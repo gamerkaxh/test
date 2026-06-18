@@ -6,253 +6,239 @@ xmlns="http://www.w3.org/TR/REC-html40">
 <meta name="ProgId" content="Word.Document">
 <meta name="Generator" content="Microsoft Word 15">
 <meta name="Originator" content="Microsoft Word 15">
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]-->
 <style>
-body { font-family: Calibri, sans-serif; font-size: 11pt; margin: 1in; }
-h1 { font-size: 18pt; color: #1F4E79; border-bottom: 2px solid #1F4E79; padding-bottom: 5pt; }
-h2 { font-size: 14pt; color: #2E75B6; margin-top: 20pt; }
-h3 { font-size: 12pt; color: #404040; }
-table { border-collapse: collapse; width: 100%; margin: 10pt 0; font-size: 9pt; }
-th { background-color: #1F4E79; color: white; padding: 6pt 8pt; border: 1px solid #1F4E79; text-align: left; }
-td { padding: 5pt 8pt; border: 1px solid #BFBFBF; }
-tr:nth-child(even) { background-color: #F2F7FC; }
-.pass { color: #107C10; font-weight: bold; }
-.fail { color: #D13438; font-weight: bold; }
-.warn { color: #CA5010; font-weight: bold; }
-.note { background-color: #FFF4CE; border-left: 4px solid #CA5010; padding: 8pt; margin: 10pt 0; }
-.disclaimer { background-color: #FDE7E9; border-left: 4px solid #D13438; padding: 8pt; margin: 10pt 0; font-size: 9pt; }
+@page { size: 8.5in 11in; margin: 0.75in; }
+body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #000000; background: #FFFFFF; }
+h1 { font-size: 20pt; color: #1F4E79; border-bottom: 3px solid #1F4E79; padding-bottom: 6pt; margin-top: 0; }
+h2 { font-size: 14pt; color: #2E75B6; margin-top: 24pt; margin-bottom: 6pt; }
+h3 { font-size: 12pt; color: #333333; margin-top: 12pt; margin-bottom: 6pt; }
+p { margin: 4pt 0; line-height: 1.4; }
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 8pt 0 16pt 0;
+    font-size: 10pt;
+    table-layout: fixed;
+}
+th {
+    background-color: #2E75B6;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: 8pt 10pt;
+    border: 1px solid #2E75B6;
+    text-align: left;
+    vertical-align: top;
+}
+td {
+    padding: 6pt 10pt;
+    border: 1px solid #D0D0D0;
+    vertical-align: top;
+    background-color: #FFFFFF;
+}
+tr:nth-child(even) td { background-color: #F5F9FC; }
+.info-table { width: 100%; }
+.info-table td:first-child { width: 30%; font-weight: bold; background-color: #F0F0F0; }
+.info-table td:last-child { width: 70%; }
+.critical { color: #CC0000; font-weight: bold; }
+.high { color: #CC6600; font-weight: bold; }
+.medium { color: #996600; }
+.pass { color: #008800; font-weight: bold; }
+.fail { color: #CC0000; font-weight: bold; }
+.warn { color: #CC6600; font-weight: bold; }
+.note { background-color: #FFFFF0; border: 1px solid #E6E600; padding: 8pt; margin: 8pt 0; }
+.disclaimer { background-color: #FFF5F5; border: 1px solid #CC0000; padding: 8pt; margin: 8pt 0; font-size: 9pt; }
 </style>
 </head>
 <body>
 
-
 <h1>Gemma 4 31B-IT Deployment Analysis via AEX Model Service</h1>
 
-<table style="width:60%; margin-bottom:20pt;">
-<tr><td style="width:40%; font-weight:bold; background:#E8E8E8;">User Story</td><td>2748133 - Explore deployment of Gemma model</td></tr>
-<tr><td style="font-weight:bold; background:#E8E8E8;">Model</td><td>google/gemma-4-31b-it</td></tr>
-<tr><td style="font-weight:bold; background:#E8E8E8;">Sprint</td><td>Cat Digital 2026 | Sprint 12 (Jun 10 - Jun 23)</td></tr>
-<tr><td style="font-weight:bold; background:#E8E8E8;">Owner</td><td>Sowndarya Kurapati</td></tr>
-<tr><td style="font-weight:bold; background:#E8E8E8;">Date</td><td>June 18, 2026</td></tr>
-<tr><td style="font-weight:bold; background:#E8E8E8;">Region</td><td>us-east-2 (Ohio)</td></tr>
-<tr><td style="font-weight:bold; background:#E8E8E8;">Pricing Type</td><td>On-Demand</td></tr>
+<table class="info-table">
+<tr><td>User Story</td><td>2748133 - Explore deployment of Gemma model</td></tr>
+<tr><td>Model</td><td>google/gemma-4-31b-it</td></tr>
+<tr><td>Sprint</td><td>Cat Digital 2026 | Sprint 12 (Jun 10 - Jun 23)</td></tr>
+<tr><td>Owner</td><td>Sowndarya Kurapati</td></tr>
+<tr><td>Date</td><td>June 18, 2026</td></tr>
+<tr><td>AWS Region</td><td>us-east-2 (Ohio)</td></tr>
+<tr><td>Pricing Type</td><td>On-Demand</td></tr>
 </table>
+
 
 <h2>1. Model Specifications</h2>
 <table>
-<tr><th>Specification</th><th>Value</th></tr>
+<tr><th style="width:35%;">Specification</th><th style="width:65%;">Value</th></tr>
 <tr><td>Model Name</td><td>google/gemma-4-31b-it</td></tr>
 <tr><td>Parameters</td><td>31 Billion (Dense)</td></tr>
 <tr><td>Model Size on Disk (BF16)</td><td>~65 GB</td></tr>
 <tr><td>VRAM Required (FP16/BF16)</td><td>~71 GB</td></tr>
 <tr><td>VRAM Required (NVFP4 Quantized)</td><td>~45 GB</td></tr>
-<tr><td>Minimum GPU</td><td>1x NVIDIA A100 80GB (single GPU) or 2x A100 40GB (tensor parallel)</td></tr>
+<tr><td>Minimum GPU</td><td>1x NVIDIA A100 80GB or 2x A100 40GB (tensor parallel)</td></tr>
 <tr><td>Recommended Serving Engine</td><td>vLLM v0.8.0+</td></tr>
 <tr><td>Context Length</td><td>Up to 256K tokens</td></tr>
 <tr><td>Source</td><td>JFrog Artifactory (artifacts.cat.com) - Approved</td></tr>
 <tr><td>Artifactory Path</td><td>cat-huggingface-repo/models/google/gemma-4-31B-it/</td></tr>
 </table>
 
-
-<h2>2. AEX Model Service - Available Deployment Paths</h2>
-<p>The CMAAI-Model-Service GitHub Actions workflow (cmaai-model-service.yaml) supports the following model-type options:</p>
+<h2>2. AWS Deployment Options via AEX Model Service</h2>
+<p>The CMAAI-Model-Service GitHub Actions workflow supports the following AWS deployment paths for Gemma 4 31B:</p>
 <table>
-<tr><th>#</th><th>model-type</th><th>Description</th><th>Applicable to Gemma 4 31B?</th></tr>
-<tr><td>1</td><td>huggingface</td><td>Deploy HuggingFace model on AEX infrastructure (ECS/EC2 with GPU)</td><td class="warn">Yes - but likely fails due to size</td></tr>
-<tr><td>2</td><td>sagemaker</td><td>Deploy via Amazon SageMaker endpoint</td><td class="pass">Yes - most viable AEX path</td></tr>
-<tr><td>3</td><td>mlflow</td><td>Deploy MLflow model</td><td class="fail">No - not applicable for LLMs</td></tr>
-<tr><td>4</td><td>pythonpackage</td><td>Deploy Python package model</td><td class="fail">No - not applicable</td></tr>
-<tr><td>5</td><td>llmobject</td><td>Deploy LLM object</td><td class="warn">Possibly - needs investigation</td></tr>
+<tr><th style="width:5%;">#</th><th style="width:25%;">AWS Service</th><th style="width:15%;">AEX model-type</th><th style="width:15%;">Can Deploy?</th><th style="width:40%;">Primary Blocker</th></tr>
+<tr><td>1</td><td>Amazon SageMaker</td><td>sagemaker</td><td class="warn">MAYBE</td><td>65 GB tar.gz packaging; no GPU instance selection</td></tr>
+<tr><td>2</td><td>Amazon ECS on EC2 (GPU)</td><td>huggingface</td><td class="fail">NO</td><td>Storage 20 GiB &lt; 65 GB; ECR 52 GB limit; No GPU on Fargate</td></tr>
+<tr><td>3</td><td>Amazon Bedrock</td><td>N/A</td><td class="fail">NO</td><td>Gemma 4 not available on Bedrock (only Gemma v3)</td></tr>
+<tr><td>4</td><td>LLM Object</td><td>llmobject</td><td class="warn">UNKNOWN</td><td>Undocumented - needs investigation</td></tr>
 </table>
 
-<h2>3. OPTION 1: AEX &rarr; model-type = "huggingface"</h2>
-<h3>Description</h3>
-<p>Model artifacts stored in S3 are pulled to a worker node and loaded into GPU memory for inference.</p>
+
+<h2>3. OPTION 1: Amazon SageMaker (model-type = "sagemaker")</h2>
+<p><b>How It Works:</b> Model is packaged as model.tar.gz, uploaded to Amazon S3, and deployed to a SageMaker real-time inference endpoint.</p>
 
 <h3>Feasibility Assessment</h3>
 <table>
-<tr><th>Requirement</th><th>Current AEX Limit</th><th>Gemma 4 31B Needs</th><th>Status</th></tr>
-<tr><td>Worker Ephemeral Storage</td><td>20 GiB (default)</td><td>65+ GB</td><td class="fail">FAILS</td></tr>
-<tr><td>GPU VRAM</td><td>Unknown (depends on provisioned instance)</td><td>71 GB (FP16) / 45 GB (NVFP4)</td><td class="warn">UNKNOWN</td></tr>
-<tr><td>S3 Download Time</td><td>Unknown timeout threshold</td><td>~5-10 min for 65 GB at 200 MB/s</td><td class="warn">RISK</td></tr>
-<tr><td>Cold Start Time</td><td>Unknown health check timeout</td><td>2-5 minutes (model loading + warmup)</td><td class="warn">RISK</td></tr>
-<tr><td>ECR Image Layer Size</td><td>52 GB max per layer</td><td>65 GB model cannot fit in image</td><td class="fail">FAILS</td></tr>
+<tr><th style="width:25%;">Requirement</th><th style="width:30%;">AWS Capability</th><th style="width:25%;">Gemma 4 31B Needs</th><th style="width:20%;">Status</th></tr>
+<tr><td>Model packaging</td><td>S3 multipart upload, no size limit</td><td>65 GB tar.gz</td><td class="warn">POSSIBLE but slow</td></tr>
+<tr><td>Endpoint storage</td><td>Configurable EBS volume</td><td>65+ GB</td><td class="pass">PASS</td></tr>
+<tr><td>GPU availability</td><td>ml.g5, ml.p4d, ml.p5 families</td><td>A100 80GB min for FP16</td><td class="pass">PASS</td></tr>
+<tr><td>Cold start</td><td>Instance launch + model load</td><td>5-15 minutes</td><td class="warn">SLOW</td></tr>
+<tr><td>Inference timeout</td><td>60 seconds max (real-time)</td><td>Depends on output</td><td class="warn">RISK</td></tr>
 </table>
 
-
-<h3>EC2 Instance Pricing (If AEX Provisions GPU Instances) - us-east-2 On-Demand</h3>
-<div class="note"><strong>Note:</strong> EC2 GPU instance pricing is identical in us-east-1 and us-east-2 for these instance types. Confirmed via devzero.io and doit.com for us-east-2 specifically.</div>
+<h3>Problems Blocking This Path</h3>
 <table>
-<tr><th>Instance Type</th><th>vCPUs</th><th>RAM (GiB)</th><th>GPUs</th><th>GPU Type</th><th>VRAM/GPU</th><th>Total VRAM</th><th>Can Run Gemma 4 31B?</th><th>Tensor Parallel</th><th>Price/Hour</th><th>Price/Week (168h)</th><th>Price/Month (730h)</th></tr>
-<tr><td>g6.12xlarge</td><td>48</td><td>192</td><td>4</td><td>NVIDIA L4</td><td>24 GB</td><td>96 GB</td><td class="warn">Yes (NVFP4 quantized only)</td><td>TP=4</td><td><strong>$4.6016</strong></td><td>$773.07</td><td>$3,359.17</td></tr>
-<tr><td>g6.48xlarge</td><td>192</td><td>768</td><td>8</td><td>NVIDIA L4</td><td>24 GB</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><strong>$13.3504</strong></td><td>$2,242.87</td><td>$9,745.79</td></tr>
-<tr><td>g5.12xlarge</td><td>48</td><td>192</td><td>4</td><td>NVIDIA A10G</td><td>24 GB</td><td>96 GB</td><td class="warn">Yes (tight, quantization recommended)</td><td>TP=4</td><td><strong>$5.672</strong></td><td>$952.90</td><td>$4,140.56</td></tr>
-<tr><td>g5.48xlarge</td><td>192</td><td>768</td><td>8</td><td>NVIDIA A10G</td><td>24 GB</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><strong>$16.288</strong></td><td>$2,736.38</td><td>$11,890.24</td></tr>
-<tr><td>p4d.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 40GB</td><td>40 GB</td><td>320 GB</td><td class="pass">Yes</td><td>TP=2</td><td><strong>$21.9576</strong></td><td>$3,688.88</td><td>$16,029.05</td></tr>
-<tr><td>p4de.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (single GPU capable)</td><td>TP=1</td><td><strong>$27.4471</strong></td><td>$4,611.11</td><td>$20,036.38</td></tr>
-<tr><td>p5.48xlarge</td><td>192</td><td>2048</td><td>8</td><td>NVIDIA H100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (single GPU, fastest)</td><td>TP=1</td><td><strong>$55.04</strong></td><td>$9,246.72</td><td>$40,179.20</td></tr>
+<tr><th style="width:5%;">#</th><th style="width:25%;">Problem</th><th style="width:50%;">Detail</th><th style="width:20%;">Severity</th></tr>
+<tr><td>1</td><td>No staging infrastructure</td><td>Need a server to download 65 GB from JFrog, compress to tar.gz, and upload to S3. No such server exists today.</td><td class="critical">CRITICAL</td></tr>
+<tr><td>2</td><td>65 GB tar.gz impractical</td><td>Safetensors files do not compress well. Creating tar.gz takes hours and output is nearly same size.</td><td class="high">HIGH</td></tr>
+<tr><td>3</td><td>No GPU instance selection</td><td>Workflow only has deploy-on-gpu=true/false. Cannot specify ml.p4d.24xlarge or ml.g5.12xlarge.</td><td class="high">HIGH</td></tr>
+<tr><td>4</td><td>No JFrog-to-S3 transfer</td><td>No automated pipeline to move 65 GB from Artifactory to S3. Lambda limited to 10 GB.</td><td class="high">HIGH</td></tr>
 </table>
-<p><strong>Verdict:</strong> <span class="fail">LIKELY FAILS</span> - Worker ephemeral storage (20 GiB) and ECR layer limit (52 GB) are insufficient for 65 GB model.</p>
 
-
-<h2>4. OPTION 2: AEX &rarr; model-type = "sagemaker"</h2>
-<h3>Description</h3>
-<p>Model is packaged as model.tar.gz, uploaded to S3, and deployed to a SageMaker real-time inference endpoint via the CMAAI-Model-Service workflow.</p>
-
-<h3>Feasibility Assessment</h3>
+<h3>Amazon SageMaker Instance Pricing - us-east-2 (Ohio) On-Demand</h3>
+<div class="disclaimer"><b>IMPORTANT:</b> SageMaker pricing below is derived from cloudprice.net monthly rates (divided by 730 hours). Verify exact pricing at aws.amazon.com/sagemaker/pricing - select "US East (Ohio)" region.</div>
 <table>
-<tr><th>Requirement</th><th>SageMaker Capability</th><th>Gemma 4 31B Needs</th><th>Status</th></tr>
-<tr><td>Model packaging (tar.gz)</td><td>S3 multipart upload, no hard size limit</td><td>65 GB tar.gz</td><td class="pass">PASS (slow to create)</td></tr>
-<tr><td>Storage on endpoint instance</td><td>Configurable EBS volume</td><td>65+ GB</td><td class="pass">PASS</td></tr>
-<tr><td>GPU availability</td><td>Multiple GPU instance families</td><td>A100 80GB min for FP16</td><td class="pass">PASS</td></tr>
-<tr><td>Cold start</td><td>Instance launch + model load</td><td>5-15 minutes total</td><td class="warn">PASS (slow)</td></tr>
-<tr><td>Inference timeout (real-time)</td><td>Up to 60 seconds response</td><td>Depends on output length</td><td class="warn">RISK for long outputs</td></tr>
-<tr><td>Gemma 4 on JumpStart</td><td>Available since April 2026</td><td>Pre-configured deployment</td><td class="pass">CONFIRMED</td></tr>
+<tr><th style="width:16%;">Instance</th><th style="width:5%;">GPUs</th><th style="width:12%;">GPU Type</th><th style="width:10%;">Total VRAM</th><th style="width:12%;">Can Run?</th><th style="width:5%;">TP</th><th style="width:12%;">$/Hour*</th><th style="width:14%;">$/Week (168h)</th><th style="width:14%;">$/Month (730h)</th></tr>
+<tr><td>ml.g5.12xlarge</td><td>4</td><td>NVIDIA A10G</td><td>96 GB</td><td class="warn">Quantized only</td><td>TP=4</td><td><b>$7.09*</b></td><td>$1,191.12</td><td>$5,175.70</td></tr>
+<tr><td>ml.g5.48xlarge</td><td>8</td><td>NVIDIA A10G</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><b>$20.36*</b></td><td>$3,420.48</td><td>$14,862.80</td></tr>
+<tr><td>ml.p4d.24xlarge</td><td>8</td><td>NVIDIA A100 40GB</td><td>320 GB</td><td class="pass">Yes</td><td>TP=2</td><td><b>$25.25*</b></td><td>$4,242.00</td><td>$18,433.44</td></tr>
+<tr><td>ml.p4de.24xlarge</td><td>8</td><td>NVIDIA A100 80GB</td><td>640 GB</td><td class="pass">Yes (1 GPU)</td><td>TP=1</td><td><b>$31.56*</b></td><td>$5,302.08</td><td>$23,041.80</td></tr>
+<tr><td>ml.p5.48xlarge</td><td>8</td><td>NVIDIA H100 80GB</td><td>640 GB</td><td class="pass">Yes (fastest)</td><td>TP=1</td><td><b>$63.29*</b></td><td>$10,632.72</td><td>$46,206.08</td></tr>
 </table>
+<p><i>* Hourly rate derived from cloudprice.net monthly pricing. Verify at AWS SageMaker pricing page.</i></p>
+<p><b>Verdict: MOST VIABLE AEX PATH</b> - Requires solving file transfer and tar.gz packaging challenges first.</p>
 
-<h3>SageMaker Inference Endpoint Pricing - us-east-2 On-Demand</h3>
-<div class="disclaimer"><strong>IMPORTANT:</strong> SageMaker inference pricing shown below is derived from cloudprice.net monthly rates (divided by 730 hours). These are approximate values. <strong>You MUST verify exact pricing at <a href="https://aws.amazon.com/sagemaker/pricing/">https://aws.amazon.com/sagemaker/pricing/</a></strong> before making any purchase decisions. Select "US East (Ohio)" region on the pricing page.</div>
+
+<h2>4. OPTION 2: Amazon ECS on EC2 with GPU (model-type = "huggingface")</h2>
+<p><b>How It Works:</b> Model artifacts in Amazon S3 are pulled to an ECS worker node and loaded into GPU memory for inference.</p>
+
+<h3>Problems Blocking This Path</h3>
 <table>
-<tr><th>Instance Type</th><th>vCPUs</th><th>RAM (GiB)</th><th>GPUs</th><th>GPU Type</th><th>VRAM/GPU</th><th>Total VRAM</th><th>Can Run?</th><th>Tensor Parallel</th><th>Price/Hour*</th><th>Price/Week (168h)</th><th>Price/Month (730h)</th></tr>
-<tr><td>ml.g5.12xlarge</td><td>48</td><td>192</td><td>4</td><td>NVIDIA A10G</td><td>24 GB</td><td>96 GB</td><td class="warn">Yes (NVFP4 quantized)</td><td>TP=4</td><td><strong>$7.09*</strong></td><td>$1,191.12</td><td>$5,175.70</td></tr>
-<tr><td>ml.g5.48xlarge</td><td>192</td><td>768</td><td>8</td><td>NVIDIA A10G</td><td>24 GB</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><strong>$20.36*</strong></td><td>$3,420.48</td><td>$14,862.80</td></tr>
-<tr><td>ml.p4d.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 40GB</td><td>40 GB</td><td>320 GB</td><td class="pass">Yes</td><td>TP=2</td><td><strong>$25.25*</strong></td><td>$4,242.00</td><td>$18,433.44</td></tr>
-<tr><td>ml.p4de.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (single GPU)</td><td>TP=1</td><td><strong>$31.56*</strong></td><td>$5,302.08</td><td>$23,041.80</td></tr>
-<tr><td>ml.p5.48xlarge</td><td>192</td><td>2048</td><td>8</td><td>NVIDIA H100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (fastest)</td><td>TP=1</td><td><strong>$63.29*</strong></td><td>$10,632.72</td><td>$46,206.08</td></tr>
+<tr><th style="width:5%;">#</th><th style="width:25%;">Problem</th><th style="width:50%;">Detail</th><th style="width:20%;">Severity</th></tr>
+<tr><td>1</td><td>Worker storage = 20 GiB</td><td>Model is 65 GB. Cannot physically fit on the worker. Need 100+ GiB.</td><td class="critical">CRITICAL</td></tr>
+<tr><td>2</td><td>ECR image layer = 52 GB</td><td>Cannot bake 65 GB model into container image (AWS hard limit).</td><td class="critical">CRITICAL</td></tr>
+<tr><td>3</td><td>ECS Fargate has no GPU</td><td>Fargate does not support GPUs. Must use ECS on EC2 with GPU instances.</td><td class="critical">CRITICAL</td></tr>
+<tr><td>4</td><td>No JFrog-to-S3 transfer</td><td>No automated mechanism to move 65 GB from Artifactory to S3.</td><td class="critical">CRITICAL</td></tr>
+<tr><td>5</td><td>No tensor parallelism</td><td>Cannot configure multi-GPU inference (TP=2, TP=4 required).</td><td class="high">HIGH</td></tr>
 </table>
-<p><em>* Hourly rate derived from monthly pricing on cloudprice.net. Verify at AWS SageMaker pricing page.</em></p>
-<p><strong>Verdict:</strong> <span class="pass">MOST LIKELY TO SUCCEED VIA AEX</span> - Requires packaging 65 GB model as tar.gz and selecting appropriate GPU instance.</p>
 
-
-<h2>5. OPTION 3: SageMaker JumpStart (Direct - Bypasses AEX)</h2>
-<h3>Description</h3>
-<p>Gemma 4 models are pre-registered in SageMaker JumpStart (confirmed available since April 2026). Deploy directly from SageMaker Studio or Python SDK. No manual model packaging required.</p>
-<h3>Feasibility Assessment</h3>
+<h3>AWS EC2 GPU Instance Pricing - us-east-2 (Ohio) On-Demand</h3>
+<div class="note"><b>Note:</b> This path currently FAILS due to critical blockers above. Prices show what EC2 GPU instances cost if AEX infrastructure were upgraded. EC2 GPU pricing confirmed identical in us-east-1 and us-east-2 (verified via devzero.io, doit.com).</div>
 <table>
-<tr><th>Requirement</th><th>Status</th><th>Notes</th></tr>
-<tr><td>Model availability in JumpStart</td><td class="pass">PASS</td><td>Confirmed available April 2026 (aws.amazon.com announcement)</td></tr>
-<tr><td>Manual packaging required?</td><td class="pass">NO - JumpStart handles artifacts</td><td>Eliminates 65 GB tar.gz challenge</td></tr>
-<tr><td>GPU instances available?</td><td class="pass">PASS</td><td>Same instances as Option 2</td></tr>
-<tr><td>Integration with AEX pipeline?</td><td class="fail">FAILS</td><td>Not managed through CMAAI-Model-Service workflow</td></tr>
+<tr><th style="width:14%;">Instance</th><th style="width:5%;">GPUs</th><th style="width:13%;">GPU Type</th><th style="width:10%;">Total VRAM</th><th style="width:13%;">Can Run?</th><th style="width:5%;">TP</th><th style="width:12%;">$/Hour</th><th style="width:14%;">$/Week (168h)</th><th style="width:14%;">$/Month (730h)</th></tr>
+<tr><td>g6.12xlarge</td><td>4</td><td>NVIDIA L4</td><td>96 GB</td><td class="warn">Quantized only</td><td>TP=4</td><td><b>$4.6016</b></td><td>$773.07</td><td>$3,359.17</td></tr>
+<tr><td>g6.48xlarge</td><td>8</td><td>NVIDIA L4</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><b>$13.3504</b></td><td>$2,242.87</td><td>$9,745.79</td></tr>
+<tr><td>g5.12xlarge</td><td>4</td><td>NVIDIA A10G</td><td>96 GB</td><td class="warn">Quantized only</td><td>TP=4</td><td><b>$5.672</b></td><td>$952.90</td><td>$4,140.56</td></tr>
+<tr><td>g5.48xlarge</td><td>8</td><td>NVIDIA A10G</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><b>$16.288</b></td><td>$2,736.38</td><td>$11,890.24</td></tr>
+<tr><td>p4d.24xlarge</td><td>8</td><td>NVIDIA A100 40GB</td><td>320 GB</td><td class="pass">Yes</td><td>TP=2</td><td><b>$21.9576</b></td><td>$3,688.88</td><td>$16,029.05</td></tr>
+<tr><td>p4de.24xlarge</td><td>8</td><td>NVIDIA A100 80GB</td><td>640 GB</td><td class="pass">Yes (1 GPU)</td><td>TP=1</td><td><b>$27.4471</b></td><td>$4,611.11</td><td>$20,036.38</td></tr>
+<tr><td>p5.48xlarge</td><td>8</td><td>NVIDIA H100 80GB</td><td>640 GB</td><td class="pass">Yes (fastest)</td><td>TP=1</td><td><b>$55.04</b></td><td>$9,246.72</td><td>$40,179.20</td></tr>
 </table>
-<h3>Pricing (Same SageMaker instances as Option 2)</h3>
+<p><b>Verdict: CURRENTLY FAILS</b> - 4 critical blockers. Would need: ECS on EC2 (not Fargate), 200 GiB storage, runtime S3 model pull.</p>
+
+
+<h2>5. OPTION 3: Amazon Bedrock</h2>
 <table>
-<tr><th>Instance Type</th><th>GPUs</th><th>Total VRAM</th><th>Price/Hour*</th><th>Price/Week (168h)</th><th>Price/Month (730h)</th><th>Notes</th></tr>
-<tr><td>ml.g5.12xlarge</td><td>4x A10G</td><td>96 GB</td><td><strong>$7.09*</strong></td><td>$1,191.12</td><td>$5,175.70</td><td>Cheapest, requires quantization</td></tr>
-<tr><td>ml.g5.48xlarge</td><td>8x A10G</td><td>192 GB</td><td><strong>$20.36*</strong></td><td>$3,420.48</td><td>$14,862.80</td><td>Good balance</td></tr>
-<tr><td>ml.p4d.24xlarge</td><td>8x A100-40GB</td><td>320 GB</td><td><strong>$25.25*</strong></td><td>$4,242.00</td><td>$18,433.44</td><td>Recommended for 31B FP16</td></tr>
-<tr><td>ml.p5.48xlarge</td><td>8x H100-80GB</td><td>640 GB</td><td><strong>$63.29*</strong></td><td>$10,632.72</td><td>$46,206.08</td><td>Fastest, overkill</td></tr>
+<tr><th style="width:40%;">Question</th><th style="width:60%;">Answer</th></tr>
+<tr><td>Is Gemma 4 31B available on Bedrock?</td><td class="fail">NO</td></tr>
+<tr><td>What Gemma versions are available?</td><td>Only Gemma v3 models</td></tr>
+<tr><td>Timeline for Gemma 4 support?</td><td>No announcement as of June 2026</td></tr>
 </table>
-<p><em>* Hourly rate derived from monthly pricing. Verify at AWS SageMaker pricing page for us-east-2.</em></p>
-<p><strong>Verdict:</strong> <span class="pass">WORKS TODAY</span> - Best option for immediate dev/testing. Not integrated with AEX pipeline.</p>
+<p><b>Verdict: NOT POSSIBLE</b> - Amazon Bedrock does not support Gemma 4 models.</p>
 
-<h2>6. OPTION 4: Self-Hosted EC2 with vLLM (Bypasses AEX)</h2>
-<h3>Description</h3>
-<p>Launch a GPU-optimized EC2 instance, install vLLM serving engine, download model from S3, and serve via OpenAI-compatible API. Full manual management required.</p>
-<h3>EC2 Instance Pricing - us-east-2 On-Demand</h3>
-<div class="note"><strong>Note:</strong> p4d.24xlarge pricing in us-east-2 confirmed at $21.9576/hr by devzero.io and doit.com. Other GPU instances are priced identically across us-east-1 and us-east-2.</div>
+<h2>6. OPTION 4: LLM Object (model-type = "llmobject")</h2>
+<p><b>Status: NEEDS INVESTIGATION</b></p>
 <table>
-<tr><th>Instance Type</th><th>vCPUs</th><th>RAM (GiB)</th><th>GPUs</th><th>GPU Type</th><th>VRAM/GPU</th><th>Total VRAM</th><th>Can Run?</th><th>TP</th><th>Price/Hour</th><th>Price/Week (168h)</th><th>Price/Month (730h)</th></tr>
-<tr><td>g6.12xlarge</td><td>48</td><td>192</td><td>4</td><td>NVIDIA L4</td><td>24 GB</td><td>96 GB</td><td class="warn">Quantized only</td><td>TP=4</td><td><strong>$4.6016</strong></td><td>$773.07</td><td>$3,359.17</td></tr>
-<tr><td>g5.12xlarge</td><td>48</td><td>192</td><td>4</td><td>NVIDIA A10G</td><td>24 GB</td><td>96 GB</td><td class="warn">Quantized only</td><td>TP=4</td><td><strong>$5.672</strong></td><td>$952.90</td><td>$4,140.56</td></tr>
-<tr><td>g6.48xlarge</td><td>192</td><td>768</td><td>8</td><td>NVIDIA L4</td><td>24 GB</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><strong>$13.3504</strong></td><td>$2,242.87</td><td>$9,745.79</td></tr>
-<tr><td>g5.48xlarge</td><td>192</td><td>768</td><td>8</td><td>NVIDIA A10G</td><td>24 GB</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><strong>$16.288</strong></td><td>$2,736.38</td><td>$11,890.24</td></tr>
-<tr><td>p4d.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 40GB</td><td>40 GB</td><td>320 GB</td><td class="pass">Yes</td><td>TP=2</td><td><strong>$21.9576</strong></td><td>$3,688.88</td><td>$16,029.05</td></tr>
-<tr><td>p4de.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes</td><td>TP=1</td><td><strong>$27.4471</strong></td><td>$4,611.11</td><td>$20,036.38</td></tr>
-<tr><td>p5.48xlarge</td><td>192</td><td>2048</td><td>8</td><td>NVIDIA H100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (fastest)</td><td>TP=1</td><td><strong>$55.04</strong></td><td>$9,246.72</td><td>$40,179.20</td></tr>
+<tr><th style="width:40%;">Question</th><th style="width:60%;">Answer</th></tr>
+<tr><td>What AWS infrastructure does it use?</td><td class="warn">UNKNOWN</td></tr>
+<tr><td>Does it support GPU?</td><td class="warn">UNKNOWN</td></tr>
+<tr><td>Storage limits?</td><td class="warn">UNKNOWN</td></tr>
+<tr><td>Supports 65+ GB models?</td><td class="warn">UNKNOWN</td></tr>
 </table>
-<p><strong>Verdict:</strong> <span class="pass">WORKS</span> - Cheapest option but requires full manual infrastructure management. Not AEX-integrated.</p>
+<p><b>Action Required:</b> Ask the AEX team what infrastructure "llmobject" deploys to. This may be the path designed for large LLMs.</p>
 
-
-<h2>7. OPTION 5: Amazon Bedrock</h2>
+<h2>7. Summary: All AWS Options</h2>
 <table>
-<tr><th>Model</th><th>Availability</th><th>Verdict</th></tr>
-<tr><td>Gemma 4 31B-IT</td><td class="fail">NOT AVAILABLE</td><td>Bedrock only supports Gemma v3 models. Gemma 4 is not offered.</td></tr>
+<tr><th style="width:5%;">#</th><th style="width:18%;">AWS Service</th><th style="width:12%;">model-type</th><th style="width:10%;">Works?</th><th style="width:13%;">Best Instance</th><th style="width:10%;">$/Hour</th><th style="width:10%;">$/Week</th><th style="width:10%;">$/Month</th><th style="width:12%;">Blocker</th></tr>
+<tr><td>1</td><td>Amazon SageMaker</td><td>sagemaker</td><td class="warn">MAYBE</td><td>ml.p4d.24xlarge</td><td>$25.25*</td><td>$4,242</td><td>$18,433</td><td>tar.gz + GPU selection</td></tr>
+<tr><td>2</td><td>Amazon ECS on EC2</td><td>huggingface</td><td class="fail">NO</td><td>p4d.24xlarge</td><td>$21.96</td><td>$3,689</td><td>$16,029</td><td>Storage/GPU/ECR</td></tr>
+<tr><td>3</td><td>Amazon Bedrock</td><td>N/A</td><td class="fail">NO</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>Not supported</td></tr>
+<tr><td>4</td><td>LLM Object</td><td>llmobject</td><td class="warn">UNKNOWN</td><td>Unknown</td><td>Unknown</td><td>Unknown</td><td>Unknown</td><td>Undocumented</td></tr>
 </table>
-<p><strong>Verdict:</strong> <span class="fail">NOT POSSIBLE</span> - Amazon Bedrock does not support Gemma 4 models.</p>
 
-<h2>8. Complete Comparison Summary - All Options</h2>
+
+<h2>8. Complete Gap Analysis</h2>
 <table>
-<tr><th>#</th><th>Deployment Path</th><th>Through AEX?</th><th>Works Today?</th><th>Recommended Instance</th><th>Price/Hour</th><th>Price/Week (168h)</th><th>Price/Month (730h)</th><th>Key Blocker / Risk</th></tr>
-<tr><td>1</td><td>AEX &rarr; huggingface</td><td class="pass">YES</td><td class="fail">NO</td><td>g6.12xlarge</td><td>$4.60</td><td>$773</td><td>$3,359</td><td>Storage 20 GiB &lt; 65 GB model; ECR 52 GB limit</td></tr>
-<tr><td>2</td><td>AEX &rarr; sagemaker</td><td class="pass">YES</td><td class="warn">MAYBE</td><td>ml.g5.12xlarge</td><td>$7.09*</td><td>$1,191</td><td>$5,176</td><td>65 GB tar.gz packaging + upload time</td></tr>
-<tr><td>3</td><td>AEX &rarr; sagemaker</td><td class="pass">YES</td><td class="warn">MAYBE</td><td>ml.p4d.24xlarge</td><td>$25.25*</td><td>$4,242</td><td>$18,433</td><td>65 GB tar.gz packaging + upload time</td></tr>
-<tr><td>4</td><td>SageMaker JumpStart (direct)</td><td class="fail">NO</td><td class="pass">YES</td><td>ml.p4d.24xlarge</td><td>$25.25*</td><td>$4,242</td><td>$18,433</td><td>Not AEX-integrated</td></tr>
-<tr><td>5</td><td>Self-hosted EC2 + vLLM</td><td class="fail">NO</td><td class="pass">YES</td><td>g6.12xlarge</td><td>$4.60</td><td>$773</td><td>$3,359</td><td>Manual management, not AEX-integrated</td></tr>
-<tr><td>6</td><td>Self-hosted EC2 + vLLM</td><td class="fail">NO</td><td class="pass">YES</td><td>p4d.24xlarge</td><td>$21.96</td><td>$3,689</td><td>$16,029</td><td>Manual management, not AEX-integrated</td></tr>
-<tr><td>7</td><td>Amazon Bedrock</td><td class="fail">NO</td><td class="fail">NO</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>Gemma 4 not supported (only v3)</td></tr>
+<tr><th style="width:5%;">#</th><th style="width:22%;">Gap</th><th style="width:15%;">Affects</th><th style="width:18%;">Current State</th><th style="width:22%;">Required</th><th style="width:18%;">Priority</th></tr>
+<tr><td>1</td><td>ECS storage = 20 GiB</td><td>ECS (huggingface)</td><td>20 GiB default</td><td>100+ GiB</td><td class="critical">P0 CRITICAL</td></tr>
+<tr><td>2</td><td>No JFrog-to-S3 transfer</td><td>All paths</td><td>Manual only</td><td>Automated for 65+ GB</td><td class="critical">P0 CRITICAL</td></tr>
+<tr><td>3</td><td>ECR layer limit = 52 GB</td><td>ECS (huggingface)</td><td>52 GB max</td><td>Runtime S3 pull</td><td class="critical">P0 CRITICAL</td></tr>
+<tr><td>4</td><td>Fargate has no GPU</td><td>ECS (huggingface)</td><td>No GPU</td><td>ECS on EC2 with GPU</td><td class="critical">P0 CRITICAL</td></tr>
+<tr><td>5</td><td>No staging server</td><td>SageMaker</td><td>None available</td><td>EC2/ECS for file ops</td><td class="high">P1 HIGH</td></tr>
+<tr><td>6</td><td>65 GB tar.gz impractical</td><td>SageMaker</td><td>Expects tar.gz</td><td>Skip or stream from S3</td><td class="high">P1 HIGH</td></tr>
+<tr><td>7</td><td>No GPU instance selection</td><td>SageMaker</td><td>true/false only</td><td>ml.p4d / ml.g5 / ml.p5</td><td class="high">P1 HIGH</td></tr>
+<tr><td>8</td><td>Gemma 4 not on Bedrock</td><td>Bedrock</td><td>Only v3</td><td>Out of our control</td><td class="medium">P2 MEDIUM</td></tr>
+<tr><td>9</td><td>llmobject undocumented</td><td>llmobject</td><td>No docs</td><td>Documentation + testing</td><td class="medium">P2 MEDIUM</td></tr>
+<tr><td>10</td><td>No tensor parallelism</td><td>SageMaker, ECS</td><td>Not configurable</td><td>TP=1,2,4,8 selectable</td><td class="medium">P2 MEDIUM</td></tr>
+<tr><td>11</td><td>Cold start too long</td><td>SageMaker, ECS</td><td>Unknown timeout</td><td>10-15 min for model load</td><td class="medium">P2 MEDIUM</td></tr>
+<tr><td>12</td><td>No quantization pipeline</td><td>All paths</td><td>Not available</td><td>NVFP4 (65 GB to ~20 GB)</td><td>P3 LOW</td></tr>
 </table>
-<p><em>* SageMaker pricing is approximate. Verify at aws.amazon.com/sagemaker/pricing for us-east-2.</em></p>
 
-
-<h2>9. Cost Ranking - Cheapest to Most Expensive (24/7 Operation)</h2>
+<h2>9. Recommendations</h2>
 <table>
-<tr><th>Rank</th><th>Option</th><th>Instance</th><th>$/Hour</th><th>$/Week</th><th>$/Month</th><th>Trade-off</th></tr>
-<tr><td>1</td><td>EC2 Self-Hosted (quantized)</td><td>g6.12xlarge</td><td>$4.60</td><td>$773</td><td>$3,359</td><td>Cheapest; manual mgmt; quantization needed</td></tr>
-<tr><td>2</td><td>EC2 Self-Hosted (quantized)</td><td>g5.12xlarge</td><td>$5.67</td><td>$953</td><td>$4,141</td><td>Manual mgmt; quantization needed</td></tr>
-<tr><td>3</td><td>AEX &rarr; SageMaker</td><td>ml.g5.12xlarge</td><td>$7.09*</td><td>$1,191</td><td>$5,176</td><td>AEX-managed; quantization needed</td></tr>
-<tr><td>4</td><td>EC2 Self-Hosted</td><td>g6.48xlarge</td><td>$13.35</td><td>$2,243</td><td>$9,746</td><td>No quantization needed; manual mgmt</td></tr>
-<tr><td>5</td><td>EC2 Self-Hosted</td><td>g5.48xlarge</td><td>$16.29</td><td>$2,736</td><td>$11,890</td><td>No quantization needed; manual mgmt</td></tr>
-<tr><td>6</td><td>AEX &rarr; SageMaker</td><td>ml.g5.48xlarge</td><td>$20.36*</td><td>$3,420</td><td>$14,863</td><td>AEX-managed; comfortable headroom</td></tr>
-<tr><td>7</td><td>EC2 Self-Hosted</td><td>p4d.24xlarge</td><td>$21.96</td><td>$3,689</td><td>$16,029</td><td>A100 GPUs; excellent performance</td></tr>
-<tr><td>8</td><td>AEX &rarr; SageMaker</td><td>ml.p4d.24xlarge</td><td>$25.25*</td><td>$4,242</td><td>$18,433</td><td>Best for production; AEX-managed</td></tr>
-<tr><td>9</td><td>EC2 Self-Hosted</td><td>p4de.24xlarge</td><td>$27.45</td><td>$4,611</td><td>$20,036</td><td>Single GPU inference possible</td></tr>
-<tr><td>10</td><td>AEX &rarr; SageMaker</td><td>ml.p4de.24xlarge</td><td>$31.56*</td><td>$5,302</td><td>$23,042</td><td>Single GPU; AEX-managed</td></tr>
-<tr><td>11</td><td>EC2 Self-Hosted</td><td>p5.48xlarge</td><td>$55.04</td><td>$9,247</td><td>$40,179</td><td>H100 GPUs; fastest possible</td></tr>
-<tr><td>12</td><td>AEX &rarr; SageMaker</td><td>ml.p5.48xlarge</td><td>$63.29*</td><td>$10,633</td><td>$46,206</td><td>Fastest; AEX-managed; most expensive</td></tr>
+<tr><th style="width:20%;">Timeframe</th><th style="width:55%;">Recommendation</th><th style="width:25%;">Cost</th></tr>
+<tr><td>Immediate</td><td>Investigate llmobject model-type - may already handle LLMs</td><td>No cost</td></tr>
+<tr><td>Immediate</td><td>Try AEX sagemaker path with ml.p4d.24xlarge to document exact failures</td><td>$25.25/hr during testing</td></tr>
+<tr><td>Short-term</td><td>Build ECS Fargate task for JFrog-to-S3 transfer (1 vCPU, 4 GB, 150 GB storage)</td><td>~$0.50 per run</td></tr>
+<tr><td>Short-term</td><td>Add GPU instance type selection to CMAAI workflow</td><td>Code change only</td></tr>
+<tr><td>Medium-term</td><td>Upgrade huggingface path: ECS on EC2 + GPU + 200 GiB storage</td><td>Infrastructure change</td></tr>
+<tr><td>Long-term</td><td>Add NVFP4 quantization pipeline (reduces 65 GB to ~20 GB)</td><td>1 sprint engineering effort</td></tr>
 </table>
-<p><em>* SageMaker pricing approximate - verify at AWS pricing page.</em></p>
 
-<h2>10. Gaps Identified in AEX Model Service</h2>
+<h2>10. Pricing Sources and Verification</h2>
 <table>
-<tr><th>#</th><th>Gap</th><th>Current State</th><th>Required for Gemma 4 31B</th><th>Priority</th><th>Impact</th></tr>
-<tr><td>1</td><td>Worker ephemeral storage too small</td><td>20 GiB default</td><td>100+ GiB</td><td class="fail">P0 - Critical</td><td>Cannot store 65 GB model on worker</td></tr>
-<tr><td>2</td><td>No JFrog-to-S3 transfer automation</td><td>Manual download required</td><td>Automated pipeline</td><td class="fail">P0 - Critical</td><td>65 GB cannot be manually transferred efficiently</td></tr>
-<tr><td>3</td><td>ECR image layer size limit</td><td>52 GB max per layer</td><td>Use runtime S3 pull instead</td><td class="warn">P1 - High</td><td>Cannot bake 65 GB model into container image</td></tr>
-<tr><td>4</td><td>No GPU instance type selection in workflow</td><td>Not configurable by user</td><td>User-selectable GPU instance type</td><td class="warn">P1 - High</td><td>Cannot specify A100/H100 for large models</td></tr>
-<tr><td>5</td><td>No tensor parallelism configuration</td><td>Not supported</td><td>TP=1,2,4,8 configurable</td><td class="warn">P2 - Medium</td><td>Multi-GPU inference required for large models</td></tr>
-<tr><td>6</td><td>Cold start/health check timeout too short</td><td>Unknown (likely &lt; 5 min)</td><td>10-15 minutes for LLM loading</td><td class="warn">P2 - Medium</td><td>Model loading takes 2-5 min minimum</td></tr>
-<tr><td>7</td><td>No model quantization pipeline</td><td>Not available</td><td>NVFP4/INT8 quantization support</td><td>P3 - Low</td><td>Would reduce model from 65 GB to ~20 GB</td></tr>
+<tr><th style="width:35%;">Data Point</th><th style="width:45%;">Source(s)</th><th style="width:20%;">Confidence</th></tr>
+<tr><td>EC2 g6.12xlarge: $4.6016/hr</td><td>instances.vantage.sh, holori.com, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>EC2 g6.48xlarge: $13.3504/hr</td><td>instances.vantage.sh, holori.com, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>EC2 g5.12xlarge: $5.672/hr</td><td>instances.vantage.sh, holori.com, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>EC2 g5.48xlarge: $16.288/hr</td><td>instances.vantage.sh, devzero.io, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>EC2 p4d.24xlarge: $21.9576/hr</td><td>devzero.io (us-east-2), doit.com (us-east-2), vantage.sh, economize.cloud</td><td class="pass">HIGH (4 sources, us-east-2 confirmed)</td></tr>
+<tr><td>EC2 p4de.24xlarge: $27.4471/hr</td><td>instances.vantage.sh, holori.com, economize.cloud, devzero.io</td><td class="pass">HIGH (4 sources)</td></tr>
+<tr><td>EC2 p5.48xlarge: $55.04/hr</td><td>instances.vantage.sh, devzero.io, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>SageMaker ml.g5.12xlarge: ~$7.09/hr</td><td>cloudprice.net ($5,175.70/month / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
+<tr><td>SageMaker ml.g5.48xlarge: ~$20.36/hr</td><td>cloudprice.net ($14,862.80/month / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
+<tr><td>SageMaker ml.p4d.24xlarge: ~$25.25/hr</td><td>cloudprice.net ($18,433.44/month / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
+<tr><td>SageMaker ml.p4de.24xlarge: ~$31.56/hr</td><td>cloudprice.net ($23,041.80/month / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
+<tr><td>SageMaker ml.p5.48xlarge: ~$63.29/hr</td><td>cloudprice.net ($46,206.08/month / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
 </table>
 
-
-<h2>11. Recommendations</h2>
-<table>
-<tr><th>Timeframe</th><th>Recommendation</th><th>Cost</th></tr>
-<tr><td>Immediate (This Sprint)</td><td>Deploy via SageMaker JumpStart on ml.p4d.24xlarge for proof of inference</td><td>$25.25/hr (only run during testing)</td></tr>
-<tr><td>Short-term (Next Sprint)</td><td>Try AEX &rarr; sagemaker model-type with ml.g5.12xlarge to test pipeline</td><td>$7.09/hr</td></tr>
-<tr><td>Medium-term (2-3 Sprints)</td><td>Add large model support to AEX: increase storage, add GPU type selection, add timeout configs</td><td>Engineering effort</td></tr>
-<tr><td>Long-term (Production)</td><td>Implement quantization (NVFP4), model caching, auto-scaling with GPU metrics</td><td>$4.60-$25.25/hr depending on quality requirements</td></tr>
-</table>
-
-<h2>12. Pricing Sources and Verification</h2>
-<table>
-<tr><th>Data Point</th><th>Source</th><th>URL</th><th>Confidence</th></tr>
-<tr><td>EC2 g6.12xlarge: $4.6016/hr</td><td>instances.vantage.sh, holori.com, economize.cloud</td><td>https://instances.vantage.sh/aws/ec2/g6.12xlarge</td><td class="pass">HIGH (3 sources)</td></tr>
-<tr><td>EC2 g6.48xlarge: $13.3504/hr</td><td>instances.vantage.sh, holori.com, economize.cloud</td><td>https://instances.vantage.sh/aws/ec2/g6.48xlarge</td><td class="pass">HIGH (3 sources)</td></tr>
-<tr><td>EC2 g5.12xlarge: $5.672/hr</td><td>instances.vantage.sh, holori.com, economize.cloud</td><td>https://instances.vantage.sh/aws/ec2/g5.12xlarge</td><td class="pass">HIGH (3 sources)</td></tr>
-<tr><td>EC2 g5.48xlarge: $16.288/hr</td><td>instances.vantage.sh, devzero.io, economize.cloud</td><td>https://instances.vantage.sh/aws/ec2/g5.48xlarge</td><td class="pass">HIGH (3 sources)</td></tr>
-<tr><td>EC2 p4d.24xlarge: $21.9576/hr (us-east-2 confirmed)</td><td>devzero.io, doit.com, instances.vantage.sh, economize.cloud</td><td>https://www.devzero.io/instances/aws/p4d.24xlarge</td><td class="pass">HIGH (4 sources, us-east-2 explicit)</td></tr>
-<tr><td>EC2 p4de.24xlarge: $27.4471/hr</td><td>instances.vantage.sh, holori.com, economize.cloud, devzero.io</td><td>https://instances.vantage.sh/aws/ec2/p4de.24xlarge</td><td class="pass">HIGH (4 sources)</td></tr>
-<tr><td>EC2 p5.48xlarge: $55.04/hr</td><td>instances.vantage.sh, devzero.io, economize.cloud, spheron.network</td><td>https://instances.vantage.sh/aws/ec2/p5.48xlarge</td><td class="pass">HIGH (4 sources)</td></tr>
-<tr><td>SageMaker ml.g5.12xlarge: ~$7.09/hr</td><td>cloudprice.net ($5,175.70/month &divide; 730h)</td><td>https://cloudprice.net/aws/sagemaker/instances/ml.g5.12xlarge</td><td class="warn">MEDIUM (1 source, derived)</td></tr>
-<tr><td>SageMaker ml.g5.48xlarge: ~$20.36/hr</td><td>cloudprice.net ($14,862.80/month &divide; 730h)</td><td>https://cloudprice.net/aws/sagemaker/instances/ml.g5.48xlarge</td><td class="warn">MEDIUM (1 source, derived)</td></tr>
-<tr><td>SageMaker ml.p4d.24xlarge: ~$25.25/hr</td><td>cloudprice.net ($18,433.44/month &divide; 730h)</td><td>https://cloudprice.net/aws/sagemaker/instances/ml.p4d.24xlarge</td><td class="warn">MEDIUM (1 source, derived)</td></tr>
-<tr><td>SageMaker ml.p4de.24xlarge: ~$31.56/hr</td><td>cloudprice.net ($23,041.80/month &divide; 730h)</td><td>https://cloudprice.net/aws/sagemaker/instances/ml.p4de.24xlarge</td><td class="warn">MEDIUM (1 source, derived)</td></tr>
-<tr><td>SageMaker ml.p5.48xlarge: ~$63.29/hr</td><td>cloudprice.net ($46,206.08/month &divide; 730h)</td><td>https://cloudprice.net/aws/sagemaker/instances/ml.p5.48xlarge</td><td class="warn">MEDIUM (1 source, derived)</td></tr>
-<tr><td>Gemma 4 on SageMaker JumpStart</td><td>AWS announcement</td><td>https://aws.amazon.com/about-aws/whats-new/2026/04/gemma-4-models-on-sagemaker-jumpstart/</td><td class="pass">HIGH (official AWS)</td></tr>
-<tr><td>VRAM requirement: ~71 GB FP16</td><td>spheron.network GPU recommender</td><td>https://www.spheron.network/tools/gpu-recommender/google/gemma-4-31B-it/</td><td class="pass">HIGH</td></tr>
-</table>
-
+<br>
 <div class="disclaimer">
-<strong>DISCLAIMERS:</strong><br>
-1. All prices are <strong>On-Demand</strong> pricing for <strong>us-east-2 (Ohio)</strong> region unless otherwise noted.<br>
-2. EC2 prices are confirmed identical in us-east-1 and us-east-2 for these GPU instance types.<br>
-3. SageMaker pricing marked with * is approximate (derived from monthly rates). <strong>Verify at https://aws.amazon.com/sagemaker/pricing/</strong><br>
-4. SageMaker Savings Plans can reduce costs by up to 64% with 1-3 year commitments.<br>
-5. EC2 Spot instances can reduce costs by 60-90% but may be interrupted.<br>
-6. Prices do NOT include data transfer, S3 storage, EBS volumes, or other ancillary costs.<br>
-7. GPU instance availability may be limited. Quota increase via AWS Service Quotas may be required.<br>
-8. Date of pricing data: June 18, 2026. Prices may have changed. Always verify before purchasing.
+<b>DISCLAIMERS:</b><br>
+1. All prices are On-Demand for us-east-2 (Ohio). EC2 GPU pricing confirmed identical in us-east-1 and us-east-2.<br>
+2. SageMaker pricing marked with * is approximate. Verify at aws.amazon.com/sagemaker/pricing<br>
+3. SageMaker Savings Plans can reduce costs by up to 64% (1-3 year commitment).<br>
+4. Prices do NOT include data transfer, S3 storage, or EBS volumes.<br>
+5. GPU instance availability may require quota increase via AWS Service Quotas.<br>
+6. Pricing data date: June 18, 2026.
 </div>
 
 </body>
