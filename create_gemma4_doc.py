@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
 """
-Create a .docx file about Gemma 4 technical details using only standard library.
-A .docx is a ZIP file containing XML documents following the OOXML standard.
+Create a .docx file about Gemma 4 technical details in TABULAR FORMAT.
+All content is organized into tables for easy reading.
+Uses only standard library (zipfile + XML).
 """
 import zipfile
 import os
-
-# XML namespace constants
-W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-CT_NS = "http://schemas.openxmlformats.org/package/2006/content-types"
-REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
-WP_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
 
 def make_content_types():
@@ -38,7 +32,6 @@ def make_word_rels():
 </Relationships>'''
 
 
-
 def make_styles():
     return '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
@@ -52,16 +45,6 @@ def make_styles():
     <w:pPr><w:spacing w:before="360" w:after="120"/></w:pPr>
     <w:rPr><w:b/><w:sz w:val="36"/><w:color w:val="1565c0"/></w:rPr>
   </w:style>
-  <w:style w:type="paragraph" w:styleId="Heading2">
-    <w:name w:val="heading 2"/>
-    <w:pPr><w:spacing w:before="240" w:after="80"/></w:pPr>
-    <w:rPr><w:b/><w:sz w:val="28"/><w:color w:val="1976d2"/></w:rPr>
-  </w:style>
-  <w:style w:type="paragraph" w:styleId="Heading3">
-    <w:name w:val="heading 3"/>
-    <w:pPr><w:spacing w:before="200" w:after="60"/></w:pPr>
-    <w:rPr><w:b/><w:sz w:val="24"/><w:color w:val="333333"/></w:rPr>
-  </w:style>
   <w:style w:type="paragraph" w:styleId="Normal">
     <w:name w:val="Normal"/>
     <w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr>
@@ -71,506 +54,376 @@ def make_styles():
 
 
 
-def p(text, style="Normal", bold=False):
-    """Create a paragraph XML element."""
+def escape(text):
+    """Escape XML special characters."""
+    return str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+
+
+def p(text, style="Normal"):
+    """Create a paragraph."""
     style_xml = f'<w:pPr><w:pStyle w:val="{style}"/></w:pPr>' if style != "Normal" else ''
-    if bold:
-        return f'<w:p>{style_xml}<w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">{escape(text)}</w:t></w:r></w:p>'
     return f'<w:p>{style_xml}<w:r><w:t xml:space="preserve">{escape(text)}</w:t></w:r></w:p>'
 
 
-def bullet(text):
-    """Create a bullet point paragraph."""
-    return f'''<w:p>
-  <w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>
-  <w:ind w:left="720" w:hanging="360"/></w:pPr>
-  <w:r><w:t xml:space="preserve">{escape(text)}</w:t></w:r></w:p>'''
+def table_start():
+    """Start a table with borders."""
+    return '''<w:tbl><w:tblPr><w:tblW w:w="5000" w:type="pct"/>
+<w:tblBorders>
+<w:top w:val="single" w:sz="6" w:color="333333"/>
+<w:bottom w:val="single" w:sz="6" w:color="333333"/>
+<w:left w:val="single" w:sz="6" w:color="333333"/>
+<w:right w:val="single" w:sz="6" w:color="333333"/>
+<w:insideH w:val="single" w:sz="4" w:color="666666"/>
+<w:insideV w:val="single" w:sz="4" w:color="666666"/>
+</w:tblBorders></w:tblPr>'''
 
 
-def escape(text):
-    """Escape XML special characters."""
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+def table_end():
+    return '</w:tbl>'
 
 
-def table_row(cells, bold=False):
-    """Create a table row."""
-    row = '<w:tr>'
+def row(cells, bold=False):
+    """Create a table row with cells."""
+    r = '<w:tr>'
     for cell in cells:
         rpr = '<w:rPr><w:b/></w:rPr>' if bold else ''
-        row += f'''<w:tc>
-  <w:tcPr><w:tcBorders>
-    <w:top w:val="single" w:sz="4" w:color="999999"/>
-    <w:bottom w:val="single" w:sz="4" w:color="999999"/>
-    <w:left w:val="single" w:sz="4" w:color="999999"/>
-    <w:right w:val="single" w:sz="4" w:color="999999"/>
-  </w:tcBorders></w:tcPr>
-  <w:p><w:r>{rpr}<w:t xml:space="preserve">{escape(str(cell))}</w:t></w:r></w:p></w:tc>'''
-    row += '</w:tr>'
-    return row
+        shading = '<w:shd w:val="clear" w:color="auto" w:fill="E3F2FD"/>' if bold else ''
+        r += f'''<w:tc><w:tcPr>{shading}
+<w:tcBorders>
+<w:top w:val="single" w:sz="4" w:color="666666"/>
+<w:bottom w:val="single" w:sz="4" w:color="666666"/>
+<w:left w:val="single" w:sz="4" w:color="666666"/>
+<w:right w:val="single" w:sz="4" w:color="666666"/>
+</w:tcBorders></w:tcPr>
+<w:p><w:r>{rpr}<w:t xml:space="preserve">{escape(cell)}</w:t></w:r></w:p></w:tc>'''
+    r += '</w:tr>'
+    return r
 
 
 
 def make_document():
-    body_content = []
-    
+    c = []  # content accumulator
+
     # Title
-    body_content.append(p("Google Gemma 4 - Detailed Technical Summary", "Title"))
-    body_content.append(p("Comprehensive Extract of Architecture, Specifications, and Capabilities", "Normal"))
-    body_content.append(p("Prepared: June 2026 | Source: Google DeepMind Official Documentation", "Normal"))
-    body_content.append(p("License: Apache 2.0 | Developer: Google DeepMind", "Normal"))
-    body_content.append(p(""))
-    
-    # Section 1: Executive Overview
-    body_content.append(p("1. Executive Overview", "Heading1"))
-    body_content.append(p("Gemma 4 is Google DeepMind's latest family of open-weight multimodal AI models, released on April 2, 2026 (with the 12B model added June 3, 2026). The models handle text and image inputs (with audio supported on E2B, E4B, and 12B variants) and generate text output. They are released under the Apache 2.0 license, making them freely available for commercial and research use."))
-    body_content.append(p("The family features both Dense and Mixture-of-Experts (MoE) architectures across five model sizes: E2B, E4B, 12B Unified, 26B A4B (MoE), and 31B Dense. Context windows range from 128K tokens (smaller models) to 256K tokens (larger models), with multilingual support for 140+ languages."))
-    body_content.append(p(""))
-    
-    # Section 2: Model Family Overview
-    body_content.append(p("2. Model Family and Size Variants", "Heading1"))
-    body_content.append(p("2.1 Dense Models", "Heading2"))
-    body_content.append(p("Gemma 4 E2B (Effective 2 Billion Parameters)", "Heading3"))
-    body_content.append(p("Total parameters: 5.1B (including embeddings), Effective: 2.3B"))
-    body_content.append(p("Layers: 35 | Sliding window: 512 tokens | Context: 128K tokens"))
-    body_content.append(p("Vocabulary size: 262,144 tokens"))
-    body_content.append(p("Modalities: Text, Image, Audio"))
-    body_content.append(p("Vision encoder: ~150M parameters | Audio encoder: ~300M parameters"))
-    body_content.append(p("Uses Per-Layer Embeddings (PLE) architecture"))
-    body_content.append(p(""))
+    c.append(p("Google Gemma 4 - Detailed Technical Summary", "Title"))
+    c.append(p("All Technical Details in Tabular Format", "Normal"))
+    c.append(p("Prepared: June 2026 | Developer: Google DeepMind | License: Apache 2.0", "Normal"))
+    c.append(p(""))
+
+    # ========== TABLE 1: Executive Overview ==========
+    c.append(p("1. Executive Overview", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Property", "Details"], bold=True))
+    c.append(row(["Model Family", "Gemma 4 (4th generation of Google's open Gemma models)"]))
+    c.append(row(["Developer", "Google DeepMind"]))
+    c.append(row(["Release Date", "April 2, 2026 (E2B, E4B, 26B A4B, 31B); June 3, 2026 (12B Unified)"]))
+    c.append(row(["License", "Apache 2.0 (fully open for commercial and research use)"]))
+    c.append(row(["Input Modalities", "Text, Image (all models); Audio (E2B, E4B, 12B only)"]))
+    c.append(row(["Output Modality", "Text only"]))
+    c.append(row(["Architecture Types", "Dense and Mixture-of-Experts (MoE)"]))
+    c.append(row(["Model Sizes", "E2B, E4B, 12B Unified, 26B A4B (MoE), 31B Dense"]))
+    c.append(row(["Context Window", "128K tokens (E2B, E4B); 256K tokens (12B, 26B, 31B)"]))
+    c.append(row(["Vocabulary Size", "262,144 tokens (262K) shared across all models"]))
+    c.append(row(["Multilingual Support", "Pre-trained on 140+ languages; 35+ with dedicated support"]))
+    c.append(row(["Model Variants", "Pre-trained (base) and Instruction-tuned (IT) for each size"]))
+    c.append(row(["Additional Variants", "QAT (Quantization-Aware Training); MTP (Multi-Token Prediction for 12B)"]))
+    c.append(row(["Availability", "Hugging Face, Kaggle, Ollama, Google AI Studio"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    body_content.append(p("Gemma 4 E4B (Effective 4 Billion Parameters)", "Heading3"))
-    body_content.append(p("Total parameters: 8B (including embeddings), Effective: 4.5B"))
-    body_content.append(p("Layers: 42 | Sliding window: 512 tokens | Context: 128K tokens"))
-    body_content.append(p("Vocabulary size: 262,144 tokens"))
-    body_content.append(p("Modalities: Text, Image, Audio"))
-    body_content.append(p("Vision encoder: ~150M parameters | Audio encoder: ~300M parameters"))
-    body_content.append(p("Uses Per-Layer Embeddings (PLE) architecture"))
-    body_content.append(p("Optimized for on-device deployment (laptops, mobile)"))
-    body_content.append(p(""))
-    
-    body_content.append(p("Gemma 4 12B Unified (Encoder-Free Architecture)", "Heading3"))
-    body_content.append(p("Total parameters: 11.95B"))
-    body_content.append(p("Layers: 48 | Sliding window: 1024 tokens | Context: 256K tokens"))
-    body_content.append(p("Vocabulary size: 262,144 tokens"))
-    body_content.append(p("Modalities: Text, Image, Audio (encoder-free)"))
-    body_content.append(p("No dedicated vision or audio encoder - projects raw inputs directly into LLM embedding space"))
-    body_content.append(p("Runs on laptops with 16GB VRAM; ~7GB at 4-bit quantization"))
-    body_content.append(p("Includes Multi-Token Prediction (MTP) variant for faster inference"))
-    body_content.append(p(""))
-    
-    body_content.append(p("Gemma 4 31B Dense", "Heading3"))
-    body_content.append(p("Total parameters: 30.7B"))
-    body_content.append(p("Layers: 60 | Sliding window: 1024 tokens | Context: 256K tokens"))
-    body_content.append(p("Vocabulary size: 262,144 tokens"))
-    body_content.append(p("Modalities: Text, Image (no audio support)"))
-    body_content.append(p("Vision encoder: ~550M parameters"))
-    body_content.append(p("Highest-performing model in the family"))
-    body_content.append(p("Arena AI ELO: 1,452 (ranked 3rd among all open models at release)"))
-    body_content.append(p(""))
+    # ========== TABLE 2: Model Specifications ==========
+    c.append(p("2. Model Specifications Comparison", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Property", "E2B", "E4B", "12B Unified", "26B A4B (MoE)", "31B Dense"], bold=True))
+    c.append(row(["Total Parameters", "5.1B (2.3B effective)", "8B (4.5B effective)", "11.95B", "25.2B (3.8B active)", "30.7B"]))
+    c.append(row(["Active Parameters/Token", "2.3B", "4.5B", "11.95B", "3.8B", "30.7B"]))
+    c.append(row(["Layers", "35", "42", "48", "30", "60"]))
+    c.append(row(["Sliding Window Size", "512 tokens", "512 tokens", "1024 tokens", "1024 tokens", "1024 tokens"]))
+    c.append(row(["Context Length", "128K tokens", "128K tokens", "256K tokens", "256K tokens", "256K tokens"]))
+    c.append(row(["Vocabulary Size", "262K", "262K", "262K", "262K", "262K"]))
+    c.append(row(["Architecture", "Dense + PLE", "Dense + PLE", "Dense (Encoder-Free)", "MoE (128 experts)", "Dense"]))
+    c.append(row(["Text Input", "Yes", "Yes", "Yes", "Yes", "Yes"]))
+    c.append(row(["Image Input", "Yes", "Yes", "Yes", "Yes", "Yes"]))
+    c.append(row(["Audio Input", "Yes", "Yes", "Yes", "No", "No"]))
+    c.append(row(["Vision Encoder", "~150M params", "~150M params", "None (encoder-free)", "~550M params", "~550M params"]))
+    c.append(row(["Audio Encoder", "~300M params", "~300M params", "None (encoder-free)", "N/A", "N/A"]))
+    c.append(row(["Expert Count", "N/A", "N/A", "N/A", "128 routed + 1 shared", "N/A"]))
+    c.append(row(["Active Experts/Token", "N/A", "N/A", "N/A", "8 of 128", "N/A"]))
+    c.append(row(["Target Deployment", "Mobile, Edge", "Laptop, Mobile", "16GB Laptop GPU", "Consumer GPU/Server", "Workstation/Server"]))
+    c.append(row(["Arena AI ELO (at release)", "-", "-", "-", "-", "1,452 (3rd open model)"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    body_content.append(p("2.2 Mixture-of-Experts (MoE) Model", "Heading2"))
-    body_content.append(p("Gemma 4 26B A4B (Active 4 Billion)", "Heading3"))
-    body_content.append(p("Total parameters: 25.2B | Active parameters per token: 3.8B"))
-    body_content.append(p("Layers: 30 | Sliding window: 1024 tokens | Context: 256K tokens"))
-    body_content.append(p("Vocabulary size: 262,144 tokens"))
-    body_content.append(p("Expert configuration: 128 total routed experts + 1 shared expert, 8 active per token"))
-    body_content.append(p("Modalities: Text, Image (no audio support)"))
-    body_content.append(p("Vision encoder: ~550M parameters"))
-    body_content.append(p("Routing: Top-8 routing selects 8 of 128 fine-grained experts per token"))
-    body_content.append(p("Runs nearly as fast as a 4B-parameter model despite 26B total size"))
-    body_content.append(p("All 26B parameters must be loaded into memory; router selectively activates experts"))
-    body_content.append(p(""))
-    
-    # Section 3: Architecture Deep Dive
-    body_content.append(p("3. Architecture Technical Details", "Heading1"))
-    body_content.append(p("3.1 Core Architecture: Decoder-Only Transformer", "Heading2"))
-    body_content.append(p("All Gemma 4 models are decoder-only transformers with a hybrid attention mechanism that interleaves local sliding-window attention with full global attention. The final layer is always a global attention layer."))
-    body_content.append(p(""))
-    
-    body_content.append(p("3.2 Hybrid Attention Mechanism", "Heading2"))
-    body_content.append(p("Layers alternate between local sliding-window attention and global full attention in a fixed ratio (approximately 5:1 or 4:1, depending on the model size). This hybrid design delivers fast processing and low memory usage while maintaining deep contextual awareness for complex, long-context tasks."))
-    body_content.append(p(""))
-    body_content.append(p("Sliding window layers:", "Normal", bold=True))
-    body_content.append(p("- E2B/E4B: 512-token sliding window"))
-    body_content.append(p("- 12B/26B/31B: 1024-token sliding window"))
-    body_content.append(p("- Head dimension: 256 with 8 KV heads (for sliding layers)"))
-    body_content.append(p(""))
-    body_content.append(p("Global attention layers:", "Normal", bold=True))
-    body_content.append(p("- Full context attention spanning up to 128K/256K tokens"))
-    body_content.append(p("- Global head dimension: 512 with unified (single) KV head"))
-    body_content.append(p("- Only 25% of dimensions carry positional information in global layers"))
-    body_content.append(p(""))
+    # ========== TABLE 3: Architecture Details ==========
+    c.append(p("3. Architecture Technical Details", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Component", "Description"], bold=True))
+    c.append(row(["Base Architecture", "Decoder-only Transformer with hybrid attention"]))
+    c.append(row(["Attention Pattern", "Interleaves local sliding-window attention with full global attention (ratio ~5:1 or 4:1); final layer always global"]))
+    c.append(row(["Sliding Window Layers", "Local attention limited to 512 tokens (E2B/E4B) or 1024 tokens (12B/26B/31B); head_dim=256, num_kv_heads=8"]))
+    c.append(row(["Global Attention Layers", "Full context attention (128K or 256K); global_head_dim=512, num_kv_heads=1 (unified KV)"]))
+    c.append(row(["Unified Keys & Values", "Global layers share a single Key-Value pair across all query heads, drastically reducing KV cache memory"]))
+    c.append(row(["Proportional RoPE (p-RoPE)", "Only ~25% of embedding dimensions carry positional info in global layers; remaining are position-independent for stable long-range performance"]))
+    c.append(row(["Per-Layer Embeddings (PLE)", "E2B/E4B only: Each decoder layer has its own embedding lookup table; large tables but O(1) lookups (not compute-intensive)"]))
+    c.append(row(["PLE Effect", "Total params much higher than effective params; e.g., E4B is 8B total but only 4.5B effective compute"]))
+    c.append(row(["Double-Norm Architecture", "E2B/E4B use double normalization alongside PLE for stability"]))
+    c.append(row(["Encoder-Free (12B Unified)", "No dedicated vision/audio encoders; raw image patches and audio waveforms projected into LLM embedding space via lightweight linear layers"]))
+    c.append(row(["12B Advantages", "All modalities in single decoder-only transformer; reduced latency; entire model fine-tunable in one pass"]))
+    c.append(row(["MoE Architecture (26B)", "128 fine-grained routed experts + 1 shared (always active) expert per MoE layer"]))
+    c.append(row(["MoE Routing", "Top-8 routing: router network selects 8 experts per token; remaining experts inactive"]))
+    c.append(row(["MoE Memory", "All 26B parameters must reside in memory; only routing/activation is sparse"]))
+    c.append(row(["MoE Speed", "Runs nearly as fast as a 4B dense model despite 26B total size"]))
+    c.append(row(["Vision Processing", "Variable aspect ratio + variable resolution via configurable visual token budget (70/140/280/560/1120 tokens)"]))
+    c.append(row(["Image Normalization", "No ImageNet mean/std normalization; patch embedding layer internally scales to [-1, 1] range"]))
+    c.append(row(["Audio Processing", "E2B/E4B: dedicated ~300M encoder; 12B: raw waveform linear projection; max 30 seconds"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    body_content.append(p("3.3 Unified Keys and Values (KV Sharing)", "Heading2"))
-    body_content.append(p("To optimize memory for long contexts, global attention layers feature unified Keys and Values. This means that all query heads share a single Key-Value pair in global layers, dramatically reducing KV cache memory requirements during inference. This is distinct from Grouped Query Attention (GQA) - it uses a single KV head for the entire global layer."))
-    body_content.append(p(""))
-    
-    body_content.append(p("3.4 Proportional RoPE (p-RoPE)", "Heading2"))
-    body_content.append(p("Global attention layers apply Proportional RoPE (p-RoPE), a modified version of Rotary Position Embeddings. In p-RoPE, only a proportion of the embedding dimensions carry positional information (approximately 25%), while the remaining dimensions are position-independent. This allows the model to maintain strong long-range awareness without the degradation typically seen with standard RoPE at extreme sequence lengths."))
-    body_content.append(p(""))
-    
-    body_content.append(p("3.5 Per-Layer Embeddings (PLE)", "Heading2"))
-    body_content.append(p("The E2B and E4B models use Per-Layer Embeddings (PLE) to maximize parameter efficiency for on-device deployments. Rather than adding more layers or parameters, PLE gives each decoder layer its own small embedding lookup table for every token. These embedding tables are large in total but only require quick lookups (not compute-intensive operations), which is why the 'effective' parameter count is much smaller than the total parameter count."))
-    body_content.append(p(""))
-    body_content.append(p("Key characteristics of PLE:"))
-    body_content.append(p("- Each decoder layer has a dedicated per-layer embedding table"))
-    body_content.append(p("- Embedding lookups are fast O(1) operations, not matrix multiplications"))
-    body_content.append(p("- E2B: 5.1B total but only 2.3B 'effective' computation"))
-    body_content.append(p("- E4B: 8B total but only 4.5B 'effective' computation"))
-    body_content.append(p("- Uses double-norm architecture alongside PLE"))
-    body_content.append(p("- Makes models resistant to certain fine-tuning approaches (e.g., LoRA abliteration)"))
-    body_content.append(p(""))
+    # ========== TABLE 4: Inference Configuration ==========
+    c.append(p("4. Inference Configuration and Best Practices", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Parameter / Feature", "Value / Details"], bold=True))
+    c.append(row(["Temperature", "1.0 (recommended)"]))
+    c.append(row(["Top-p (nucleus sampling)", "0.95"]))
+    c.append(row(["Top-k", "64"]))
+    c.append(row(["Thinking Mode - Enable", "Include <|think|> token at start of system prompt"]))
+    c.append(row(["Thinking Mode - Disable", "Remove <|think|> token from system prompt"]))
+    c.append(row(["Thinking Output Format", "<|channel>thought\\n[internal reasoning]<channel|>[final answer]"]))
+    c.append(row(["Thinking Disabled Behavior", "Empty thought block generated (except E2B/E4B which skip entirely)"]))
+    c.append(row(["Multi-Turn Conversations", "Historical turns should only include final response; remove thinking content from history"]))
+    c.append(row(["System Prompt", "Native support for 'system' role (new in Gemma 4)"]))
+    c.append(row(["Image Placement", "Place image content BEFORE text in prompts"]))
+    c.append(row(["Audio Placement", "Place audio content AFTER text in prompts"]))
+    c.append(row(["Visual Token Budget: 70", "Fast inference; for classification, captioning, video frames"]))
+    c.append(row(["Visual Token Budget: 140", "General image understanding"]))
+    c.append(row(["Visual Token Budget: 280", "Balanced detail and speed"]))
+    c.append(row(["Visual Token Budget: 560", "Higher detail; document parsing"]))
+    c.append(row(["Visual Token Budget: 1120", "Maximum detail; OCR, reading small text"]))
+    c.append(row(["Max Audio Length", "30 seconds"]))
+    c.append(row(["Max Video Length", "60 seconds (processed at 1 frame/second)"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    body_content.append(p("3.6 Encoder-Free Unified Architecture (12B)", "Heading2"))
-    body_content.append(p("The 12B Unified model eliminates dedicated vision and audio encoders entirely. Instead of passing multimodal data through encoder towers before the LLM, it projects raw image patches and audio waveforms directly into the LLM's embedding space through lightweight linear projection layers."))
-    body_content.append(p(""))
-    body_content.append(p("Advantages of the encoder-free design:"))
-    body_content.append(p("- All modalities flow into a single decoder-only transformer"))
-    body_content.append(p("- Reduced multimodal latency (no encoder processing bottleneck)"))
-    body_content.append(p("- Entire model can be fine-tuned in one pass"))
-    body_content.append(p("- Simpler architecture for deployment"))
-    body_content.append(p("- First medium-sized open model to natively ingest audio"))
-    body_content.append(p(""))
-    
-    body_content.append(p("3.7 Mixture-of-Experts Architecture (26B A4B)", "Heading2"))
-    body_content.append(p("The MoE variant uses fine-grained expert routing to achieve high performance at low per-token compute cost:"))
-    body_content.append(p("- 128 routed experts per MoE layer + 1 shared expert (always active)"))
-    body_content.append(p("- Top-8 routing: a router network selects 8 experts per token"))
-    body_content.append(p("- Active parameters: ~3.8B per token out of 25.2B total"))
-    body_content.append(p("- All 26B parameters must reside in memory; only routing is sparse"))
-    body_content.append(p("- Achieves inference speed comparable to a 4B dense model"))
-    body_content.append(p("- Delivers performance close to the 31B dense model"))
-    body_content.append(p(""))
-    
-    body_content.append(p("3.8 Vision Processing", "Heading2"))
-    body_content.append(p("For models with dedicated vision encoders (E2B, E4B, 26B, 31B):"))
-    body_content.append(p("- Variable aspect ratio support"))
-    body_content.append(p("- Variable resolution via configurable visual token budget"))
-    body_content.append(p("- Supported token budgets: 70, 140, 280, 560, 1120"))
-    body_content.append(p("- No standard ImageNet mean/std normalization applied"))
-    body_content.append(p("- Patch embedding layer handles scaling internally (shifting to [-1, 1] range)"))
-    body_content.append(p("- E2B/E4B vision encoder: ~150M parameters"))
-    body_content.append(p("- 26B/31B vision encoder: ~550M parameters"))
-    body_content.append(p(""))
+    # ========== TABLE 5: Core Capabilities ==========
+    c.append(p("5. Core Capabilities", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Capability", "Details", "Supported Models"], bold=True))
+    c.append(row(["Thinking / Reasoning", "Built-in step-by-step reasoning with configurable thinking modes", "All models"]))
+    c.append(row(["Long Context", "128K tokens (small) / 256K tokens (medium/large)", "All models"]))
+    c.append(row(["Image Understanding", "Object detection, document/PDF parsing, UI understanding, chart comprehension, OCR (multilingual), handwriting, pointing", "All models"]))
+    c.append(row(["Variable Image Resolution", "Configurable token budgets (70-1120) for quality/speed tradeoff", "All models"]))
+    c.append(row(["Video Understanding", "Analyze video by processing frame sequences (max 60s at 1 fps)", "All models"]))
+    c.append(row(["Interleaved Multimodal", "Mix text and images in any order within a single prompt", "All models"]))
+    c.append(row(["Function Calling", "Native structured tool use for agentic workflows; multi-step planning", "All models"]))
+    c.append(row(["Coding", "Code generation, completion, correction; IDE integration ready", "All models"]))
+    c.append(row(["Multilingual", "35+ supported languages; pre-trained on 140+ languages", "All models"]))
+    c.append(row(["Audio - ASR", "Automatic Speech Recognition in multiple languages", "E2B, E4B, 12B"]))
+    c.append(row(["Audio - AST", "Speech-to-translated-text across languages", "E2B, E4B, 12B"]))
+    c.append(row(["Agentic Workflows", "Plan, navigate apps, complete tasks autonomously without fine-tuning", "All models"]))
+    c.append(row(["System Prompt", "Native 'system' role for structured, controllable conversations", "All models"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    body_content.append(p("3.9 Audio Processing (E2B, E4B, 12B Only)", "Heading2"))
-    body_content.append(p("- E2B/E4B: Dedicated audio encoder (~300M parameters)"))
-    body_content.append(p("- 12B Unified: No encoder; raw audio waveforms projected via linear layers"))
-    body_content.append(p("- Maximum audio length: 30 seconds"))
-    body_content.append(p("- Supports ASR (Automatic Speech Recognition) and AST (Speech Translation)"))
-    body_content.append(p("- Note: 26B and 31B models do NOT support audio"))
-    body_content.append(p(""))
-    
-    # Section 4: Context Window and Tokenization
-    body_content.append(p("4. Context Window and Tokenization", "Heading1"))
-    body_content.append(p("4.1 Context Lengths", "Heading2"))
-    body_content.append(p("- E2B, E4B: 128K tokens"))
-    body_content.append(p("- 12B Unified, 26B A4B, 31B Dense: 256K tokens"))
-    body_content.append(p(""))
-    body_content.append(p("4.2 Vocabulary", "Heading2"))
-    body_content.append(p("- Vocabulary size: 262,144 tokens (262K) across all models"))
-    body_content.append(p("- Shared vocabulary across the entire Gemma 4 family"))
-    body_content.append(p("- Supports 140+ languages in pre-training"))
-    body_content.append(p("- 35+ languages with dedicated out-of-the-box support"))
-    body_content.append(p(""))
-    
-    # Section 5: Inference Configuration
-    body_content.append(p("5. Inference Configuration and Best Practices", "Heading1"))
-    body_content.append(p("5.1 Recommended Sampling Parameters", "Heading2"))
-    body_content.append(p("- Temperature: 1.0"))
-    body_content.append(p("- Top-p (nucleus sampling): 0.95"))
-    body_content.append(p("- Top-k: 64"))
-    body_content.append(p(""))
-    body_content.append(p("5.2 Thinking Mode (Chain-of-Thought Reasoning)", "Heading2"))
-    body_content.append(p("Gemma 4 features built-in configurable thinking/reasoning:"))
-    body_content.append(p("- Enabled by including <|think|> token at the start of system prompt"))
-    body_content.append(p("- Disabled by removing the <|think|> token"))
-    body_content.append(p("- When enabled, model outputs internal reasoning followed by final answer"))
-    body_content.append(p("- Structure: <|channel>thought\\n[reasoning]<channel|>[final answer]"))
-    body_content.append(p("- When disabled (except E2B/E4B): empty thought block still generated"))
-    body_content.append(p("- Multi-turn: historical turns should only include final response, not thoughts"))
-    body_content.append(p(""))
+    # ========== TABLE 6: Text & Reasoning Benchmarks ==========
+    c.append(p("6. Benchmark Results - Text and Reasoning", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Benchmark", "Gemma 4 31B", "Gemma 4 26B A4B", "Gemma 4 12B", "Gemma 4 E4B", "Gemma 4 E2B", "Gemma 3 27B"], bold=True))
+    c.append(row(["MMLU Pro", "85.2%", "82.6%", "77.2%", "69.4%", "60.0%", "67.6%"]))
+    c.append(row(["AIME 2026 (no tools)", "89.2%", "88.3%", "77.5%", "42.5%", "37.5%", "20.8%"]))
+    c.append(row(["LiveCodeBench v6", "80.0%", "77.1%", "72.0%", "52.0%", "44.0%", "29.1%"]))
+    c.append(row(["Codeforces ELO", "2150", "1718", "1659", "940", "633", "110"]))
+    c.append(row(["GPQA Diamond", "84.3%", "82.3%", "78.8%", "58.6%", "43.4%", "42.4%"]))
+    c.append(row(["Tau2 (avg over 3)", "76.9%", "68.2%", "69.0%", "42.2%", "24.5%", "16.2%"]))
+    c.append(row(["HLE (no tools)", "19.5%", "8.7%", "5.2%", "-", "-", "-"]))
+    c.append(row(["HLE (with search)", "26.5%", "17.2%", "-", "-", "-", "-"]))
+    c.append(row(["BigBench Extra Hard", "74.4%", "64.8%", "53.0%", "33.1%", "21.9%", "19.3%"]))
+    c.append(row(["MMMLU (Multilingual)", "88.4%", "86.3%", "83.4%", "76.6%", "67.4%", "70.7%"]))
+    c.append(table_end())
+    c.append(p(""))
+
+    # ========== TABLE 7: Vision Benchmarks ==========
+    c.append(p("7. Benchmark Results - Vision", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Benchmark", "Gemma 4 31B", "Gemma 4 26B A4B", "Gemma 4 12B", "Gemma 4 E4B", "Gemma 4 E2B", "Gemma 3 27B"], bold=True))
+    c.append(row(["MMMU Pro", "76.9%", "73.8%", "69.1%", "52.6%", "44.2%", "49.7%"]))
+    c.append(row(["OmniDocBench 1.5 (edit dist, lower=better)", "0.131", "0.149", "0.164", "0.181", "0.290", "0.365"]))
+    c.append(row(["MATH-Vision", "85.6%", "82.4%", "79.7%", "59.5%", "52.4%", "46.0%"]))
+    c.append(row(["MedXPertQA MM", "61.3%", "58.1%", "48.7%", "28.7%", "23.5%", "-"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    body_content.append(p("5.3 System Prompt Support", "Heading2"))
-    body_content.append(p("Gemma 4 introduces native support for the 'system' role. This is a new addition to the Gemma family, enabling more structured and controllable conversations with dedicated system-level instructions."))
-    body_content.append(p(""))
-    body_content.append(p("5.4 Modality Input Order", "Heading2"))
-    body_content.append(p("For optimal multimodal performance:"))
-    body_content.append(p("- Place image content BEFORE text in prompts"))
-    body_content.append(p("- Place audio content AFTER text in prompts"))
-    body_content.append(p(""))
-    body_content.append(p("5.5 Visual Token Budget", "Heading2"))
-    body_content.append(p("Controls how many tokens represent an image (trade-off: detail vs. speed):"))
-    body_content.append(p("- Budget 70: Fast inference, suitable for classification/captioning"))
-    body_content.append(p("- Budget 140: Good for general image understanding"))
-    body_content.append(p("- Budget 280: Balanced detail and speed"))
-    body_content.append(p("- Budget 560: Higher detail for document parsing"))
-    body_content.append(p("- Budget 1120: Maximum detail for OCR, small text reading"))
-    body_content.append(p(""))
-    body_content.append(p("5.6 Video Processing", "Heading2"))
-    body_content.append(p("- Video is processed as sequences of frames"))
-    body_content.append(p("- Maximum video length: 60 seconds (at 1 frame per second)"))
-    body_content.append(p("- Lower visual token budgets recommended for video (more frames, less per-frame detail)"))
-    body_content.append(p(""))
-    
-    # Section 6: Capabilities
-    body_content.append(p("6. Core Capabilities", "Heading1"))
-    body_content.append(p("6.1 Function Calling and Agentic Workflows", "Heading2"))
-    body_content.append(p("Gemma 4 includes native function calling support for structured tool use:"))
-    body_content.append(p("- Models can generate structured function call outputs"))
-    body_content.append(p("- Supports multi-step planning and autonomous action"))
-    body_content.append(p("- Enables building AI agents that plan, navigate apps, and complete tasks"))
-    body_content.append(p("- Works without specialized fine-tuning"))
-    body_content.append(p("- tau2-bench agentic tool use: Gemma 4 31B scores 86.4% (vs. Gemma 3 27B at 6.6%)"))
-    body_content.append(p(""))
+    # ========== TABLE 8: Audio Benchmarks ==========
+    c.append(p("8. Benchmark Results - Audio", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Benchmark", "Gemma 4 12B", "Gemma 4 E4B", "Gemma 4 E2B"], bold=True))
+    c.append(row(["CoVoST (BLEU score)", "38.5", "35.54", "33.47"]))
+    c.append(row(["FLEURS (WER, lower=better)", "0.069", "0.08", "0.09"]))
+    c.append(table_end())
+    c.append(p(""))
+
+    # ========== TABLE 9: Long Context Benchmark ==========
+    c.append(p("9. Benchmark Results - Long Context", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Benchmark", "Gemma 4 31B", "Gemma 4 26B A4B", "Gemma 4 12B", "Gemma 4 E4B", "Gemma 4 E2B", "Gemma 3 27B"], bold=True))
+    c.append(row(["MRCR v2 8-needle 128K (avg)", "66.4%", "44.1%", "43.4%", "25.4%", "19.1%", "13.5%"]))
+    c.append(table_end())
+    c.append(p(""))
+
+    # ========== TABLE 10: Gemma 4 vs Gemma 3 Comparison ==========
+    c.append(p("10. Improvement: Gemma 4 31B vs. Gemma 3 27B", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Benchmark", "Gemma 4 31B", "Gemma 3 27B", "Improvement"], bold=True))
+    c.append(row(["MMLU Pro", "85.2%", "67.6%", "+17.6 points"]))
+    c.append(row(["AIME 2026 (no tools)", "89.2%", "20.8%", "+68.4 points"]))
+    c.append(row(["LiveCodeBench v6", "80.0%", "29.1%", "+50.9 points"]))
+    c.append(row(["Codeforces ELO", "2150", "110", "+2040 ELO"]))
+    c.append(row(["GPQA Diamond", "84.3%", "42.4%", "+41.9 points"]))
+    c.append(row(["MMMU Pro (Vision)", "76.9%", "49.7%", "+27.2 points"]))
+    c.append(row(["MRCR Long Context", "66.4%", "13.5%", "+52.9 points"]))
+    c.append(row(["Tau2 (Agentic)", "76.9%", "16.2%", "+60.7 points"]))
+    c.append(row(["BigBench Extra Hard", "74.4%", "19.3%", "+55.1 points"]))
+    c.append(row(["MMMLU (Multilingual)", "88.4%", "70.7%", "+17.7 points"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    body_content.append(p("6.2 Image Understanding", "Heading2"))
-    body_content.append(p("- Object detection and recognition"))
-    body_content.append(p("- Document/PDF parsing"))
-    body_content.append(p("- Screen and UI understanding"))
-    body_content.append(p("- Chart comprehension"))
-    body_content.append(p("- OCR (including multilingual OCR)"))
-    body_content.append(p("- Handwriting recognition"))
-    body_content.append(p("- Pointing (spatial reference)"))
-    body_content.append(p("- Variable aspect ratios and resolutions"))
-    body_content.append(p("- Interleaved text-image input in any order"))
-    body_content.append(p(""))
-    
-    body_content.append(p("6.3 Audio Capabilities (E2B, E4B, 12B)", "Heading2"))
-    body_content.append(p("- Automatic Speech Recognition (ASR)"))
-    body_content.append(p("- Speech-to-translated-text (AST) across multiple languages"))
-    body_content.append(p("- Maximum 30-second audio segments"))
-    body_content.append(p(""))
-    
-    body_content.append(p("6.4 Coding", "Heading2"))
-    body_content.append(p("- Code generation, completion, and correction"))
-    body_content.append(p("- Codeforces ELO: 2150 (31B), 1718 (26B), 1659 (12B)"))
-    body_content.append(p("- LiveCodeBench v6: 80.0% (31B), 77.1% (26B), 72.0% (12B)"))
-    body_content.append(p("- Suitable for IDE integration and coding assistants"))
-    body_content.append(p(""))
-    
-    body_content.append(p("6.5 Reasoning", "Heading2"))
-    body_content.append(p("- All models designed as highly capable reasoners"))
-    body_content.append(p("- Configurable thinking modes (can be enabled/disabled)"))
-    body_content.append(p("- AIME 2026 (no tools): 89.2% (31B), 88.3% (26B), 77.5% (12B)"))
-    body_content.append(p("- GPQA Diamond: 84.3% (31B), 82.3% (26B), 78.8% (12B)"))
-    body_content.append(p(""))
+    # ========== TABLE 11: Key Innovations ==========
+    c.append(p("11. Key Architectural Innovations", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Innovation", "Description", "Benefit"], bold=True))
+    c.append(row(["Native System Prompt", "New 'system' role support", "More structured, controllable conversations"]))
+    c.append(row(["Configurable Thinking", "<|think|> control token enables/disables reasoning", "Flexible reasoning for different use cases"]))
+    c.append(row(["Per-Layer Embeddings (PLE)", "Each decoder layer has its own embedding table", "Maximizes parameter efficiency on-device"]))
+    c.append(row(["Encoder-Free Architecture", "12B: No separate vision/audio encoders", "Lower latency, single-pass fine-tuning"]))
+    c.append(row(["Proportional RoPE (p-RoPE)", "Only 25% of dims carry positional info in global layers", "Stable long-range performance at extreme lengths"]))
+    c.append(row(["Unified KV Sharing", "Single Key-Value pair shared across all query heads in global layers", "Dramatically reduced KV cache memory"]))
+    c.append(row(["Fine-Grained MoE", "128 experts (vs typical 8-16 in other models)", "Better specialization per token"]))
+    c.append(row(["Variable Image Resolution", "Configurable token budgets (70-1120)", "Detail/speed tradeoff control"]))
+    c.append(row(["Native Audio Processing", "Built-in audio without separate ASR pipeline", "End-to-end audio understanding"]))
+    c.append(row(["Native Function Calling", "Structured tool use built into model", "Agentic workflows without fine-tuning"]))
+    c.append(row(["Extended Context", "Up to 256K tokens (vs 128K in Gemma 3)", "Process longer documents/conversations"]))
+    c.append(row(["Multi-Token Prediction", "MTP variant for 12B model", "Faster local inference speed"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    # Section 7: Benchmark Results
-    body_content.append(p("7. Benchmark Results (Instruction-Tuned Models)", "Heading1"))
-    body_content.append(p("7.1 Text and Reasoning Benchmarks", "Heading2"))
-    
-    # Table: Text benchmarks
-    body_content.append('<w:tbl><w:tblPr><w:tblBorders>')
-    body_content.append('<w:top w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:bottom w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:left w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:right w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:insideH w:val="single" w:sz="4" w:color="999999"/>')
-    body_content.append('<w:insideV w:val="single" w:sz="4" w:color="999999"/>')
-    body_content.append('</w:tblBorders></w:tblPr>')
-    body_content.append(table_row(["Benchmark", "31B", "26B A4B", "12B", "E4B", "E2B", "Gemma 3 27B"], bold=True))
-    body_content.append(table_row(["MMLU Pro", "85.2%", "82.6%", "77.2%", "69.4%", "60.0%", "67.6%"]))
-    body_content.append(table_row(["AIME 2026 (no tools)", "89.2%", "88.3%", "77.5%", "42.5%", "37.5%", "20.8%"]))
-    body_content.append(table_row(["LiveCodeBench v6", "80.0%", "77.1%", "72.0%", "52.0%", "44.0%", "29.1%"]))
-    body_content.append(table_row(["Codeforces ELO", "2150", "1718", "1659", "940", "633", "110"]))
-    body_content.append(table_row(["GPQA Diamond", "84.3%", "82.3%", "78.8%", "58.6%", "43.4%", "42.4%"]))
-    body_content.append(table_row(["Tau2 (avg over 3)", "76.9%", "68.2%", "69.0%", "42.2%", "24.5%", "16.2%"]))
-    body_content.append(table_row(["HLE (no tools)", "19.5%", "8.7%", "5.2%", "-", "-", "-"]))
-    body_content.append(table_row(["HLE (with search)", "26.5%", "17.2%", "-", "-", "-", "-"]))
-    body_content.append(table_row(["BigBench Extra Hard", "74.4%", "64.8%", "53.0%", "33.1%", "21.9%", "19.3%"]))
-    body_content.append(table_row(["MMMLU", "88.4%", "86.3%", "83.4%", "76.6%", "67.4%", "70.7%"]))
-    body_content.append('</w:tbl>')
-    body_content.append(p(""))
+    # ========== TABLE 12: Deployment ==========
+    c.append(p("12. Deployment Targets and Hardware Requirements", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Model", "Target Hardware", "Memory Requirement", "Notes"], bold=True))
+    c.append(row(["E2B", "Smartphones, tablets, edge devices", "Minimal (2.3B effective)", "QAT mobile variants available"]))
+    c.append(row(["E4B", "Laptops, mobile devices", "Moderate (4.5B effective)", "PLE architecture; QAT mobile variants"]))
+    c.append(row(["12B Unified", "Laptops with 16GB VRAM/unified memory", "~7GB at 4-bit quantization", "First medium model with native audio"]))
+    c.append(row(["26B A4B (MoE)", "Consumer GPUs, servers", "~26GB (all params in memory)", "Inference speed of ~4B model"]))
+    c.append(row(["31B Dense", "Workstations, cloud servers", "~31GB+ full precision", "Highest quality; needs more compute"]))
+    c.append(table_end())
+    c.append(p(""))
+
+    # ========== TABLE 13: Training Data ==========
+    c.append(p("13. Training Data", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Aspect", "Details"], bold=True))
+    c.append(row(["Data Cutoff Date", "January 2025"]))
+    c.append(row(["Web Documents", "Diverse web text in 140+ languages; broad linguistic styles and topics"]))
+    c.append(row(["Code", "Programming language syntax, patterns, documentation"]))
+    c.append(row(["Mathematics", "Logical reasoning, symbolic representation, mathematical text"]))
+    c.append(row(["Images", "Wide range of visual data for image analysis and extraction tasks"]))
+    c.append(row(["CSAM Filtering", "Rigorous multi-stage filtering for Child Sexual Abuse Material"]))
+    c.append(row(["Sensitive Data Filtering", "Automated removal of personal information and sensitive data"]))
+    c.append(row(["Content Quality Filtering", "Quality and safety filtering per Google AI policies"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    body_content.append(p("7.2 Vision Benchmarks", "Heading2"))
-    body_content.append('<w:tbl><w:tblPr><w:tblBorders>')
-    body_content.append('<w:top w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:bottom w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:left w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:right w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:insideH w:val="single" w:sz="4" w:color="999999"/>')
-    body_content.append('<w:insideV w:val="single" w:sz="4" w:color="999999"/>')
-    body_content.append('</w:tblBorders></w:tblPr>')
-    body_content.append(table_row(["Benchmark", "31B", "26B A4B", "12B", "E4B", "E2B", "Gemma 3 27B"], bold=True))
-    body_content.append(table_row(["MMMU Pro", "76.9%", "73.8%", "69.1%", "52.6%", "44.2%", "49.7%"]))
-    body_content.append(table_row(["OmniDocBench 1.5 (lower=better)", "0.131", "0.149", "0.164", "0.181", "0.290", "0.365"]))
-    body_content.append(table_row(["MATH-Vision", "85.6%", "82.4%", "79.7%", "59.5%", "52.4%", "46.0%"]))
-    body_content.append(table_row(["MedXPertQA MM", "61.3%", "58.1%", "48.7%", "28.7%", "23.5%", "-"]))
-    body_content.append('</w:tbl>')
-    body_content.append(p(""))
-    
-    body_content.append(p("7.3 Audio Benchmarks", "Heading2"))
-    body_content.append('<w:tbl><w:tblPr><w:tblBorders>')
-    body_content.append('<w:top w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:bottom w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:left w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:right w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:insideH w:val="single" w:sz="4" w:color="999999"/>')
-    body_content.append('<w:insideV w:val="single" w:sz="4" w:color="999999"/>')
-    body_content.append('</w:tblBorders></w:tblPr>')
-    body_content.append(table_row(["Benchmark", "12B", "E4B", "E2B"], bold=True))
-    body_content.append(table_row(["CoVoST (BLEU)", "38.5", "35.54", "33.47"]))
-    body_content.append(table_row(["FLEURS (WER, lower=better)", "0.069", "0.08", "0.09"]))
-    body_content.append('</w:tbl>')
-    body_content.append(p(""))
-    
-    body_content.append(p("7.4 Long Context Benchmark", "Heading2"))
-    body_content.append('<w:tbl><w:tblPr><w:tblBorders>')
-    body_content.append('<w:top w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:bottom w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:left w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:right w:val="single" w:sz="4" w:color="333333"/>')
-    body_content.append('<w:insideH w:val="single" w:sz="4" w:color="999999"/>')
-    body_content.append('<w:insideV w:val="single" w:sz="4" w:color="999999"/>')
-    body_content.append('</w:tblBorders></w:tblPr>')
-    body_content.append(table_row(["Benchmark", "31B", "26B A4B", "12B", "E4B", "E2B", "Gemma 3 27B"], bold=True))
-    body_content.append(table_row(["MRCR v2 8-needle 128k (avg)", "66.4%", "44.1%", "43.4%", "25.4%", "19.1%", "13.5%"]))
-    body_content.append('</w:tbl>')
-    body_content.append(p(""))
+    # ========== TABLE 14: Function Calling / Agentic ==========
+    c.append(p("14. Function Calling and Agentic Performance", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Feature / Metric", "Details"], bold=True))
+    c.append(row(["Function Calling", "Native structured tool use; models generate structured function call outputs"]))
+    c.append(row(["Multi-Step Planning", "Supports autonomous multi-step planning and action"]))
+    c.append(row(["Agent Capabilities", "Plan, navigate apps, complete tasks without specialized fine-tuning"]))
+    c.append(row(["Tau2-Bench (Gemma 4 31B)", "86.4% (agentic tool use benchmark)"]))
+    c.append(row(["Tau2-Bench (Gemma 3 27B)", "6.6% (for comparison)"]))
+    c.append(row(["Improvement", "+79.8 points absolute improvement in agentic capability"]))
+    c.append(row(["Tau2 Average (31B)", "76.9% across 3 sub-benchmarks"]))
+    c.append(row(["Tau2 Average (26B A4B)", "68.2%"]))
+    c.append(row(["Tau2 Average (12B)", "69.0%"]))
+    c.append(row(["On-Device Agentic", "E2B/E4B enable agentic workflows on mobile/laptop"]))
+    c.append(table_end())
+    c.append(p(""))
+
+    # ========== TABLE 15: Safety ==========
+    c.append(p("15. Safety and Ethics", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Aspect", "Details"], bold=True))
+    c.append(row(["Evaluation Standard", "Same rigorous safety evaluations as proprietary Gemini models"]))
+    c.append(row(["Safety vs Gemma 3", "Major improvements in all content safety categories"]))
+    c.append(row(["Policy Violations", "Minimal across all model sizes in both text-to-text and image-to-text"]))
+    c.append(row(["Unjustified Refusals", "Kept low while improving safety"]))
+    c.append(row(["Testing Method", "Conducted without safety filters to evaluate raw model behavior"]))
+    c.append(row(["Evaluated Categories", "CSAM, dangerous content, sexually explicit content, hate speech, harassment"]))
+    c.append(row(["Development Process", "Partnership with internal safety and responsible AI teams"]))
+    c.append(row(["Alignment", "Google's AI Principles"]))
+    c.append(row(["Content Moderation", "Guidelines provided via Responsible Generative AI Toolkit"]))
+    c.append(table_end())
+    c.append(p(""))
 
 
-    # Section 8: Training Data
-    body_content.append(p("8. Training Data", "Heading1"))
-    body_content.append(p("8.1 Dataset Composition", "Heading2"))
-    body_content.append(p("Pre-training uses a large-scale, diverse collection with a cutoff date of January 2025:"))
-    body_content.append(p("- Web Documents: Diverse web text in 140+ languages covering broad linguistic styles and topics"))
-    body_content.append(p("- Code: Programming languages syntax, patterns, and documentation"))
-    body_content.append(p("- Mathematics: Logical reasoning, symbolic representation, mathematical text"))
-    body_content.append(p("- Images: Wide range of visual data for image analysis and visual extraction tasks"))
-    body_content.append(p(""))
-    body_content.append(p("8.2 Data Preprocessing and Safety Filtering", "Heading2"))
-    body_content.append(p("- CSAM Filtering: Rigorous Child Sexual Abuse Material filtering at multiple pipeline stages"))
-    body_content.append(p("- Sensitive Data Filtering: Automated removal of personal information and sensitive data"))
-    body_content.append(p("- Content Quality Filtering: Quality and safety filtering aligned with Google AI policies"))
-    body_content.append(p("- Training data cutoff: January 2025"))
-    body_content.append(p(""))
-    
-    # Section 9: Model Variants
-    body_content.append(p("9. Model Variants and Availability", "Heading1"))
-    body_content.append(p("Each model size is available in two variants:"))
-    body_content.append(p("- Pre-trained (base): Raw model weights for custom fine-tuning"))
-    body_content.append(p("- Instruction-tuned (IT): Fine-tuned for conversational and instruction-following tasks"))
-    body_content.append(p(""))
-    body_content.append(p("Additionally available:"))
-    body_content.append(p("- QAT (Quantization-Aware Training) variants for efficient deployment"))
-    body_content.append(p("- Multi-Token Prediction (MTP) variant for 12B (faster local inference)"))
-    body_content.append(p(""))
-    body_content.append(p("Available on: Hugging Face, Kaggle, Ollama, Google AI Studio"))
-    body_content.append(p(""))
+    # ========== TABLE 16: Limitations ==========
+    c.append(p("16. Known Limitations", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Limitation Category", "Details"], bold=True))
+    c.append(row(["Training Data Biases", "Quality/diversity of training data may influence outputs; biases or gaps possible"]))
+    c.append(row(["Task Complexity", "Open-ended or highly complex tasks may be challenging"]))
+    c.append(row(["Factual Accuracy", "May generate incorrect or outdated factual statements (not a knowledge base)"]))
+    c.append(row(["Language Nuance", "May struggle with sarcasm, figurative language, or subtle nuance"]))
+    c.append(row(["Common Sense", "Relies on statistical patterns; may lack common sense in certain situations"]))
+    c.append(row(["Audio Limitation", "26B and 31B models do NOT support audio input"]))
+    c.append(row(["Audio Length", "Maximum 30 seconds per segment"]))
+    c.append(row(["Video Length", "Maximum 60 seconds (at 1 frame per second)"]))
+    c.append(row(["Context Dependency", "Longer context generally improves outputs, up to a point"]))
+    c.append(row(["Subject Scope", "Limited to areas well-represented in training data"]))
+    c.append(table_end())
+    c.append(p(""))
+
+    # ========== TABLE 17: Sources ==========
+    c.append(p("17. Sources and References", "Heading1"))
+    c.append(table_start())
+    c.append(row(["Source", "URL"], bold=True))
+    c.append(row(["Google AI Model Card", "https://ai.google.dev/gemma/docs/core/model_card_4"]))
+    c.append(row(["Google DeepMind Gemma 4", "https://deepmind.google/models/gemma/gemma-4/"]))
+    c.append(row(["Hugging Face Blog", "https://huggingface.co/blog/gemma4"]))
+    c.append(row(["Google Developers Blog (12B)", "https://developers.googleblog.com/gemma-4-12b-the-developer-guide/"]))
+    c.append(row(["HF Model: gemma-4-12B", "https://huggingface.co/google/gemma-4-12B"]))
+    c.append(row(["Google Launch Blog", "https://blog.google/innovation-and-ai/technology/developers-tools/gemma-4/"]))
+    c.append(row(["KerasHub Agentic Guide", "https://keras.io/keras_hub/guides/gemma4_multimodal_and_agentic_workflows/"]))
+    c.append(table_end())
+    c.append(p(""))
+    c.append(p("Note: Content was rephrased for compliance with licensing restrictions. All technical specifications sourced from official Google DeepMind documentation and model cards."))
 
 
-    # Section 10: Deployment
-    body_content.append(p("10. Deployment Targets and Hardware Requirements", "Heading1"))
-    body_content.append(p("10.1 On-Device / Edge (E2B, E4B)", "Heading2"))
-    body_content.append(p("- Target: Smartphones, tablets, laptops"))
-    body_content.append(p("- Optimized for efficient local execution"))
-    body_content.append(p("- PLE architecture minimizes active compute while maintaining capability"))
-    body_content.append(p("- QAT mobile variants available for further compression"))
-    body_content.append(p(""))
-    body_content.append(p("10.2 Consumer Hardware (12B)", "Heading2"))
-    body_content.append(p("- Target: Laptops with 16GB VRAM or unified memory"))
-    body_content.append(p("- ~7GB at 4-bit quantization"))
-    body_content.append(p("- Can run on dedicated GPU laptops"))
-    body_content.append(p(""))
-    body_content.append(p("10.3 Workstation / Server (26B A4B, 31B)", "Heading2"))
-    body_content.append(p("- Target: Consumer GPUs, workstations, cloud servers"))
-    body_content.append(p("- 26B MoE: All parameters must be in memory (~26B) but inference is fast (4B active)"))
-    body_content.append(p("- 31B Dense: Requires more compute but delivers highest quality"))
-    body_content.append(p(""))
-    
-    # Section 11: Key Innovations Summary
-    body_content.append(p("11. Key Architectural Innovations vs. Previous Gemma Models", "Heading1"))
-    body_content.append(p("- Native system prompt support (new 'system' role)"))
-    body_content.append(p("- Configurable thinking mode with <|think|> control token"))
-    body_content.append(p("- Per-Layer Embeddings (PLE) for parameter-efficient on-device models"))
-    body_content.append(p("- Encoder-free unified architecture (12B) - no separate vision/audio encoders"))
-    body_content.append(p("- Proportional RoPE (p-RoPE) for better long-context handling"))
-    body_content.append(p("- Unified KV in global attention layers for memory efficiency"))
-    body_content.append(p("- Fine-grained MoE with 128 experts (vs. typical 8-16 in other models)"))
-    body_content.append(p("- Variable image resolution with configurable token budgets"))
-    body_content.append(p("- Native audio processing without separate ASR pipeline (E2B, E4B, 12B)"))
-    body_content.append(p("- Native function calling for agentic applications"))
-    body_content.append(p("- Dramatically improved agentic performance (tau2: 6.6% -> 86.4%)"))
-    body_content.append(p("- Extended context: up to 256K tokens (vs. 128K in Gemma 3)"))
-    body_content.append(p(""))
-
-
-    # Section 12: Comparison with Gemma 3
-    body_content.append(p("12. Comparison: Gemma 4 vs. Gemma 3 27B", "Heading1"))
-    body_content.append(p("Key improvements of Gemma 4 31B over Gemma 3 27B:"))
-    body_content.append(p("- MMLU Pro: 85.2% vs 67.6% (+17.6 points)"))
-    body_content.append(p("- AIME 2026: 89.2% vs 20.8% (+68.4 points)"))
-    body_content.append(p("- LiveCodeBench v6: 80.0% vs 29.1% (+50.9 points)"))
-    body_content.append(p("- Codeforces ELO: 2150 vs 110 (+2040 points)"))
-    body_content.append(p("- GPQA Diamond: 84.3% vs 42.4% (+41.9 points)"))
-    body_content.append(p("- MMMU Pro (Vision): 76.9% vs 49.7% (+27.2 points)"))
-    body_content.append(p("- MRCR Long Context: 66.4% vs 13.5% (+52.9 points)"))
-    body_content.append(p("- Tau2 Agentic: 76.9% vs 16.2% (+60.7 points)"))
-    body_content.append(p(""))
-    
-    # Section 13: Safety
-    body_content.append(p("13. Safety and Ethics", "Heading1"))
-    body_content.append(p("- Same rigorous safety evaluations as proprietary Gemini models"))
-    body_content.append(p("- Major improvements in content safety relative to previous Gemma models"))
-    body_content.append(p("- Minimal policy violations across all model sizes"))
-    body_content.append(p("- Low unjustified refusal rates"))
-    body_content.append(p("- Testing conducted without safety filters to evaluate raw model behavior"))
-    body_content.append(p("- Evaluated for: CSAM, dangerous content, sexually explicit content, hate speech, harassment"))
-    body_content.append(p("- Developed in partnership with internal safety and responsible AI teams"))
-    body_content.append(p("- Aligned with Google's AI Principles"))
-    body_content.append(p(""))
-    
-    # Section 14: Limitations
-    body_content.append(p("14. Known Limitations", "Heading1"))
-    body_content.append(p("- Training data biases may influence outputs"))
-    body_content.append(p("- May struggle with highly complex, open-ended tasks"))
-    body_content.append(p("- Can generate incorrect or outdated factual statements"))
-    body_content.append(p("- May not grasp subtle nuance, sarcasm, or figurative language"))
-    body_content.append(p("- Common sense reasoning limitations in certain situations"))
-    body_content.append(p("- 26B/31B models do NOT support audio"))
-    body_content.append(p("- Audio limited to 30 seconds maximum"))
-    body_content.append(p("- Video limited to 60 seconds maximum (at 1 fps)"))
-    body_content.append(p(""))
-
-
-    # Section 15: Sources
-    body_content.append(p("15. Sources and References", "Heading1"))
-    body_content.append(p("- Google AI for Developers - Gemma 4 Model Card: https://ai.google.dev/gemma/docs/core/model_card_4"))
-    body_content.append(p("- Google DeepMind Gemma 4 Page: https://deepmind.google/models/gemma/gemma-4/"))
-    body_content.append(p("- Hugging Face Gemma 4 Blog: https://huggingface.co/blog/gemma4"))
-    body_content.append(p("- Google Developers Blog - Gemma 4 12B Guide: https://developers.googleblog.com/gemma-4-12b-the-developer-guide/"))
-    body_content.append(p("- Hugging Face Model Pages: https://huggingface.co/google/gemma-4-12B"))
-    body_content.append(p("- Google Launch Blog: https://blog.google/innovation-and-ai/technology/developers-tools/gemma-4/"))
-    body_content.append(p(""))
-    body_content.append(p("Note: Content was rephrased for compliance with licensing restrictions. All technical specifications sourced from official Google DeepMind documentation and model cards."))
-    
     # Assemble the full document
-    body_xml = '\n'.join(body_content)
-    
+    body_xml = '\n'.join(c)
+
     document = f'''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
             xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <w:body>
     {body_xml}
     <w:sectPr>
-      <w:pgSz w:w="12240" w:h="15840"/>
-      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/>
+      <w:pgSz w:w="15840" w:h="12240" w:orient="landscape"/>
+      <w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080"/>
     </w:sectPr>
   </w:body>
 </w:document>'''
-    
-    return document
 
+    return document
 
 
 def create_docx(output_path):
@@ -581,11 +434,11 @@ def create_docx(output_path):
         zf.writestr('word/_rels/document.xml.rels', make_word_rels())
         zf.writestr('word/styles.xml', make_styles())
         zf.writestr('word/document.xml', make_document())
-    
+
     print(f"Document created successfully: {output_path}")
     print(f"File size: {os.path.getsize(output_path):,} bytes")
 
 
 if __name__ == "__main__":
-    output_file = "/projects/sandbox/Gemma_4_Technical_Summary.docx"
+    output_file = "/projects/sandbox/test/Gemma_4_Technical_Summary.docx"
     create_docx(output_file)
