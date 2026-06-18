@@ -26,16 +26,16 @@ tr:nth-child(even) { background-color: #F2F7FC; }
 
 <h1>Gemma 4 31B-IT Deployment Analysis via AEX Model Service</h1>
 
+
 <table style="width:60%; margin-bottom:20pt;">
 <tr><td style="width:40%; font-weight:bold; background:#E8E8E8;">User Story</td><td>2748133 - Explore deployment of Gemma model</td></tr>
 <tr><td style="font-weight:bold; background:#E8E8E8;">Model</td><td>google/gemma-4-31b-it</td></tr>
 <tr><td style="font-weight:bold; background:#E8E8E8;">Sprint</td><td>Cat Digital 2026 | Sprint 12 (Jun 10 - Jun 23)</td></tr>
 <tr><td style="font-weight:bold; background:#E8E8E8;">Owner</td><td>Sowndarya Kurapati</td></tr>
 <tr><td style="font-weight:bold; background:#E8E8E8;">Date</td><td>June 18, 2026</td></tr>
-<tr><td style="font-weight:bold; background:#E8E8E8;">Region</td><td>us-east-2 (Ohio)</td></tr>
+<tr><td style="font-weight:bold; background:#E8E8E8;">AWS Region</td><td>us-east-2 (Ohio)</td></tr>
 <tr><td style="font-weight:bold; background:#E8E8E8;">Pricing Type</td><td>On-Demand</td></tr>
 </table>
-
 
 <h2>1. Model Specifications</h2>
 <table>
@@ -45,105 +45,88 @@ tr:nth-child(even) { background-color: #F2F7FC; }
 <tr><td>Model Size on Disk (BF16)</td><td>~65 GB</td></tr>
 <tr><td>VRAM Required (FP16/BF16)</td><td>~71 GB</td></tr>
 <tr><td>VRAM Required (NVFP4 Quantized)</td><td>~45 GB</td></tr>
-<tr><td>Minimum GPU</td><td>1x NVIDIA A100 80GB (single GPU) or 2x A100 40GB (tensor parallel)</td></tr>
+<tr><td>Minimum GPU</td><td>1x NVIDIA A100 80GB or 2x A100 40GB (tensor parallel)</td></tr>
 <tr><td>Recommended Serving Engine</td><td>vLLM v0.8.0+</td></tr>
 <tr><td>Context Length</td><td>Up to 256K tokens</td></tr>
 <tr><td>Source</td><td>JFrog Artifactory (artifacts.cat.com) - Approved</td></tr>
 <tr><td>Artifactory Path</td><td>cat-huggingface-repo/models/google/gemma-4-31B-it/</td></tr>
 </table>
 
-<h2>2. AEX Model Service - All Supported Deployment Paths</h2>
-<p>The CMAAI-Model-Service GitHub Actions workflow (cmaai-model-service.yaml) supports <strong>5 model-type options</strong>. Below is the feasibility assessment of each for Gemma 4 31B:</p>
+
+<h2>2. AWS Deployment Options via AEX Model Service</h2>
+<p>The CMAAI-Model-Service workflow supports 5 model-types. The following AWS deployment paths are relevant for Gemma 4 31B:</p>
 <table>
-<tr><th>#</th><th>model-type</th><th>Description</th><th>Can Deploy Gemma 4 31B?</th><th>Primary Blocker</th></tr>
-<tr><td>1</td><td><strong>sagemaker</strong></td><td>Deploy via Amazon SageMaker endpoint</td><td class="warn">MAYBE (best chance)</td><td>65 GB tar.gz packaging; no GPU instance selection</td></tr>
-<tr><td>2</td><td><strong>huggingface</strong></td><td>Deploy HuggingFace model on AEX infrastructure</td><td class="fail">NO</td><td>Storage 20 GiB &lt; 65 GB; No GPU on Fargate; ECR 52 GB limit</td></tr>
-<tr><td>3</td><td><strong>llmobject</strong></td><td>Deploy LLM object (likely LLM-specific path)</td><td class="warn">UNKNOWN - Needs Investigation</td><td>Undocumented; may support larger models</td></tr>
-<tr><td>4</td><td><strong>mlflow</strong></td><td>Deploy MLflow-packaged model</td><td class="fail">NO</td><td>Wrong model format (not MLflow)</td></tr>
-<tr><td>5</td><td><strong>pythonpackage</strong></td><td>Deploy Python package model</td><td class="fail">NO</td><td>Wrong model format + same infra limits</td></tr>
+<tr><th>#</th><th>AWS Deployment Path</th><th>AEX model-type</th><th>Can Deploy Gemma 4 31B?</th><th>Primary Blocker</th></tr>
+<tr><td>1</td><td>Amazon SageMaker Endpoint</td><td>sagemaker</td><td class="warn">MAYBE (best chance)</td><td>65 GB tar.gz packaging; no GPU instance selection</td></tr>
+<tr><td>2</td><td>Amazon ECS on EC2 with GPU</td><td>huggingface</td><td class="fail">NO</td><td>Storage 20 GiB &lt; 65 GB; ECR 52 GB limit; No GPU on Fargate</td></tr>
+<tr><td>3</td><td>Amazon Bedrock</td><td>N/A (not in workflow)</td><td class="fail">NO</td><td>Gemma 4 not available on Bedrock (only Gemma v3)</td></tr>
+<tr><td>4</td><td>LLM Object (unknown AWS infra)</td><td>llmobject</td><td class="warn">UNKNOWN</td><td>Undocumented - needs investigation</td></tr>
 </table>
 
-
-<h2>3. PATH 1: model-type = "sagemaker" (Most Viable)</h2>
+<h2>3. OPTION 1: Amazon SageMaker (AEX model-type = "sagemaker")</h2>
 <h3>How It Works</h3>
-<p>Model is packaged as model.tar.gz, uploaded to S3, and deployed to a SageMaker real-time inference endpoint via the CMAAI-Model-Service workflow.</p>
-<h3>Workflow Inputs Required</h3>
-<table>
-<tr><th>Input</th><th>Value for Gemma 4 31B</th></tr>
-<tr><td>environment</td><td>datahub-dev</td></tr>
-<tr><td>model-name</td><td>gemma-4-31b-it</td></tr>
-<tr><td>model-version</td><td>v1</td></tr>
-<tr><td>model-type</td><td>sagemaker</td></tr>
-<tr><td>sagemaker-model-artifact-filename</td><td>model.tar.gz</td></tr>
-<tr><td>sagemaker-requirements-filename</td><td>requirements.txt</td></tr>
-<tr><td>deploy-on-gpu</td><td>true</td></tr>
-<tr><td>artifact-location</td><td>s3://pfn-aex-cmaai-mr-s3-bucket-dev/models/google/gemma-4-31b-it/model.tar.gz</td></tr>
-<tr><td>network-type</td><td>routable</td></tr>
-</table>
-
+<p>Model is packaged as model.tar.gz, uploaded to Amazon S3, and deployed to a SageMaker real-time inference endpoint.</p>
 <h3>Feasibility Assessment</h3>
 <table>
-<tr><th>Requirement</th><th>SageMaker Capability</th><th>Gemma 4 31B Needs</th><th>Status</th></tr>
+<tr><th>Requirement</th><th>AWS SageMaker Capability</th><th>Gemma 4 31B Needs</th><th>Status</th></tr>
 <tr><td>Model packaging (tar.gz)</td><td>S3 multipart upload, no hard size limit</td><td>65 GB tar.gz</td><td class="warn">POSSIBLE but very slow</td></tr>
 <tr><td>Storage on endpoint</td><td>Configurable EBS volume</td><td>65+ GB</td><td class="pass">PASS</td></tr>
-<tr><td>GPU availability</td><td>Multiple GPU instance families</td><td>A100 80GB minimum for FP16</td><td class="pass">PASS</td></tr>
+<tr><td>GPU availability</td><td>ml.g5, ml.p4d, ml.p5 instance families</td><td>A100 80GB min for FP16</td><td class="pass">PASS</td></tr>
 <tr><td>Cold start</td><td>Instance launch + model load</td><td>5-15 minutes total</td><td class="warn">SLOW but acceptable</td></tr>
 <tr><td>Inference timeout</td><td>Up to 60 seconds (real-time)</td><td>Depends on output length</td><td class="warn">RISK for long outputs</td></tr>
-<tr><td>Gemma 4 on JumpStart</td><td>Available since April 2026</td><td>Pre-configured</td><td class="pass">CONFIRMED</td></tr>
 </table>
+
 
 <h3>Problems Blocking This Path</h3>
 <table>
 <tr><th>#</th><th>Problem</th><th>Detail</th><th>Severity</th></tr>
-<tr><td>1</td><td class="fail">No staging infrastructure for 65 GB file operations</td><td>Need a server to: download from JFrog (65 GB) + compress to tar.gz + upload to S3. No such server exists. Cannot do this on a laptop.</td><td>CRITICAL</td></tr>
-<tr><td>2</td><td class="fail">65 GB tar.gz packaging is impractical</td><td>Compressing 65 GB of safetensors files takes hours and produces an archive nearly as large (safetensors don't compress well).</td><td>HIGH</td></tr>
-<tr><td>3</td><td class="warn">No GPU instance type selection in workflow</td><td>Workflow has deploy-on-gpu=true/false but no way to specify WHICH instance (ml.p4d.24xlarge, ml.g5.12xlarge). The model needs specific GPU types with enough VRAM.</td><td>HIGH</td></tr>
-<tr><td>4</td><td class="warn">No JFrog to S3 automated transfer</td><td>Model sits in JFrog Artifactory. No pipeline exists to move it to the AEX S3 bucket. Lambda is limited to 10 GB. Would need ECS task or EC2 instance.</td><td>HIGH</td></tr>
-<tr><td>5</td><td class="warn">SageMaker 60-second inference timeout</td><td>Real-time endpoints timeout at 60 seconds. Long-form generation may exceed this.</td><td>MEDIUM</td></tr>
+<tr><td>1</td><td class="fail">No staging infrastructure for 65 GB file operations</td><td>Need a server to download from JFrog (65 GB), compress to tar.gz, and upload to S3. No such server exists today.</td><td>CRITICAL</td></tr>
+<tr><td>2</td><td class="fail">65 GB tar.gz packaging impractical</td><td>Safetensors files do not compress well. Creating tar.gz takes hours and produces nearly same size.</td><td>HIGH</td></tr>
+<tr><td>3</td><td class="warn">No GPU instance type selection in workflow</td><td>Workflow only has deploy-on-gpu=true/false. Cannot specify ml.p4d.24xlarge or ml.g5.12xlarge.</td><td>HIGH</td></tr>
+<tr><td>4</td><td class="warn">No JFrog to S3 automated transfer</td><td>No pipeline to move 65 GB from JFrog Artifactory to AEX S3 bucket. Lambda limited to 10 GB.</td><td>HIGH</td></tr>
 </table>
 
-
-<h3>SageMaker Instance Pricing (If Deployment Succeeds) - us-east-2 On-Demand</h3>
-<div class="disclaimer"><strong>IMPORTANT:</strong> SageMaker inference pricing below is derived from cloudprice.net monthly rates (divided by 730 hours). <strong>Verify exact pricing at <a href="https://aws.amazon.com/sagemaker/pricing/">aws.amazon.com/sagemaker/pricing</a></strong> — select "US East (Ohio)" region.</div>
+<h3>Amazon SageMaker Instance Pricing - us-east-2 (Ohio) On-Demand</h3>
+<div class="disclaimer"><strong>IMPORTANT:</strong> SageMaker pricing below is derived from cloudprice.net monthly rates (divided by 730 hours). <strong>Verify exact pricing at <a href="https://aws.amazon.com/sagemaker/pricing/">aws.amazon.com/sagemaker/pricing</a></strong> - select "US East (Ohio)" region.</div>
 <table>
-<tr><th>Instance Type</th><th>vCPUs</th><th>RAM (GiB)</th><th>GPUs</th><th>GPU Type</th><th>VRAM/GPU</th><th>Total VRAM</th><th>Can Run Gemma 4 31B?</th><th>Tensor Parallel</th><th>Price/Hour*</th><th>Price/Week (168h)</th><th>Price/Month (730h)</th></tr>
-<tr><td>ml.g5.12xlarge</td><td>48</td><td>192</td><td>4</td><td>NVIDIA A10G</td><td>24 GB</td><td>96 GB</td><td class="warn">Yes (NVFP4 quantized only)</td><td>TP=4</td><td><strong>$7.09*</strong></td><td>$1,191.12</td><td>$5,175.70</td></tr>
+<tr><th>SageMaker Instance</th><th>vCPUs</th><th>RAM (GiB)</th><th>GPUs</th><th>GPU Type</th><th>VRAM/GPU</th><th>Total VRAM</th><th>Can Run?</th><th>Tensor Parallel</th><th>Price/Hour*</th><th>Price/Week (168h)</th><th>Price/Month (730h)</th></tr>
+<tr><td>ml.g5.12xlarge</td><td>48</td><td>192</td><td>4</td><td>NVIDIA A10G</td><td>24 GB</td><td>96 GB</td><td class="warn">Quantized only</td><td>TP=4</td><td><strong>$7.09*</strong></td><td>$1,191.12</td><td>$5,175.70</td></tr>
 <tr><td>ml.g5.48xlarge</td><td>192</td><td>768</td><td>8</td><td>NVIDIA A10G</td><td>24 GB</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><strong>$20.36*</strong></td><td>$3,420.48</td><td>$14,862.80</td></tr>
 <tr><td>ml.p4d.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 40GB</td><td>40 GB</td><td>320 GB</td><td class="pass">Yes</td><td>TP=2</td><td><strong>$25.25*</strong></td><td>$4,242.00</td><td>$18,433.44</td></tr>
-<tr><td>ml.p4de.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (single GPU capable)</td><td>TP=1</td><td><strong>$31.56*</strong></td><td>$5,302.08</td><td>$23,041.80</td></tr>
+<tr><td>ml.p4de.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (1 GPU)</td><td>TP=1</td><td><strong>$31.56*</strong></td><td>$5,302.08</td><td>$23,041.80</td></tr>
 <tr><td>ml.p5.48xlarge</td><td>192</td><td>2048</td><td>8</td><td>NVIDIA H100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (fastest)</td><td>TP=1</td><td><strong>$63.29*</strong></td><td>$10,632.72</td><td>$46,206.08</td></tr>
 </table>
-<p><em>* Hourly rate derived from monthly pricing on cloudprice.net. Verify at AWS SageMaker pricing page for us-east-2.</em></p>
+<p><em>* Hourly rate derived from cloudprice.net monthly pricing. Verify at AWS SageMaker pricing page for us-east-2.</em></p>
+<p><strong>Verdict:</strong> <span class="warn">MOST VIABLE AEX PATH</span> - Requires solving file transfer and tar.gz packaging challenges first.</p>
 
 
-<h2>4. PATH 2: model-type = "huggingface"</h2>
+<h2>4. OPTION 2: Amazon ECS on EC2 with GPU (AEX model-type = "huggingface")</h2>
 <h3>How It Works</h3>
-<p>Model artifacts stored in S3 are pulled to an AEX worker node (ECS) and loaded into GPU memory for inference.</p>
+<p>Model artifacts stored in Amazon S3 are pulled to an ECS worker node and loaded into GPU memory for inference.</p>
 <h3>Feasibility Assessment</h3>
 <table>
-<tr><th>Requirement</th><th>Current AEX Limit</th><th>Gemma 4 31B Needs</th><th>Status</th></tr>
-<tr><td>Worker Ephemeral Storage</td><td>20 GiB (default)</td><td>65+ GB</td><td class="fail">FAILS - model cannot fit</td></tr>
-<tr><td>ECR Image Layer Size</td><td>52 GB max per layer</td><td>65 GB model</td><td class="fail">FAILS - exceeds limit</td></tr>
-<tr><td>GPU Support (Fargate)</td><td>No GPU available</td><td>71 GB VRAM (FP16)</td><td class="fail">FAILS - no GPU on Fargate</td></tr>
-<tr><td>S3 Download Time</td><td>Unknown timeout</td><td>~5-10 min for 65 GB</td><td class="warn">RISK</td></tr>
-<tr><td>Cold Start</td><td>Unknown health check timeout</td><td>2-5 minutes for model load</td><td class="warn">RISK</td></tr>
+<tr><th>Requirement</th><th>Current AEX / AWS Limit</th><th>Gemma 4 31B Needs</th><th>Status</th></tr>
+<tr><td>Worker Ephemeral Storage</td><td>20 GiB (ECS Fargate default)</td><td>65+ GB</td><td class="fail">FAILS</td></tr>
+<tr><td>ECR Image Layer Size</td><td>52 GB max per layer (AWS hard limit)</td><td>65 GB model</td><td class="fail">FAILS</td></tr>
+<tr><td>GPU Support</td><td>ECS Fargate = No GPU; ECS on EC2 = GPU possible</td><td>71 GB VRAM (FP16)</td><td class="fail">FAILS on Fargate</td></tr>
+<tr><td>S3 Download Time</td><td>Unknown timeout threshold</td><td>~5-10 min for 65 GB</td><td class="warn">RISK</td></tr>
+<tr><td>Cold Start</td><td>Unknown health check timeout</td><td>2-5 min model loading</td><td class="warn">RISK</td></tr>
 </table>
 
 <h3>Problems Blocking This Path</h3>
 <table>
 <tr><th>#</th><th>Problem</th><th>Detail</th><th>Severity</th></tr>
-<tr><td>1</td><td class="fail">Worker ephemeral storage = 20 GiB</td><td>Model is 65 GB. Cannot physically fit on the worker. Would need 100+ GiB storage.</td><td>CRITICAL</td></tr>
-<tr><td>2</td><td class="fail">ECR image layer limit = 52 GB</td><td>Cannot bake the 65 GB model into the container image.</td><td>CRITICAL</td></tr>
-<tr><td>3</td><td class="fail">ECS Fargate has no GPU</td><td>Model requires 71 GB of GPU VRAM. Fargate does not support GPUs at all.</td><td>CRITICAL</td></tr>
-<tr><td>4</td><td class="fail">No JFrog to S3 transfer mechanism</td><td>Cannot get the model from Artifactory into the S3 bucket efficiently.</td><td>CRITICAL</td></tr>
-<tr><td>5</td><td class="warn">No tensor parallelism support</td><td>Cannot split model across multiple GPUs (TP=2 or TP=4 needed for most instances).</td><td>HIGH</td></tr>
-<tr><td>6</td><td class="warn">Cold start exceeds health check</td><td>Model loading takes 2-5 minutes. Health checks likely timeout before model is ready.</td><td>MEDIUM</td></tr>
+<tr><td>1</td><td class="fail">ECS Fargate ephemeral storage = 20 GiB</td><td>Model is 65 GB. Cannot fit. Max Fargate storage is 200 GiB but must be explicitly configured.</td><td>CRITICAL</td></tr>
+<tr><td>2</td><td class="fail">ECR image layer limit = 52 GB</td><td>Cannot bake the 65 GB model into the container image (AWS hard limit).</td><td>CRITICAL</td></tr>
+<tr><td>3</td><td class="fail">ECS Fargate has no GPU</td><td>Fargate does not support GPUs. Must use ECS on EC2 with GPU instances instead.</td><td>CRITICAL</td></tr>
+<tr><td>4</td><td class="fail">No JFrog to S3 transfer</td><td>No automated mechanism to move 65 GB from Artifactory to S3.</td><td>CRITICAL</td></tr>
+<tr><td>5</td><td class="warn">No tensor parallelism support</td><td>Cannot configure multi-GPU inference (TP=2, TP=4).</td><td>HIGH</td></tr>
 </table>
 
-<h3>EC2 Instance Pricing (If Infrastructure Were Fixed) - us-east-2 On-Demand</h3>
-<div class="note"><strong>Note:</strong> These prices are for reference only. This path currently FAILS due to the critical blockers above. Prices shown are what the underlying EC2 instances cost if AEX infrastructure were upgraded.</div>
+<h3>AWS EC2 GPU Instance Pricing (If Infrastructure Were Fixed) - us-east-2 On-Demand</h3>
+<div class="note"><strong>Note:</strong> This path currently FAILS. Prices below show what EC2 GPU instances cost if AEX infrastructure were upgraded to support ECS on EC2 with GPU. EC2 pricing confirmed identical in us-east-1 and us-east-2 for GPU instances (verified via devzero.io, doit.com for us-east-2).</div>
 <table>
-<tr><th>Instance Type</th><th>vCPUs</th><th>RAM (GiB)</th><th>GPUs</th><th>GPU Type</th><th>VRAM/GPU</th><th>Total VRAM</th><th>Can Run?</th><th>TP</th><th>Price/Hour</th><th>Price/Week (168h)</th><th>Price/Month (730h)</th></tr>
+<tr><th>EC2 Instance</th><th>vCPUs</th><th>RAM (GiB)</th><th>GPUs</th><th>GPU Type</th><th>VRAM/GPU</th><th>Total VRAM</th><th>Can Run?</th><th>TP</th><th>Price/Hour</th><th>Price/Week (168h)</th><th>Price/Month (730h)</th></tr>
 <tr><td>g6.12xlarge</td><td>48</td><td>192</td><td>4</td><td>NVIDIA L4</td><td>24 GB</td><td>96 GB</td><td class="warn">Quantized only</td><td>TP=4</td><td><strong>$4.6016</strong></td><td>$773.07</td><td>$3,359.17</td></tr>
 <tr><td>g6.48xlarge</td><td>192</td><td>768</td><td>8</td><td>NVIDIA L4</td><td>24 GB</td><td>192 GB</td><td class="pass">Yes</td><td>TP=4</td><td><strong>$13.3504</strong></td><td>$2,242.87</td><td>$9,745.79</td></tr>
 <tr><td>g5.12xlarge</td><td>48</td><td>192</td><td>4</td><td>NVIDIA A10G</td><td>24 GB</td><td>96 GB</td><td class="warn">Quantized only</td><td>TP=4</td><td><strong>$5.672</strong></td><td>$952.90</td><td>$4,140.56</td></tr>
@@ -152,97 +135,94 @@ tr:nth-child(even) { background-color: #F2F7FC; }
 <tr><td>p4de.24xlarge</td><td>96</td><td>1152</td><td>8</td><td>NVIDIA A100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (1 GPU)</td><td>TP=1</td><td><strong>$27.4471</strong></td><td>$4,611.11</td><td>$20,036.38</td></tr>
 <tr><td>p5.48xlarge</td><td>192</td><td>2048</td><td>8</td><td>NVIDIA H100 80GB</td><td>80 GB</td><td>640 GB</td><td class="pass">Yes (fastest)</td><td>TP=1</td><td><strong>$55.04</strong></td><td>$9,246.72</td><td>$40,179.20</td></tr>
 </table>
+<p><strong>Verdict:</strong> <span class="fail">CURRENTLY FAILS</span> - 4 critical blockers. Would need: upgrade to ECS on EC2 (not Fargate), increase storage to 200 GiB, use runtime S3 model pull.</p>
 
 
-<h2>5. PATH 3: model-type = "llmobject" (Needs Investigation)</h2>
-<h3>How It Works</h3>
-<p><strong>Unknown.</strong> This model-type likely provides a specialized deployment path for Large Language Models. It may have different infrastructure requirements than the generic "huggingface" path.</p>
-<h3>What We Know</h3>
+<h2>5. OPTION 3: Amazon Bedrock</h2>
 <table>
 <tr><th>Question</th><th>Answer</th></tr>
-<tr><td>What infrastructure does it use?</td><td class="warn">UNKNOWN - needs team input</td></tr>
-<tr><td>Does it support GPU?</td><td class="warn">UNKNOWN - needs team input</td></tr>
-<tr><td>What storage limits apply?</td><td class="warn">UNKNOWN - needs team input</td></tr>
-<tr><td>Does it support 65+ GB models?</td><td class="warn">UNKNOWN - needs team input</td></tr>
-<tr><td>Is tensor parallelism supported?</td><td class="warn">UNKNOWN - needs team input</td></tr>
+<tr><td>Is Gemma 4 31B available on Amazon Bedrock?</td><td class="fail">NO</td></tr>
+<tr><td>What Gemma versions are available?</td><td>Only Gemma v3 models</td></tr>
+<tr><td>Is there a timeline for Gemma 4 on Bedrock?</td><td>No announcement as of June 2026</td></tr>
 </table>
-<h3>Action Required</h3>
-<p>Ask the AEX team: "What does the <code>llmobject</code> model-type do? What infrastructure does it deploy to? Does it support 65+ GB models with GPU inference?"</p>
-<p>This could potentially be the correct path for Gemma 4 31B if it was designed to handle LLM-specific requirements (large model size, GPU inference, tensor parallelism).</p>
+<p><strong>Verdict:</strong> <span class="fail">NOT POSSIBLE</span> - Amazon Bedrock does not support Gemma 4 models. Only Gemma v3 is available.</p>
 
-<h2>6. PATH 4: model-type = "mlflow"</h2>
-<h3>Why It Cannot Work</h3>
+<h2>6. OPTION 4: LLM Object (AEX model-type = "llmobject")</h2>
+<h3>Status: NEEDS INVESTIGATION</h3>
 <table>
-<tr><th>Reason</th><th>Detail</th></tr>
-<tr><td class="fail">Wrong model format</td><td>Gemma 4 31B is a HuggingFace model with safetensors weights. It is NOT packaged as an MLflow model. MLflow is designed for traditional ML models (sklearn, XGBoost, PyTorch custom) or requires wrapping the model in an MLflow-compatible format.</td></tr>
-<tr><td class="fail">Same infrastructure limits apply</td><td>Even if wrapped in MLflow format, the same storage (20 GiB) and GPU (no Fargate GPU) limitations would block deployment.</td></tr>
+<tr><th>Question</th><th>Answer</th></tr>
+<tr><td>What AWS infrastructure does it use?</td><td class="warn">UNKNOWN</td></tr>
+<tr><td>Does it support GPU?</td><td class="warn">UNKNOWN</td></tr>
+<tr><td>What storage limits apply?</td><td class="warn">UNKNOWN</td></tr>
+<tr><td>Does it support 65+ GB models?</td><td class="warn">UNKNOWN</td></tr>
 </table>
+<p><strong>Action Required:</strong> Ask the AEX team what infrastructure <code>llmobject</code> deploys to. This may be the path designed for large LLMs.</p>
 
-<h2>7. PATH 5: model-type = "pythonpackage"</h2>
-<h3>Why It Cannot Work</h3>
+<h2>7. Summary: All AWS Deployment Options</h2>
 <table>
-<tr><th>Reason</th><th>Detail</th></tr>
-<tr><td class="fail">Wrong model format</td><td>Gemma 4 31B is not a Python package. It is a 65 GB neural network with safetensors weight files. You cannot pip-install a 65 GB model.</td></tr>
-<tr><td class="fail">Same infrastructure limits apply</td><td>Even if packaged as a Python module, the same storage (20 GiB) and GPU (no Fargate GPU) limitations would block deployment.</td></tr>
+<tr><th>#</th><th>AWS Service</th><th>AEX model-type</th><th>Works Today?</th><th>Best Instance</th><th>Price/Hour</th><th>Price/Week</th><th>Price/Month</th><th>Key Blocker</th></tr>
+<tr><td>1</td><td>Amazon SageMaker</td><td>sagemaker</td><td class="warn">MAYBE</td><td>ml.p4d.24xlarge</td><td>$25.25*</td><td>$4,242</td><td>$18,433</td><td>65 GB tar.gz + no GPU selection</td></tr>
+<tr><td>2</td><td>Amazon ECS on EC2 (GPU)</td><td>huggingface</td><td class="fail">NO</td><td>p4d.24xlarge</td><td>$21.96</td><td>$3,689</td><td>$16,029</td><td>Storage 20 GiB; No Fargate GPU; ECR limit</td></tr>
+<tr><td>3</td><td>Amazon Bedrock</td><td>N/A</td><td class="fail">NO</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>Gemma 4 not supported (only v3)</td></tr>
+<tr><td>4</td><td>LLM Object (unknown)</td><td>llmobject</td><td class="warn">UNKNOWN</td><td>Unknown</td><td>Unknown</td><td>Unknown</td><td>Unknown</td><td>Undocumented</td></tr>
 </table>
+<p><em>* SageMaker pricing approximate. Verify at aws.amazon.com/sagemaker/pricing for us-east-2.</em></p>
 
 
-<h2>8. Complete Gap Analysis - Problems Preventing Deployment</h2>
+<h2>8. Complete Gap Analysis</h2>
 <table>
-<tr><th>#</th><th>Gap / Problem</th><th>Affects Path(s)</th><th>Current State</th><th>Required for Gemma 4 31B</th><th>Priority</th></tr>
-<tr><td>1</td><td>Worker ephemeral storage too small</td><td>huggingface, pythonpackage, mlflow</td><td>20 GiB default</td><td>100+ GiB</td><td class="fail">P0 - CRITICAL</td></tr>
-<tr><td>2</td><td>No JFrog to S3 automated transfer</td><td>sagemaker, huggingface (all paths)</td><td>Manual download only</td><td>Automated pipeline for 65+ GB</td><td class="fail">P0 - CRITICAL</td></tr>
-<tr><td>3</td><td>ECR image layer limit = 52 GB</td><td>huggingface</td><td>52 GB max per layer (AWS hard limit)</td><td>Runtime S3 pull instead of baking into image</td><td class="fail">P0 - CRITICAL</td></tr>
-<tr><td>4</td><td>ECS Fargate has no GPU</td><td>huggingface</td><td>Zero GPU support on Fargate</td><td>A100 80GB minimum (71 GB VRAM needed)</td><td class="fail">P0 - CRITICAL</td></tr>
-<tr><td>5</td><td>No staging server for large file operations</td><td>sagemaker</td><td>No server available</td><td>Server with 100+ GB storage for download + tar.gz + upload</td><td class="fail">P1 - HIGH</td></tr>
-<tr><td>6</td><td>65 GB tar.gz packaging impractical</td><td>sagemaker</td><td>Default expects model.tar.gz</td><td>Skip tar.gz or stream directly from S3</td><td class="warn">P1 - HIGH</td></tr>
-<tr><td>7</td><td>No GPU instance type selection in workflow</td><td>sagemaker</td><td>deploy-on-gpu = true/false only</td><td>Selectable: ml.p4d.24xlarge, ml.g5.12xlarge, etc.</td><td class="warn">P1 - HIGH</td></tr>
-<tr><td>8</td><td>llmobject path undocumented</td><td>llmobject</td><td>No documentation available</td><td>Documentation + testing needed</td><td class="warn">P2 - MEDIUM</td></tr>
-<tr><td>9</td><td>No tensor parallelism configuration</td><td>huggingface, sagemaker</td><td>Not configurable</td><td>TP=1,2,4,8 configurable</td><td class="warn">P2 - MEDIUM</td></tr>
-<tr><td>10</td><td>Cold start exceeds health check timeout</td><td>huggingface, sagemaker</td><td>Unknown (likely &lt; 5 min)</td><td>10-15 minutes for 65 GB model loading</td><td class="warn">P2 - MEDIUM</td></tr>
-<tr><td>11</td><td>No model quantization pipeline</td><td>all paths</td><td>Not available</td><td>NVFP4 quantization (reduces 65 GB to ~20 GB)</td><td>P3 - LOW</td></tr>
-<tr><td>12</td><td>SageMaker 60-second inference timeout</td><td>sagemaker</td><td>60 sec max for real-time</td><td>Longer timeout or async inference</td><td>P3 - LOW</td></tr>
+<tr><th>#</th><th>Gap / Problem</th><th>Affects</th><th>Current State</th><th>Required</th><th>Priority</th></tr>
+<tr><td>1</td><td>ECS worker ephemeral storage = 20 GiB</td><td>ECS on EC2 (huggingface)</td><td>20 GiB default</td><td>100+ GiB</td><td class="fail">P0 - CRITICAL</td></tr>
+<tr><td>2</td><td>No JFrog to S3 automated transfer</td><td>SageMaker, ECS (all paths)</td><td>Manual only</td><td>Automated pipeline for 65+ GB</td><td class="fail">P0 - CRITICAL</td></tr>
+<tr><td>3</td><td>ECR image layer limit = 52 GB</td><td>ECS on EC2 (huggingface)</td><td>52 GB max (AWS hard limit)</td><td>Use runtime S3 pull instead</td><td class="fail">P0 - CRITICAL</td></tr>
+<tr><td>4</td><td>ECS Fargate has no GPU</td><td>ECS on EC2 (huggingface)</td><td>No GPU on Fargate</td><td>Must use ECS on EC2 with GPU instances</td><td class="fail">P0 - CRITICAL</td></tr>
+<tr><td>5</td><td>No staging server for file operations</td><td>SageMaker (sagemaker)</td><td>No server available</td><td>EC2 or ECS task for download + compress + upload</td><td class="fail">P1 - HIGH</td></tr>
+<tr><td>6</td><td>65 GB tar.gz packaging impractical</td><td>SageMaker (sagemaker)</td><td>Expects model.tar.gz</td><td>Skip tar.gz or use uncompressed tar</td><td class="warn">P1 - HIGH</td></tr>
+<tr><td>7</td><td>No GPU instance type selection</td><td>SageMaker (sagemaker)</td><td>deploy-on-gpu = true/false only</td><td>Selectable: ml.p4d, ml.g5, ml.p5</td><td class="warn">P1 - HIGH</td></tr>
+<tr><td>8</td><td>Gemma 4 not on Amazon Bedrock</td><td>Bedrock</td><td>Only Gemma v3 supported</td><td>AWS to add Gemma 4 (out of our control)</td><td class="warn">P2 - MEDIUM</td></tr>
+<tr><td>9</td><td>llmobject path undocumented</td><td>llmobject</td><td>No docs available</td><td>Documentation + feasibility testing</td><td class="warn">P2 - MEDIUM</td></tr>
+<tr><td>10</td><td>No tensor parallelism configuration</td><td>SageMaker, ECS</td><td>Not configurable</td><td>TP=1,2,4,8 selectable</td><td class="warn">P2 - MEDIUM</td></tr>
+<tr><td>11</td><td>Cold start exceeds health check</td><td>SageMaker, ECS</td><td>Unknown timeout</td><td>10-15 min for 65 GB model load</td><td class="warn">P2 - MEDIUM</td></tr>
+<tr><td>12</td><td>No model quantization pipeline</td><td>All paths</td><td>Not available</td><td>NVFP4 (reduces 65 GB to ~20 GB)</td><td>P3 - LOW</td></tr>
 </table>
-
 
 <h2>9. Recommendations</h2>
 <table>
-<tr><th>Timeframe</th><th>Recommendation</th><th>Estimated Cost</th></tr>
-<tr><td>Immediate (This Sprint)</td><td>Investigate <code>llmobject</code> model-type — may already solve some problems</td><td>No cost (investigation only)</td></tr>
-<tr><td>Immediate (This Sprint)</td><td>Try AEX &rarr; sagemaker path with ml.p4d.24xlarge to document exact failure points</td><td>$25.25/hr (only during testing)</td></tr>
-<tr><td>Short-term (Next Sprint)</td><td>Build ECS Fargate task for JFrog &rarr; S3 transfer (1 vCPU, 4 GB RAM, 150 GB storage)</td><td>Engineering effort + ~$0.50 per transfer run</td></tr>
-<tr><td>Short-term (Next Sprint)</td><td>Add GPU instance type selection to CMAAI-Model-Service workflow</td><td>Small code change to workflow YAML</td></tr>
-<tr><td>Medium-term (2-3 Sprints)</td><td>Upgrade huggingface path: increase storage to 200 GiB, add GPU instance support (ECS on EC2 instead of Fargate)</td><td>Infrastructure change</td></tr>
-<tr><td>Long-term</td><td>Add NVFP4 quantization pipeline (reduces model from 65 GB to ~20 GB, solving most storage issues)</td><td>1 sprint engineering effort</td></tr>
+<tr><th>Timeframe</th><th>Recommendation</th><th>Cost</th></tr>
+<tr><td>Immediate</td><td>Investigate llmobject model-type (may already handle LLM deployment)</td><td>No cost</td></tr>
+<tr><td>Immediate</td><td>Try AEX sagemaker path with ml.p4d.24xlarge to document exact failures</td><td>$25.25/hr during testing</td></tr>
+<tr><td>Short-term</td><td>Build ECS Fargate task for JFrog to S3 transfer (1 vCPU, 4 GB, 150 GB storage)</td><td>~$0.50 per run</td></tr>
+<tr><td>Short-term</td><td>Add GPU instance type selection to workflow</td><td>Code change</td></tr>
+<tr><td>Medium-term</td><td>Upgrade huggingface path: ECS on EC2 with GPU, 200 GiB storage, runtime S3 pull</td><td>Infrastructure change</td></tr>
+<tr><td>Long-term</td><td>Add NVFP4 quantization (reduces model to ~20 GB, solving most storage issues)</td><td>Engineering effort</td></tr>
 </table>
 
-<h2>10. Pricing Sources and Verification</h2>
+
+<h2>10. Pricing Sources</h2>
 <table>
 <tr><th>Data Point</th><th>Source(s)</th><th>Confidence</th></tr>
-<tr><td>EC2 g6.12xlarge: $4.6016/hr</td><td>instances.vantage.sh, holori.com, economize.cloud (3 sources)</td><td class="pass">HIGH - Verified</td></tr>
-<tr><td>EC2 g6.48xlarge: $13.3504/hr</td><td>instances.vantage.sh, holori.com, economize.cloud (3 sources)</td><td class="pass">HIGH - Verified</td></tr>
-<tr><td>EC2 g5.12xlarge: $5.672/hr</td><td>instances.vantage.sh, holori.com, economize.cloud (3 sources)</td><td class="pass">HIGH - Verified</td></tr>
-<tr><td>EC2 g5.48xlarge: $16.288/hr</td><td>instances.vantage.sh, devzero.io, economize.cloud (3 sources)</td><td class="pass">HIGH - Verified</td></tr>
-<tr><td>EC2 p4d.24xlarge: $21.9576/hr</td><td>devzero.io (us-east-2 explicit), doit.com (us-east-2), instances.vantage.sh, economize.cloud (4 sources)</td><td class="pass">HIGH - Verified for us-east-2</td></tr>
-<tr><td>EC2 p4de.24xlarge: $27.4471/hr</td><td>instances.vantage.sh, holori.com, economize.cloud, devzero.io (4 sources)</td><td class="pass">HIGH - Verified</td></tr>
-<tr><td>EC2 p5.48xlarge: $55.04/hr</td><td>instances.vantage.sh, devzero.io, economize.cloud, spheron.network (4 sources)</td><td class="pass">HIGH - Verified</td></tr>
-<tr><td>SageMaker ml.g5.12xlarge: ~$7.09/hr</td><td>cloudprice.net ($5,175.70/month / 730h)</td><td class="warn">MEDIUM - Verify at aws.amazon.com/sagemaker/pricing</td></tr>
-<tr><td>SageMaker ml.g5.48xlarge: ~$20.36/hr</td><td>cloudprice.net ($14,862.80/month / 730h)</td><td class="warn">MEDIUM - Verify at aws.amazon.com/sagemaker/pricing</td></tr>
-<tr><td>SageMaker ml.p4d.24xlarge: ~$25.25/hr</td><td>cloudprice.net ($18,433.44/month / 730h)</td><td class="warn">MEDIUM - Verify at aws.amazon.com/sagemaker/pricing</td></tr>
-<tr><td>SageMaker ml.p4de.24xlarge: ~$31.56/hr</td><td>cloudprice.net ($23,041.80/month / 730h)</td><td class="warn">MEDIUM - Verify at aws.amazon.com/sagemaker/pricing</td></tr>
-<tr><td>SageMaker ml.p5.48xlarge: ~$63.29/hr</td><td>cloudprice.net ($46,206.08/month / 730h)</td><td class="warn">MEDIUM - Verify at aws.amazon.com/sagemaker/pricing</td></tr>
-<tr><td>VRAM requirement: ~71 GB (FP16)</td><td>spheron.network GPU recommender</td><td class="pass">HIGH</td></tr>
-<tr><td>Gemma 4 on SageMaker JumpStart</td><td>AWS official announcement (April 2026)</td><td class="pass">HIGH - Official AWS</td></tr>
+<tr><td>EC2 g6.12xlarge: $4.6016/hr</td><td>instances.vantage.sh, holori.com, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>EC2 g6.48xlarge: $13.3504/hr</td><td>instances.vantage.sh, holori.com, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>EC2 g5.12xlarge: $5.672/hr</td><td>instances.vantage.sh, holori.com, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>EC2 g5.48xlarge: $16.288/hr</td><td>instances.vantage.sh, devzero.io, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>EC2 p4d.24xlarge: $21.9576/hr (us-east-2)</td><td>devzero.io (us-east-2 explicit), doit.com (us-east-2), instances.vantage.sh, economize.cloud</td><td class="pass">HIGH (4 sources)</td></tr>
+<tr><td>EC2 p4de.24xlarge: $27.4471/hr</td><td>instances.vantage.sh, holori.com, economize.cloud, devzero.io</td><td class="pass">HIGH (4 sources)</td></tr>
+<tr><td>EC2 p5.48xlarge: $55.04/hr</td><td>instances.vantage.sh, devzero.io, economize.cloud</td><td class="pass">HIGH (3 sources)</td></tr>
+<tr><td>SageMaker ml.g5.12xlarge: ~$7.09/hr</td><td>cloudprice.net ($5,175.70/mo / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
+<tr><td>SageMaker ml.g5.48xlarge: ~$20.36/hr</td><td>cloudprice.net ($14,862.80/mo / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
+<tr><td>SageMaker ml.p4d.24xlarge: ~$25.25/hr</td><td>cloudprice.net ($18,433.44/mo / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
+<tr><td>SageMaker ml.p4de.24xlarge: ~$31.56/hr</td><td>cloudprice.net ($23,041.80/mo / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
+<tr><td>SageMaker ml.p5.48xlarge: ~$63.29/hr</td><td>cloudprice.net ($46,206.08/mo / 730h)</td><td class="warn">MEDIUM - Verify at AWS</td></tr>
 </table>
 
 <div class="disclaimer">
 <strong>DISCLAIMERS:</strong><br>
-1. All prices are <strong>On-Demand</strong> for <strong>us-east-2 (Ohio)</strong>. EC2 GPU pricing confirmed identical in us-east-1 and us-east-2.<br>
-2. SageMaker pricing marked with * is approximate. <strong>Verify at https://aws.amazon.com/sagemaker/pricing/</strong><br>
-3. SageMaker Savings Plans can reduce costs by up to 64% (1-3 year commitment).<br>
-4. Prices do NOT include data transfer, S3 storage, EBS volumes, or ancillary costs.<br>
+1. All prices are <strong>On-Demand</strong> for <strong>us-east-2 (Ohio)</strong> region.<br>
+2. EC2 GPU pricing confirmed identical in us-east-1 and us-east-2.<br>
+3. SageMaker pricing marked * is approximate. <strong>Verify at https://aws.amazon.com/sagemaker/pricing/</strong><br>
+4. Prices do NOT include data transfer, S3 storage, or EBS volumes.<br>
 5. GPU instance availability may require quota increase via AWS Service Quotas.<br>
-6. Pricing data date: June 18, 2026. Always verify current pricing before purchasing.
+6. Pricing data date: June 18, 2026.
 </div>
 
 </body>
