@@ -126,7 +126,7 @@ These are the SageMaker instances that could run Gemma 4 31B. Prices are On-Dema
 
 ## Option 3: SageMaker JumpStart (Skips AEX Entirely)
 
-Good news: Gemma 4 models have been available in SageMaker JumpStart since April 2026. This means we can deploy directly from SageMaker Studio without any manual packaging - JumpStart handles everything.
+Gemma 4 models have been available in SageMaker JumpStart since April 2026. This means we can deploy directly from SageMaker Studio without any manual packaging - JumpStart handles everything.
 
 The catch? It bypasses the AEX pipeline completely, so it doesn't help us understand what AEX needs to fix.
 
