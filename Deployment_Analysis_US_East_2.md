@@ -59,7 +59,7 @@ This path pulls model files from S3 onto an AEX worker node and loads them into 
 | artifact-location | s3://pfn-aex-cmaai-mr-s3-bucket-dev/models/google/gemma-4-31b-it/ |
 | network-type | non-routable |
 
-### Why It Won't Work Today
+### Why It Won't Work for now
 
 | What's Needed | What We Have | The Problem |
 |---|---|---|
@@ -103,7 +103,7 @@ This path packages the model as a tar.gz file, uploads it to S3, and deploys it 
 
 ### What's Still Blocking Us
 
-1. **No staging server** - We need somewhere to download 65 GB from JFrog, compress it, and upload to S3. There's no server set up for this today.
+1. **No staging server** - We need somewhere to download 65 GB from JFrog, compress it, and upload to S3. There's no server set up for this for now.
 2. **The tar.gz step is painful** - Safetensors files barely compress at all. Creating a 65 GB tar.gz takes hours and the output is almost the same size.
 3. **Can't pick the GPU instance** - The workflow only lets us say "yes GPU" or "no GPU." We can't specify that we need an ml.p4d.24xlarge with A100 GPUs.
 4. **No automated JFrog-to-S3 pipeline** - We have to manually move 65 GB from Artifactory to S3, and Lambda can only handle 10 GB max.
@@ -168,7 +168,7 @@ Short answer: **Not possible.** Bedrock only supports Gemma v3, not Gemma 4. No 
 
 ## Full Cost Comparison (Ranked Cheapest to Most Expensive)
 
-| Rank | Path | Through AEX? | Instance | GPU Config | $/Hour | $/Week | $/Month | Works Today? |
+| Rank | Path | Through AEX? | Instance | GPU Config | $/Hour | $/Week | $/Month | Works for now? |
 |---|---|---|---|---|---|---|---|---|
 | 1 | EC2 Self-Hosted | No | g6.12xlarge | 4x L4 (96GB) | $4.60 | $773 | $3,359 | Yes (manual) |
 | 2 | EC2 Self-Hosted | No | g5.12xlarge | 4x A10G (96GB) | $5.67 | $953 | $4,141 | Yes (manual) |
@@ -187,7 +187,7 @@ Short answer: **Not possible.** Bedrock only supports Gemma v3, not Gemma 4. No 
 
 ## What's Stopping Us? (Gap Analysis)
 
-Here's everything that's preventing a smooth deployment through AEX today:
+Here's everything that's preventing a smooth deployment through AEX for now:
 
 | # | The Problem | Where It Stands Now | What We Need | How Bad Is It |
 |---|---|---|---|---|
@@ -329,7 +329,7 @@ AWS provides official, pre-built vLLM containers specifically optimized for depl
 
 ## The Recommended Approach (Combining Solutions 1 + 2 + 3)
 
-Here's the most cost-effective way to deploy Gemma 4 31B through AEX today:
+Here's the most cost-effective way to deploy Gemma 4 31B through AEX for now:
 
 ```
 Step 1: Get nvidia/Gemma-4-31B-IT-NVFP4 from Artifactory (~20 GB)
