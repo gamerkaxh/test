@@ -201,26 +201,6 @@ Here's everything that's preventing a smooth deployment through AEX for now:
 
 ---
 
-## What We Recommend
-
-### Right Now (This Sprint)
-1. Try deploying via **SageMaker JumpStart** on **ml.g5.12xlarge** ($7.09/hr) to prove the model works
-2. Document what we learn for the team
-
-### Next Sprint
-1. Attempt the AEX **"sagemaker"** path with **ml.p4d.24xlarge** and document exactly where it fails
-2. Build an ECS Fargate task to automate JFrog-to-S3 transfers
-3. Add GPU instance type selection to the CMAAI-Model-Service workflow (small code change)
-
-### Longer Term
-1. For production, **ml.p4d.24xlarge** ($25.25/hr) gives the best performance-to-cost ratio
-2. If budget is tight, **g6.12xlarge** ($4.60/hr) works with NVFP4 quantization
-3. Implement model caching, auto-scaling, and proper monitoring
-
----
-
----
-
 ## Possible Solutions to Deploy Gemma 4 31B with AEX
 
 After researching extensively, here are 4 confirmed approaches that can make Gemma 4 31B deployment work through the AEX pipeline at justifiable cost.
@@ -326,38 +306,3 @@ AWS provides official, pre-built vLLM containers specifically optimized for depl
 **Source:** [AWS Deep Learning Containers](https://aws.github.io/deep-learning-containers/), [Deploy on ECS](https://aws.amazon.com/blogs/architecture/deploy-llms-on-amazon-eks-using-vllm-deep-learning-containers/)
 
 ---
-
-## The Recommended Approach (Combining Solutions 1 + 2 + 3)
-
-Here's the most cost-effective way to deploy Gemma 4 31B through AEX for now:
-
-```
-Step 1: Get nvidia/Gemma-4-31B-IT-NVFP4 from Artifactory (~20 GB)
-Step 2: Upload UNCOMPRESSED to S3 using an ECS Fargate transfer task (~$0.50)
-Step 3: Deploy via AEX "sagemaker" model-type with CompressionType=None
-Step 4: Use SageMaker async endpoint with scale-to-zero
-Step 5: Instance: ml.g5.12xlarge ($7.09/hr, only when actively testing)
-```
-
-**Effective cost for dev/testing: ~$7.09/hr only during active inference. $0 when idle.**
-
-### Changes Required in AEX Workflow
-
-| Change | Effort | What It Unblocks |
-|---|---|---|
-| Add `CompressionType: None` support | Small code change | Eliminates tar.gz packaging (biggest blocker) |
-| Add GPU instance type selector | Small code change | Lets us pick ml.g5, ml.p4d, etc. |
-| Add async endpoint option | Medium code change | Enables scale-to-zero ($0 when idle) |
-| Build ECS Fargate task for JFrog → S3 | 1-2 days | Automates the 20 GB file transfer |
-| Support NVFP4 model variant | Documentation only | Reduces model from 65 GB to 20 GB |
-
----
-
-## Important Notes
-
-- All prices are **On-Demand** for **us-east-2 (Ohio)**. EC2 GPU pricing is the same in us-east-1 and us-east-2.
-- SageMaker Savings Plans can cut costs by up to 64% with a 1-3 year commitment.
-- EC2 Spot instances are 60-90% cheaper but can be interrupted at any time.
-- These prices don't include data transfer, S3 storage, or EBS volume costs.
-- SageMaker prices above are approximate (derived from monthly rates). Double-check at aws.amazon.com/sagemaker/pricing before committing budget.
-- You might need to request a GPU quota increase through AWS Service Quotas before you can launch these instances.
