@@ -126,7 +126,7 @@ These are the SageMaker instances that could run Gemma 4 31B. Prices are On-Dema
 
 ## Option 3: SageMaker JumpStart (Skips AEX Entirely)
 
-Gemma 4 models have been available in SageMaker JumpStart since April 2026. This means we can deploy directly from SageMaker Studio without any manual packaging - JumpStart handles everything.
+Good news: Gemma 4 models have been available in SageMaker JumpStart since April 2026. This means we can deploy directly from SageMaker Studio without any manual packaging - JumpStart handles everything.
 
 The catch? It bypasses the AEX pipeline completely, so it doesn't help us understand what AEX needs to fix.
 
@@ -216,6 +216,140 @@ Here's everything that's preventing a smooth deployment through AEX today:
 1. For production, **ml.p4d.24xlarge** ($25.25/hr) gives the best performance-to-cost ratio
 2. If budget is tight, **g6.12xlarge** ($4.60/hr) works with NVFP4 quantization
 3. Implement model caching, auto-scaling, and proper monitoring
+
+---
+
+---
+
+## Possible Solutions to Deploy Gemma 4 31B with AEX
+
+After researching extensively, here are 4 confirmed approaches that can make Gemma 4 31B deployment work through the AEX pipeline at justifiable cost.
+
+### Solution 1: SageMaker Uncompressed Model Deployment (Skip the tar.gz)
+
+The biggest blocker we identified was having to package 65 GB into a tar.gz file. Turns out, **SageMaker supports deploying models directly from S3 without any compression.**
+
+AWS calls this "Deploying Uncompressed Models" and it works by setting `CompressionType: None` with `S3DataType: S3Prefix` in the `S3ModelDataSource` configuration.
+
+**How it works:**
+1. Upload the raw model files (safetensors, config.json, etc.) to an S3 prefix
+2. Point SageMaker to that S3 prefix
+3. SageMaker automatically downloads them to `/opt/ml/model` on the endpoint instance
+
+**What this means for AEX:**
+- Eliminates the entire tar.gz packaging step
+- No staging server needed for compression
+- Just need to get files from JFrog → S3 (which we solve with an ECS transfer task)
+- The CMAAI workflow needs a small code change to pass `CompressionType: None`
+
+**Source:** [AWS Official Documentation - Deploying Uncompressed Models](https://docs.aws.amazon.com/sagemaker/latest/dg/large-model-inference-uncompressed.html)
+
+---
+
+### Solution 2: Use the NVFP4 Quantized Model (~20 GB instead of 65 GB)
+
+NVIDIA maintains an official quantized version of Gemma 4 31B called `nvidia/Gemma-4-31B-IT-NVFP4`. This shrinks the model dramatically while keeping quality nearly identical.
+
+| Spec | Full Model | NVFP4 Quantized |
+|---|---|---|
+| Size on disk | ~65 GB | ~20 GB |
+| GPU VRAM needed | ~71 GB | ~45 GB |
+| Quality loss | Baseline | 1-3% degradation |
+| Minimum GPU | 1x A100 80GB | 4x A10G with TP=4 (96 GB total) |
+
+**Why this is a game-changer for AEX:**
+- 20 GB is much easier to transfer, store, and deploy
+- Fits comfortably within increased ECS ephemeral storage (even 50 GiB would work)
+- Tar.gz of 20 GB is practical (if still needed for older workflow path)
+- Makes the cheapest instances viable (ml.g5.12xlarge at $7.09/hr)
+
+**Important note:** Native NVFP4 execution requires Blackwell-architecture GPUs (sm_120+). On A10G/A100 GPUs, the model still runs but may use a slightly different precision path. This needs testing.
+
+**Source:** [nvidia/Gemma-4-31B-IT-NVFP4 on HuggingFace](https://huggingface.co/nvidia/Gemma-4-31B-IT-NVFP4)
+
+---
+
+### Solution 3: SageMaker Async Inference with Scale-to-Zero (Pay Only When Testing)
+
+For dev and testing, there's no reason to keep a $25/hr GPU instance running 24/7. SageMaker Async Inference lets you **scale to zero instances** when there are no requests — meaning you pay absolutely nothing when idle.
+
+**How it works:**
+- Deploy an async endpoint instead of a real-time endpoint
+- Set `MinInstanceCount: 0` in the auto-scaling policy
+- When a request comes in, SageMaker spins up the instance (cold start ~5-15 min)
+- After processing, if no more requests come, it scales back to zero
+- Processing timeout: up to **60 minutes** (vs 60 seconds for real-time)
+
+**Cost impact:**
+
+| Scenario | Real-time Endpoint (24/7) | Async (Scale to Zero) |
+|---|---|---|
+| ml.g5.12xlarge running all day | $170.16/day | Only hours you actually use it |
+| 2 hours of testing per day | Still $170.16/day | **$14.18/day** |
+| Weekend (no testing) | Still $170.16/day | **$0/day** |
+| Monthly (testing 2hr/day weekdays) | $5,175/month | **~$310/month** |
+
+**What this means for AEX:**
+- The CMAAI workflow would need an option to deploy as async vs real-time
+- Perfect for the exploration/dev phase of this story
+- Solves the 60-second timeout problem for long outputs (async allows 60 min)
+
+**Source:** [AWS Async Inference Documentation](https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference.html), [Scale to Zero](https://docs.aws.amazon.com/sagemaker/latest/dg/endpoint-auto-scaling-zero-instances.html)
+
+---
+
+### Solution 4: AWS vLLM Deep Learning Container on ECS on EC2 (Free Container)
+
+AWS provides official, pre-built vLLM containers specifically optimized for deploying LLMs on ECS, EC2, and EKS. These containers are **completely free** — you only pay for the compute.
+
+**What's included:**
+- vLLM inference engine (latest version)
+- NVIDIA GPU drivers and CUDA
+- OpenAI-compatible API server on port 8000
+- Tensor parallelism support built-in
+- Continuous batching for high throughput
+
+**How this helps the AEX "huggingface" path:**
+- No need to build a custom container — AWS maintains it
+- Model is pulled from S3 at container startup (not baked into image) — **bypasses the ECR 52 GB layer limit**
+- Tensor parallelism is configurable at launch
+- The AEX `huggingface` model-type would use this container on ECS with EC2 GPU instances
+
+**What AEX needs to change:**
+- Switch from ECS Fargate → ECS on EC2 with GPU instances
+- Use the AWS vLLM DLC image instead of a custom image
+- Configure ephemeral storage to 200 GiB
+- Pass model S3 path as environment variable to the container
+
+**Cost:** Just the EC2 instance — cheapest is g6.12xlarge at **$4.60/hr**
+
+**Source:** [AWS Deep Learning Containers](https://aws.github.io/deep-learning-containers/), [Deploy on ECS](https://aws.amazon.com/blogs/architecture/deploy-llms-on-amazon-eks-using-vllm-deep-learning-containers/)
+
+---
+
+## The Recommended Approach (Combining Solutions 1 + 2 + 3)
+
+Here's the most cost-effective way to deploy Gemma 4 31B through AEX today:
+
+```
+Step 1: Get nvidia/Gemma-4-31B-IT-NVFP4 from Artifactory (~20 GB)
+Step 2: Upload UNCOMPRESSED to S3 using an ECS Fargate transfer task (~$0.50)
+Step 3: Deploy via AEX "sagemaker" model-type with CompressionType=None
+Step 4: Use SageMaker async endpoint with scale-to-zero
+Step 5: Instance: ml.g5.12xlarge ($7.09/hr, only when actively testing)
+```
+
+**Effective cost for dev/testing: ~$7.09/hr only during active inference. $0 when idle.**
+
+### Changes Required in AEX Workflow
+
+| Change | Effort | What It Unblocks |
+|---|---|---|
+| Add `CompressionType: None` support | Small code change | Eliminates tar.gz packaging (biggest blocker) |
+| Add GPU instance type selector | Small code change | Lets us pick ml.g5, ml.p4d, etc. |
+| Add async endpoint option | Medium code change | Enables scale-to-zero ($0 when idle) |
+| Build ECS Fargate task for JFrog → S3 | 1-2 days | Automates the 20 GB file transfer |
+| Support NVFP4 model variant | Documentation only | Reduces model from 65 GB to 20 GB |
 
 ---
 
