@@ -6,7 +6,7 @@
 - **Sprint:** Cat Digital 2026 | Sprint 12 (Jun 10 - Jun 23)
 - **Author:** Sowndarya Kurapati
 - **Date:** June 18, 2026
-- **Region:** us-east-1 (pricing based on this region)
+- **Region:** us-east-2 (Ohio) - pricing based on this region
 
 ---
 
@@ -88,22 +88,22 @@ Model is packaged as model.tar.gz, uploaded to S3, deployed to a SageMaker real-
 | artifact-location | s3://pfn-aex-cmaai-mr-s3-bucket-dev/models/google/gemma-4-31b-it/model.tar.gz |
 | network-type | routable |
 
-### Instance Options and Pricing (SageMaker Real-Time Inference - us-east-1)
+### Instance Options and Pricing (SageMaker Real-Time Inference - us-east-2 Ohio)
 
-All prices below are On-Demand, per-instance, for the us-east-1 region.
+All prices below are On-Demand, per-instance, for the us-east-2 (Ohio) region.
 
 | Instance Type | vCPUs | RAM (GiB) | GPUs | GPU Type | VRAM per GPU | Total VRAM | Can Run Gemma 4 31B? | Tensor Parallel | Price/Hour | Price/Day (24h) | Price/Week (168h) | Price/Month (730h) |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | ml.g5.12xlarge | 48 | 192 | 4 | NVIDIA A10G | 24 GB | 96 GB | Yes (tight, needs quantization) | TP=4 | $7.09 | $170.16 | $1,191.12 | $5,175.70 |
 | ml.g5.48xlarge | 192 | 768 | 8 | NVIDIA A10G | 24 GB | 192 GB | Yes | TP=4 | $20.36 | $488.64 | $3,420.48 | $14,862.80 |
-| ml.p4d.24xlarge | 96 | 1152 | 8 | NVIDIA A100 40GB | 40 GB | 320 GB | Yes | TP=2 | $25.25 | $606.00 | $4,242.00 | $18,432.50 |
-| ml.p4de.24xlarge | 96 | 1152 | 8 | NVIDIA A100 80GB | 80 GB | 640 GB | Yes (single GPU capable) | TP=1 | $33.52 | $804.48 | $5,631.36 | $24,469.60 |
-| ml.p5.48xlarge | 192 | 2048 | 8 | NVIDIA H100 80GB | 80 GB | 640 GB | Yes (single GPU capable, fastest) | TP=1 | $63.29 | $1,518.96 | $10,632.72 | $46,201.70 |
+| ml.p4d.24xlarge | 96 | 1152 | 8 | NVIDIA A100 40GB | 40 GB | 320 GB | Yes | TP=2 | $25.25 | $606.00 | $4,242.00 | $18,433.44 |
+| ml.p4de.24xlarge | 96 | 1152 | 8 | NVIDIA A100 80GB | 80 GB | 640 GB | Yes (single GPU capable) | TP=1 | $31.56 | $757.44 | $5,302.08 | $23,041.80 |
+| ml.p5.48xlarge | 192 | 2048 | 8 | NVIDIA H100 80GB | 80 GB | 640 GB | Yes (single GPU capable, fastest) | TP=1 | $63.29 | $1,518.96 | $10,632.72 | $46,206.08 |
 
 **Notes:**
-- SageMaker pricing includes managed infrastructure (auto-scaling, health checks, endpoint management)
-- SageMaker pricing is approximately 15-25% higher than raw EC2 equivalent
 - Prices sourced from [cloudprice.net](https://cloudprice.net/aws/sagemaker) and AWS pricing pages
+- SageMaker pricing derived from cloudprice.net monthly rates divided by 730 hours
+- EC2 GPU pricing confirmed identical in us-east-1 and us-east-2 (verified devzero.io, doit.com)
 
 ### Feasibility Assessment
 
@@ -139,8 +139,8 @@ Gemma 4 models are pre-registered in SageMaker JumpStart (available since April 
 |---|---|---|---|---|
 | ml.g5.12xlarge | $7.09 | $170.16 | $1,191.12 | $5,175.70 |
 | ml.g5.48xlarge | $20.36 | $488.64 | $3,420.48 | $14,862.80 |
-| ml.p4d.24xlarge | $25.25 | $606.00 | $4,242.00 | $18,432.50 |
-| ml.p5.48xlarge | $63.29 | $1,518.96 | $10,632.72 | $46,201.70 |
+| ml.p4d.24xlarge | $25.25 | $606.00 | $4,242.00 | $18,433.44 |
+| ml.p5.48xlarge | $63.29 | $1,518.96 | $10,632.72 | $46,206.08 |
 
 ### Verdict: WORKS TODAY - but not integrated with AEX pipeline. Best for immediate dev/testing.
 
@@ -151,20 +151,21 @@ Gemma 4 models are pre-registered in SageMaker JumpStart (available since April 
 ### How It Works
 Launch a GPU EC2 instance, install vLLM, download model from S3, serve via OpenAI-compatible API.
 
-### Instance Options and Pricing (EC2 On-Demand - us-east-1)
+### Instance Options and Pricing (EC2 On-Demand - us-east-2 Ohio)
 
 | Instance Type | vCPUs | RAM (GiB) | GPUs | GPU Type | VRAM per GPU | Total VRAM | Can Run Gemma 4 31B? | Tensor Parallel | Price/Hour | Price/Day (24h) | Price/Week (168h) | Price/Month (730h) |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| g6.12xlarge | 48 | 192 | 4 | NVIDIA L4 | 24 GB | 96 GB | Yes (quantized NVFP4 only) | TP=4 | $4.60 | $110.40 | $772.80 | $3,358.00 |
-| g6.48xlarge | 192 | 768 | 8 | NVIDIA L4 | 24 GB | 192 GB | Yes | TP=4 | $13.35 | $320.40 | $2,242.80 | $9,745.50 |
-| g5.12xlarge | 48 | 192 | 4 | NVIDIA A10G | 24 GB | 96 GB | Yes (quantized or tight FP16) | TP=4 | $5.67 | $136.08 | $952.56 | $4,139.00 |
-| g5.48xlarge | 192 | 768 | 8 | NVIDIA A10G | 24 GB | 192 GB | Yes | TP=4 | $16.29 | $390.96 | $2,736.72 | $11,892.00 |
-| p4d.24xlarge | 96 | 1152 | 8 | NVIDIA A100 40GB | 40 GB | 320 GB | Yes | TP=2 | $21.96 | $526.98 | $3,688.87 | $16,029.08 |
-| p4de.24xlarge | 96 | 1152 | 8 | NVIDIA A100 80GB | 80 GB | 640 GB | Yes (single GPU) | TP=1 | $27.45 | $658.73 | $4,611.10 | $20,036.35 |
+| g6.12xlarge | 48 | 192 | 4 | NVIDIA L4 | 24 GB | 96 GB | Yes (quantized NVFP4 only) | TP=4 | $4.6016 | $110.44 | $773.07 | $3,359.17 |
+| g6.48xlarge | 192 | 768 | 8 | NVIDIA L4 | 24 GB | 192 GB | Yes | TP=4 | $13.3504 | $320.41 | $2,242.87 | $9,745.79 |
+| g5.12xlarge | 48 | 192 | 4 | NVIDIA A10G | 24 GB | 96 GB | Yes (quantized or tight FP16) | TP=4 | $5.672 | $136.13 | $952.90 | $4,140.56 |
+| g5.48xlarge | 192 | 768 | 8 | NVIDIA A10G | 24 GB | 192 GB | Yes | TP=4 | $16.288 | $390.91 | $2,736.38 | $11,890.24 |
+| p4d.24xlarge | 96 | 1152 | 8 | NVIDIA A100 40GB | 40 GB | 320 GB | Yes | TP=2 | $21.9576 | $527.00 | $3,688.88 | $16,029.05 |
+| p4de.24xlarge | 96 | 1152 | 8 | NVIDIA A100 80GB | 80 GB | 640 GB | Yes (single GPU) | TP=1 | $27.4471 | $658.73 | $4,611.11 | $20,036.38 |
 | p5.48xlarge | 192 | 2048 | 8 | NVIDIA H100 80GB | 80 GB | 640 GB | Yes (single GPU, fastest) | TP=1 | $55.04 | $1,320.96 | $9,246.72 | $40,179.20 |
 
 **Notes:**
-- Prices sourced from [instances.vantage.sh](https://instances.vantage.sh) and [economize.cloud](https://economize.cloud)
+- Prices sourced from [instances.vantage.sh](https://instances.vantage.sh), [economize.cloud](https://economize.cloud), and [devzero.io](https://devzero.io)
+- EC2 GPU pricing confirmed identical in us-east-1 and us-east-2 (verified via devzero.io and doit.com for us-east-2)
 - EC2 pricing is raw compute only - does not include management overhead
 - Requires manual setup: vLLM installation, model download, monitoring, scaling
 
@@ -189,18 +190,18 @@ Launch a GPU EC2 instance, install vLLM, download model from S3, serve via OpenA
 
 | Rank | Deployment Path | Through AEX? | Instance | GPU | $/Hour | $/Day | $/Week | $/Month | Feasible Today? |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | EC2 Self-Hosted | No | g6.12xlarge | 4x L4 (96GB) | $4.60 | $110.40 | $772.80 | $3,358.00 | Yes (manual setup) |
-| 2 | EC2 Self-Hosted | No | g5.12xlarge | 4x A10G (96GB) | $5.67 | $136.08 | $952.56 | $4,139.00 | Yes (manual setup) |
+| 1 | EC2 Self-Hosted | No | g6.12xlarge | 4x L4 (96GB) | $4.6016 | $110.44 | $773.07 | $3,359.17 | Yes (manual setup) |
+| 2 | EC2 Self-Hosted | No | g5.12xlarge | 4x A10G (96GB) | $5.672 | $136.13 | $952.90 | $4,140.56 | Yes (manual setup) |
 | 3 | AEX → SageMaker | Yes | ml.g5.12xlarge | 4x A10G (96GB) | $7.09 | $170.16 | $1,191.12 | $5,175.70 | Likely Yes |
-| 4 | EC2 Self-Hosted | No | g6.48xlarge | 8x L4 (192GB) | $13.35 | $320.40 | $2,242.80 | $9,745.50 | Yes (manual setup) |
-| 5 | EC2 Self-Hosted | No | g5.48xlarge | 8x A10G (192GB) | $16.29 | $390.96 | $2,736.72 | $11,892.00 | Yes (manual setup) |
+| 4 | EC2 Self-Hosted | No | g6.48xlarge | 8x L4 (192GB) | $13.3504 | $320.41 | $2,242.87 | $9,745.79 | Yes (manual setup) |
+| 5 | EC2 Self-Hosted | No | g5.48xlarge | 8x A10G (192GB) | $16.288 | $390.91 | $2,736.38 | $11,890.24 | Yes (manual setup) |
 | 6 | AEX → SageMaker | Yes | ml.g5.48xlarge | 8x A10G (192GB) | $20.36 | $488.64 | $3,420.48 | $14,862.80 | Likely Yes |
-| 7 | EC2 Self-Hosted | No | p4d.24xlarge | 8x A100-40GB (320GB) | $21.96 | $526.98 | $3,688.87 | $16,029.08 | Yes |
-| 8 | AEX → SageMaker | Yes | ml.p4d.24xlarge | 8x A100-40GB (320GB) | $25.25 | $606.00 | $4,242.00 | $18,432.50 | Yes |
-| 9 | EC2 Self-Hosted | No | p4de.24xlarge | 8x A100-80GB (640GB) | $27.45 | $658.73 | $4,611.10 | $20,036.35 | Yes |
-| 10 | AEX → SageMaker | Yes | ml.p4de.24xlarge | 8x A100-80GB (640GB) | $33.52 | $804.48 | $5,631.36 | $24,469.60 | Yes |
+| 7 | EC2 Self-Hosted | No | p4d.24xlarge | 8x A100-40GB (320GB) | $21.9576 | $527.00 | $3,688.88 | $16,029.05 | Yes |
+| 8 | AEX → SageMaker | Yes | ml.p4d.24xlarge | 8x A100-40GB (320GB) | $25.25 | $606.00 | $4,242.00 | $18,433.44 | Yes |
+| 9 | EC2 Self-Hosted | No | p4de.24xlarge | 8x A100-80GB (640GB) | $27.4471 | $658.73 | $4,611.11 | $20,036.38 | Yes |
+| 10 | AEX → SageMaker | Yes | ml.p4de.24xlarge | 8x A100-80GB (640GB) | $31.56 | $757.44 | $5,302.08 | $23,041.80 | Yes |
 | 11 | EC2 Self-Hosted | No | p5.48xlarge | 8x H100-80GB (640GB) | $55.04 | $1,320.96 | $9,246.72 | $40,179.20 | Yes |
-| 12 | AEX → SageMaker | Yes | ml.p5.48xlarge | 8x H100-80GB (640GB) | $63.29 | $1,518.96 | $10,632.72 | $46,201.70 | Yes |
+| 12 | AEX → SageMaker | Yes | ml.p5.48xlarge | 8x H100-80GB (640GB) | $63.29 | $1,518.96 | $10,632.72 | $46,206.08 | Yes |
 
 ---
 
@@ -252,9 +253,9 @@ Launch a GPU EC2 instance, install vLLM, download model from S3, serve via OpenA
 
 ## IMPORTANT DISCLAIMERS
 
-1. All prices are **On-Demand** pricing for **us-east-1** region. Actual prices may vary by region.
+1. All prices are **On-Demand** pricing for **us-east-2 (Ohio)** region. EC2 GPU pricing confirmed identical in us-east-1 and us-east-2.
 2. SageMaker Savings Plans can reduce costs by up to 64% with 1-3 year commitments.
 3. EC2 Spot instances can reduce costs by 60-90% but may be interrupted.
 4. Prices do not include data transfer, S3 storage, or other ancillary costs.
-5. **Always verify current pricing at https://aws.amazon.com/sagemaker/pricing/ and https://aws.amazon.com/ec2/pricing/on-demand/ before making purchasing decisions.**
+5. SageMaker pricing derived from cloudprice.net monthly rates. **Verify at https://aws.amazon.com/sagemaker/pricing/ (select US East Ohio) and https://aws.amazon.com/ec2/pricing/on-demand/ before making purchasing decisions.**
 6. GPU instance availability may be limited and may require quota increase requests via AWS Service Quotas console.
