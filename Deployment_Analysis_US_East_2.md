@@ -306,3 +306,53 @@ AWS provides official, pre-built vLLM containers specifically optimized for depl
 **Source:** [AWS Deep Learning Containers](https://aws.github.io/deep-learning-containers/), [Deploy on ECS](https://aws.amazon.com/blogs/architecture/deploy-llms-on-amazon-eks-using-vllm-deep-learning-containers/)
 
 ---
+
+
+
+## Findings from Technical Discussion with Phil Hall (June 17, 2026)
+
+After reviewing the initial analysis, Phil provided key architectural context about how the Model Repo actually works.
+
+### How the Model Repo Works
+
+The Model Repo is built on a **handler pattern**:
+- The core code doesn't know or care how individual models work
+- It has a contract with **two handler methods** per model type:
+  1. **Registration handler** — knows where to get the model and how to store its metadata
+  2. **Inference handler** — knows how to run the model and return results
+- Existing handlers: `huggingface`, `sagemaker`, `mlflow`, `pythonpackage`, `llmobject`
+- Handlers are lightweight — just a few methods each
+
+### Phil's Recommended Solution
+
+1. Deploy Gemma 4 31B on **SageMaker JumpStart** (it's already there, ready to use)
+2. Write a **new handler** (e.g., `jumpstart` model type) that:
+   - **Registration:** Stores the SageMaker endpoint info (endpoint name, region, input/output format)
+   - **Inference:** Proxies requests from Model Repo → SageMaker endpoint → returns response
+3. To end-users, the model looks like any other Model Repo model
+
+### Architecture
+
+```
+Caterpillar Teams → Model Repo API → "jumpstart" handler → SageMaker JumpStart Endpoint → Response
+```
+
+### Why AEX Hosts Centrally
+
+- Many teams at Caterpillar would all try to host the same model separately
+- Costs would explode with duplicate infrastructure
+- AEX team hosts once, handles the complexity, other teams just call the API
+
+### Next Steps
+
+1. Deploy Gemma 4 31B on SageMaker JumpStart (Ankush has SageMaker experience)
+2. Write a `jumpstart` handler for the Model Repo (reference existing handlers as templates)
+3. Register the model and test end-to-end inference through Model Repo
+
+## Acceptance Criteria Status
+
+| Criteria | Status | Evidence |
+|---|---|---|
+| Attempt to deploy gemma-4-31b-it in Dev through AEX | Explored | Identified all 5 AEX model-types; documented which work and which don't |
+| Summarize issues or gaps preventing deployment | Complete | 12 gaps documented + solution identified (JumpStart handler) |
+| If successfully deployed, verify inference | Next sprint | Deploy on JumpStart + write handler (Phil's recommended approach) |
