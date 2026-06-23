@@ -1,0 +1,1934 @@
+AVT: DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning
+
+
+
+By Dmitry Ornatsky
+
+
+30 min
+
+Listen
+
+227
+
+Add a reaction
+Attachments
+Attachments
+App IconMarkdown Editor
+CATERPILLAR: CONFIDENTIAL GREEN
+  
+Roles and Responsibilities
+Optional Attendees:
+Non Helios Core Team
+Source Links
+Assumptions
+Decisions
+Solutions Design
+AI Context Service
+Knowledge Base Service
+GenAI Service
+Sample requests and responses
+genAI/instantiate
+genAI/getResults
+/maskThis endpoint will do regex masking, open ai masking (Call to GenAI Service), and model masking as a service
+Logging/Monitoring
+Error Handling/Retry
+Questions
+Vector Database
+Colocation/Recommendation/Events Schema
+API
+Condition Monitoring V3
+Recommendations V2
+Models Supported
+Platform Work Breakdown and Feature Decomposition
+Translation features
+Entitlement features
+LTA’s
+Work Breakdown
+High Level APIs
+Snowflake Role
+AWS Account
+Dependencies
+Test Approach
+ Test Data
+Deployment
+Application Features: In and Out-of-Scope
+Open Risks/Issues
+AVT Close-Out
+AVT Session Video Recording Links
+Roshan HindiaDmitry OrnatskyHarinath ManchanaCasey BennettSarath ManoharanKevin GasiorowskiDylan DristeJustin RicePaul AmadeoVijayaraj VaradarajanTejas Ravindra BaingFelix ShulmanNitin PatidarNAVED BAIGHarini AnandEvgeny Kochnev
+Roshan HindiaDmitry OrnatskyJustin RiceNitin PatidarCasey BennettPaul AmadeoSimran SharmaPaul PotockiDylan DristeKevin GasiorowskiTejas Ravindra BaingEvgeny KochnevHarinath ManchanaOliver TsoHarini AnandFelix ShulmanSarath Manoharan
+Roshan HindiaJustin RiceNitin PatidarCasey BennettPaul AmadeoSimran SharmaDylan DristeKevin GasiorowskiTejas Ravindra BaingEvgeny KochnevHarinath ManchanaNaved BaigHarini Anand
+Roshan HindiaJustin RiceNitin PatidarCasey BennettPaul PotockiKevin GasiorowskiSarath ManoharanFelix ShulmanPaul BrownEvgeny KochnevHarinath ManchanaHarini AnandMark PotockiVijayaraj Varadarajan
+Roshan HindiaHarini AnandPaul PotockiFelix ShulmanJustin RiceKevin GasiorowskiHarinath ManchanaDylan DristeEvgeny KochnevCasey BennettSarath ManoharanPaul BrownNitin PatidarAbhishek Tiwary
+Roshan HindiaTejas Ravindra BaingKevin GasiorowskiNitin PatidarSarath ManoharanEvgeny KochnevSimran SharmaHarini AnandCasey BennettPaul BrownPaul PotockiDylan DristeMark PotockiAbhishek TiwaryJustin RiceFelix ShulmanHarinath Manchana
+Roshan HindiaCasey BennettJustin RiceEvgeny KochnevHarini AnandTejas Ravindra BaingKevin GasiorowskiHarinath ManchanaMark PotockiNAVED BAIG
+Roshan HindiaHarini AnandSimran SharmaKevin GasiorowskiOliver TsoTejas Ravindra BaingJustin RiceSarath ManoharanDylan DristeMark PotockiFelix ShulmanHarinath ManchanaNAVED BAIG
+Roshan HindiaMark PotockiCasey BennettJustin RiceFelix ShulmanHarini AnandHarinath ManchanaKevin Gasiorowski
+Roshan HindiaCasey BennettPaul PotockiHarini AnandMark PotockiTejas Ravindra BaingNitin PatidarJustin RicePaul BrownHarinath ManchanaNate ConnerAbhishek TiwaryFelix ShulmanKevin GasiorowskiEvgeny KochnevVijayaraj VaradarajanSarath Manoharan
+Roshan HindiaJustin RiceNate ConnerKevin GasiorowskiPaul PotockiCasey BennettHarini AnandHarinath Manchana
+Roshan HindiaEvgeny KochnevHarinath ManchanaFelix ShulmanJustin RiceAlexey ZyuzinNAVED BAIGTejas Ravindra BaingNitin PatidarPaul Potocki
+Roshan HindiaKevin GasiorowskiHarini AnandJustin RicePaul PotockiNate ConnerNAVED BAIGHarinath Manchana
+Roshan HindiaHarinath ManchanaJustin RiceNitin PatidarTejas Ravindra BaingFelix ShulmanFarkhad BikmuratovEvgeny KochnevHarini AnandNAVED BAIGPratik Mehra
+Roshan HindiaMark PotockiNate ConnerKevin GasiorowskiJustin RiceHarini AnandLu BaiNitin PatidarHarinath ManchanaNAVED BAIGPratik MehraAbhishek Tiwary
+Roshan HindiaTejas Ravindra BaingEvgeny KochnevJustin RiceNitin PatidarFelix ShulmanAlexey ZyuzinHarinath ManchanaSimran SharmaNAVED BAIG
+Roshan HindiaFelix ShulmanNate ConnerJustin RiceHarini AnandNitin PatidarDmitry YakushevPratik MehraKevin GasiorowskiEvgeny KochnevAbhishek Tiwary
+Roshan HindiaJustin RiceHarinath ManchanaHarini AnandVishal SuchakVijay VadlamaniBrian GolubNitin PatidarAlexey ZyuzinKaunish PatelAbhishek TiwarySrujan Kumar PasulaPratik MehraFelix Shulman
+Roshan HindiaAbhishek TiwaryPaul PotockiJustin RiceNate ConnerHarini AnandHarinath ManchanaKevin Gasiorowski
+Roshan HindiaPratik MehraDmitry YakushevKevin GasiorowskiHarinath ManchanaNAVED BAIGJustin Rice
+Roshan HindiaVijay VadlamaniBrian GolubSrujan Kumar PasulaKaunish PatelVishal SuchakHarini AnandHarinath ManchanaZach Cordes
+Roshan HindiaMark PotockiNAVED BAIGJustin RiceSarath ManoharanKevin GasiorowskiHarini AnandHarinath ManchanaNitin PatidarPratik Mehra
+Roshan HindiaKaunish PatelNitin PatidarTejas Ravindra BaingAbhishek TiwaryFelix ShulmanHarinath ManchanaJustin RiceKevin GasiorowskiNAVED BAIGHarini AnandAlexey ZyuzinPratik MehraVijay VadlamaniVishal Suchak
+Roshan HindiaShareen WahabSneha Rathi Manoj RathiSaini SophiaJustin RiceHarini AnandHarinath ManchanaAbhishek Tiwary
+Roshan HindiaKevin GasiorowskiMark PotockiOliver TsoSarath ManoharanJustin RiceHarini AnandHarinath ManchanaNAVED BAIGDmitry YakushevAbhishek Tiwary
+Justin RiceTravis BusenRoshan Hindia
+Justin RiceTravis BusenRoshan HindiaLu BaiFelix ShulmanVenkatesh JayaprakashSamuel SotoAlan Doty
+Roshan HindiaJustin RiceSamuel SotoKevin GasiorowskiTravis BusenFelix ShulmanPaul Potocki
+Roshan HindiaSamuel SotoJustin RiceKevin GasiorowskiFelix ShulmanEvgeny KochnevAtul AnkolaTravis BusenKonstantin SorochanIryna KorzhovaHarini Anand
+Roshan HindiaSamuel SotoBenjamin GreeneTravis BusenFelix ShulmanKonstantin SorochanJustin RiceKevin GasiorowskiEvgeny KochnevSimran SharmaNAVED BAIG
+Post AVT Design Sessions:
+Knowledge Base Safety Info-20240226_103151-Meeting Recording.mp4
+Roles and Responsibilities
+
+Lead: @Justin Rice 
+Helios Platform Core Team
+Systems Architect @Harini Anand (Unlicensed) 
+Engineering Champion: Travis Busen (current) / @Harinath Manchana  (before AI re-org)
+Platform System Engineering Members: @Steven Buster @Paul Potocki (Unlicensed) @Tejas Ravindra Baing @Kevin Gasiorowski @Evgeny Kochnev @Sarath Manoharan 
+Platform Product Management: @NAVED BAIG 
+Facilitator: @Roshan Hindia 
+
+System & Integration Test (SIT) team members should be assigned to each AVT Core Team:
+FM 3.0 - For assignment contact @Gangadhar Devulapalli @Suresh Ganesan @Pavel Mashin
+Foresight - @Pratik Mehra @Narasimhan Ranganathan
+Customer Master - @Shilpa Prakash @Narasimhan Ranganathan
+Marketable Contracts - @Shilpa Prakash @Narasimhan Ranganathan
+For all other programs should consult with @Bhaskar Balu or @George Makovic
+
+Cat Digital Support & Operations team members should be invited to all AVTs (AVT kick-off, close-out and major milestones meetings)
+Contact @Deirdre Schlink @Yajur Parikh cc: @James Stephens
+Optional Attendees:
+
+Product Owners (must be invited to close-out meeting)
+Non Helios Core Team
+
+
+In this section participants from external teams have to be listed with team names and their roles. All external teams involved in the solution must be represented in AVT kick off, working sessions and the sign off.
+ 
+Team
+Name
+Foresight APP
+@Roshan Hindia 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Source Links
+
+High-Level Architecture (HLA): 
+CMA AI Assistant 
+Application Epics and Features (Requirements and Wireframes):  Epic 1143831: CMA AI Assistant MVP
+AVT ADO: Feature 1190753: AVT DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning
+Platform Epic in ADO:
+ 
+Assumptions
+
+
+If applicable, please record any notable information that would provide more clarity in terms of the planned releases involved, the teams, the Platform and non-Platform services, etc.
+PII AI steps are not full proof and may not identify all required information to remove. CAT CMA’s will be responsible for validating the AI generated content before using it.
+Since we are using the global instance of Microsofts OpenAI we are not guaranteed a specific SLA meaning that the run time of this solution cannot be guaranteed.
+MVP scope has been limited to PL Events only. poSOS and CAT INSPECT will not be included.
+
+Decisions
+
+Decision 1346961: CMA AI Assistant - Exclude SIS Safety Messages from Gen AI Data Processing
+Solutions Design
+
+
+In this section, including: 1) Detailed component-level solution design, 2) description of components, 3) initial data model, 4) key data flows, 5) any Helios Platform and non-Platform dependencies, etc.
+
+If there is any information that would classify this section as Caterpillar: Confidential Yellow, please move the information to a separate Confluence page and follow the “Managing Confluence Confidential Green and Yellow Content” guidelines for Access Control and Markings. A link can then be included on this page for the Confidential Yellow information.
+All LTA’s are Caterpillar: Confidential Yellow and should be saved to the SharePoint site and linked in this document.
+ 
+Reboot Design
+
+Open image-20240209-132725.png
+image-20240209-132725.png
+ 
+
+
+Click here to expand...
+
+
+
+
+
+
+
+
+
+
+
+
+
+Open image-20240212-140905.png
+image-20240212-140905.png
+ 
+
+
+Click here to expand...
+ 
+Open summary_v4.png
+summary_v4.png
+ 
+
+
+Click here to expand...
+AI Context Service
+
+/create
+/update/{id}
+/delete/{id}
+/approved
+Implementation design decision needs to be made to determine the best approach for populating placeholders in the prompt text. For example the prompt text may require input from the client i.e. the SIS Summary text, but it may also require additional metadata from the Knowledge Base i.e. Serial Number Prefix, Rollup Key, etc. Gen AI service and Prompts need to agree on how to do the substitution. Ideally Gen AI service would fail if prompt substitution fails.
+ 
+prompt schema
+AI Context API will allow the request to specify the prompt versions for each type (human/system) only when the AI context object is approved = false. If approved = true then the api will return the latest approved prompt versions for the given prompt names. It is assumed that a prompt is not set to approved unless it has been fully tested with an AI context.
+Proposed Tables
+prompt table schema
+
+
+
+CREATE TABLE prompts (
+  promptId UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- auto generated
+  promptName TEXT NOT NULL UNIQUE, -- Unique constraint
+  promptType TEXT NOT NULL CHECK (promptType IN ('system', 'human', 'query')) UNIQUE, -- Enum system, human, query // Unique constraint
+  version NUMERIC(2, 1) NOT NULL UNIQUE, -- Unique constraint
+  input TEXT[],
+  approved BOOLEAN,
+  text TEXT
+);
+
+
+
+"promptId": "144e86f6-94f3-4f04-9c5d-8df9458390", // auto generated
+"promptName": "extraction", // Unique constraint
+"promptType": "system" // Enum system, human, query // Unique constraint
+"version": 1.0, // Unique constraint
+"input": ["recommendationText"],
+"approved": true,
+"text": "Extract the probable causes, recommended actions from {recommendationText} in the following format...",
+prompt context table schema
+
+
+
+CREATE TABLE prompt_context (
+  contextId UUID PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE, -- Unique constraint
+  systemPrompt TEXT,
+  humanPrompt TEXT,
+  queryPrompt TEXT,
+  knowledgeBaseCriteria JSONB,
+  qualityModel TEXT,
+  qualityThreshold NUMERIC(3, 2),
+  largeLanguageModel TEXT,
+  tokenThreshold INTEGER,
+  temperature NUMERIC(4, 1),
+  maxTries INTEGER
+);
+
+
+
+{
+  "contextId": "782e86f6-94f3-4f04-9c5d-8df9458863",
+  "name": "recommendation_extraction",
+  "systemPrompt": "extraction", // prompt name
+  "humanPrompt": "recommendation_extraction", // prompt name
+  "queryPrompt": "pl_event_similiarity", // prompt name
+  "knowledgeBaseCriteria": {
+    "searchVectors": [
+      { "name": "possible_causes", "weight": 70.0 },
+      { "name": "recommended_action", "weight": 30.0 }
+    ]
+  },
+  "qualityModel": "aex.endpoint",
+  "qualityThreshold": 0.65,
+  "largeLanguageModel": "ChatGPT4.0",
+  "tokenThreshold": 3000,
+  "temperature": 50.0,
+  "maxTries": 3
+}
+Sample API Response
+
+
+
+{
+  "id": "359e86f6-94f3-4f04-9c5d-8df9458412",
+  "name": "sis_summary",
+  "knowledgeBaseCriteria": {
+    "searchVectors": [
+      { "name": "child_chunk", "weight": 100.0 }
+    ]
+  },
+  "qualityModel": "aex.endpoint",
+  "qualityThreshold": 0.65,
+  "largeLanguageModel": "ChatGPT4.0",
+  "tokenThreshold": 3000,
+  "temperature": 50.0,
+  "maxTries": 3,
+  "prompts": [
+    {
+      "promptId": "144e86f6-94f3-4f04-9c5d-8df9458390",
+      "promptName": "sis_pl",
+      "promptType": "system",
+      "version": 1.0,
+      "input": ["rollupKey", "serialPrefix"],
+      "approved": true,
+      "text": "..."
+    },
+    {
+      "promptId": "144e86f6-94f3-4f04-9c5d-8df9458390",
+      "promptName": "sis_pl",
+      "promptType": "human",
+      "version": 1.0,
+      "input": null,
+      "approved": true,
+      "text": "..."
+    },
+    {
+      "promptId": "144e86f6-94f3-4f04-9c5d-8df9458390",
+      "promptName": "sis_pl_query",
+      "promptType": "query",
+      "version": 1.0,
+      "input": ["rollupKey", "serialPrefix", "eventId", "eventDescription", "smcsCode"],
+      "approved": true,
+      "text": "..."
+    }
+  ]
+}
+
+
+
+{
+  "id": "359e86f6-94f3-4f04-9c5d-8df9458412",
+  "name": "recommendation_similarity",
+  "knowledgeBaseCriteria": {
+    "searchVectors": [
+      { "name": "possible_causes", "weight": 70.0 },
+      { "name": "recommended_action", "weight": 20.0 },
+      { "name": "consequence_of_action", "weight": 10.0 }
+    ]
+  },
+  "qualityModel": null,
+  "qualityThreshold": null,
+  "largeLanguageModel": null, // If null then knowledge base query only no LLM
+  "tokenThreshold": null,
+  "temperature": null,
+  "maxTries": null,
+  "prompts": [
+    {
+      "promptId": "144e86f6-94f3-4f04-9c5d-8df9458390",
+      "promptName": "reco_similarity",
+      "promptType": "query",
+      "version": 1.0,
+      "input": ["rollupKey", "serialPrefix"],
+      "approved": true,
+      "text": "..."
+    }
+  ]
+}
+
+
+
+{
+  "id": "359e86f6-94f3-4f04-9c5d-8df9458412",
+  "name": "recommendation_extraction",
+  "knowledgeBaseCriteria": null, // If null then no need for knowledge base, just LLM
+  "qualityModel": "aex.endpoint",
+  "qualityThreshold": 0.65,
+  "largeLanguageModel": "ChatGPT4.0",
+  "tokenThreshold": 3000,
+  "temperature": 50.0,
+  "maxTries": 3,
+  "prompts": [
+    {
+      "promptId": "144e86f6-94f3-4f04-9c5d-8df9458390",
+      "promptName": "extraction",
+      "promptType": "system",
+      "version": 1.0,
+      "input": ["rollupKey", "serialPrefix"],
+      "approved": true,
+      "text": "..."
+    },
+    {
+      "promptId": "144e86f6-94f3-4f04-9c5d-8df9458390",
+      "promptName": "reco_extraction",
+      "promptType": "human",
+      "version": 1.0,
+      "input": null,
+      "approved": true,
+      "text": "..."
+    }
+  ]
+}
+Knowledge Base Service
+
+Schema should be managed via GIT, embedding/chunking model changes require a newly created knowledge base. Pipeline will need to reload the new knowledge base if this occurs. Rather than using an id we can use a knowledge base name and version to keep track of history. Past versions should be kept for 6 months. 
+
+
+
+
+{
+  "name": "Recommendations", // Postgres and Open Search Index name
+  "embeddingModel": "aex.endpoint", // Postgres
+  "chunkingModel": "aex.endpoint", // Postgres
+  "schema": { // Open Search
+    "vectors": [
+      { "name": "possible_causes", "size": 768 },
+      { "name": "recommended_actions", "size": 768 },
+      { "name": "consequence_of_action", "size": 768 }
+    ],
+    "attributes": [
+      { "name": "recommendationNumber", "type": "text" },
+      { "name": "recommendationText", "type": "text" },
+      { "name": "serialPrefix", "type": "text" },
+      { "name": "rollupKey", "type": "text" },
+      { "name": "updateTime", "type": "date" }
+    ]
+  }
+}
+
+
+
+{
+  "name": "SIS", // Postgres and Open Search Index name
+  "embeddingModel": "aex.endpoint", // Postgres
+  "chunkingModel": "aex.endpoint", // Postgres
+  "externalLinks": ["safetyLink"]
+  "schema": { // Open Search
+    "vectors": [
+      { "name": "child_chunk", "size": 768 }
+    ],
+    "attributes": [
+      { "name": "parent_chunk_text", "type": "text" },
+      { "name": "ie_number", "type": "text" },
+      { "name": "doc_title", "type": "text" },
+      { "name": "serialPrefix", "type": "text" },
+      { "name": "rollupKey", "type": "text" },
+      { "name": "safetyLink", "type": "struct" }, // Map of external docs to include in the response, i.e. safety links
+      { "name": "updateTime", "type": "date" }
+    ]
+  }
+}
+
+
+
+"safetyLink": { 
+  "type": "s3",
+  "links": ["s3://safetyData"]
+}
+/{knowledgeBaseId} (GET Metadata)
+documents/{knowledgeBaseId}/{id}
+documents/{knowledgeBaseId}/create/{id}
+documents/{knowledgeBaseId}/update/{id}
+documents/{knowledgeBaseId}/delete/{id}
+documents/{knowledgeBaseId}/delete (By filter)
+documents/{knowledgeBaseId}/search
+POST Body SIS
+
+
+
+{
+  "child_chunk": [...],
+  "parent_chunk_text": "<P><U><H3>Check the Cooling System Relief Valve</H3></U>\n<P>The cooling system relief valve must open at the pressure level indicated in the appropriate Engine Specification Module. To check the pressure, install a pressure gauge in the radiator top tank. Tighten the radiator cap. Use an air pressure regulating valve or a 9S8140 Pressurizing Pump to put pressure in the cooling system. Any additional pressure above must go past the relief valve. With the air supply turned off, the system must hold the minimum pressure indicated in the Engine Specification Module.\n\n\n\n\n\n<P><U><H3>Test During Machine Operation</H3></U>\n<P>If the cause of overheating is not discovered by visual checks and simple cooling system tests, a temperature measurement must be taken. Temperatures are measured at different locations on the machine and compared to see if the temperatures are normal. The 4C6500 Thermistor Thermometer Group is used to measure temperatures at the following locations:\n<P><UL>\n<P><LI>Radiator top tank\n<P><LI>Water pump outlet\n<P><LI>Water temperature regulator housing\n<P><LI>Torque converter oil (inlet and outlet) measured across cooler\n<P><LI>Engine oil cooler\n</UL>\n<P>The temperature in the radiator top tank must be below coolant boiling point. The difference between the temperature in the radiator top tank and the ambient air must not be more than 61&deg;C (110&deg;F) with the regulator fully open, full coolant flow through the radiator, and the engine at full load. The water pump outlet temperature must be approximately 4.5&deg; to 11&deg;C (8&deg; to 20&deg;F) below the temperature in the radiator top tank.\n\n\n<P><CENTER>\n<TABLE BORDER=\"0\" WIDTH=\"493\">\n<TR><TD><HR NOSHADE></TD></TR>\n<TR><TH>NOTICE</TH></TR>\n<TR><TD><B>\n<P>The regulator in most machines is fully open when the water temperature is approximately 93&deg;C (200&deg;F - 205&deg;F). The regulators in some earlier commercial engines and engines with reduced emissions will fully open at higher water temperatures.</B></TD></TR>\n<TR><TD><HR NOSHADE></TD></TR>\n</TABLE></CENTER>\n\n<P>The cooler inlet oil temperature must not be more than 132&deg;C (270&deg;F). The normal temperature range for cooler inlet oil temperature is 6&deg; to 11&deg;C (10&deg; to 20&deg;F) over the radiator top tank temperature when a machine is operated under full load. The cooler outlet oil temperature will be 8&deg; to 22&deg;C (15&deg; to 40&deg;F) lower than the cooler inlet oil temperature.\n\n\n\n\n\n<P><U><H3>Measure Manifold and Aftercooler Temperatures</H3></U>\n<P>The temperature of the oil in the oil manifold is approximately 17&deg;C (30&deg;F) higher than the water temperature at the pump outlet. If the temperature of the oil in the oil manifold is 19&deg; to 22&deg;C (35&deg; to 40&deg;F) higher than the water pump outlet temperature, then scaling may be the cause.\n<P>A dirty aftercooler will result in high inlet air temperature. For every 1&deg; (Fahrenheit or Centigrade) increase in inlet air temperature the exhaust temperature increases 3&deg; (Fahrenheit or Centigrade). A dirty aftercooler, contaminated with oil mist or corrosion, will not permit normal heat transfer. Where raw or sea water aftercoolers leak into the engine, salt corrosion and wear of engine parts can result.",
+  "ie_number": "i03898385",
+  "doc_title": "Know Your Cooling System {0708, 1000, 1350, 7000}",
+  "prefix": "LAJ",
+  "rollup_key": "54321",
+  "last_updated_date": "2023-12-14"
+}
+Recommendations
+
+
+
+{
+  "possible_causes": [...],
+  "recommended_actions": [...],
+  "consequence_of_action": [...],
+  "parent_chunk_text": "<P><U><H3>Check the Cooling System Relief Valve</H3></U>\n<P>The cooling system relief valve must open at the pressure level indicated in the appropriate Engine Specification Module. To check the pressure, install a pressure gauge in the radiator top tank. Tighten the radiator cap. Use an air pressure regulating valve or a 9S8140 Pressurizing Pump to put pressure in the cooling system. Any additional pressure above must go past the relief valve. With the air supply turned off, the system must hold the minimum pressure indicated in the Engine Specification Module.\n\n\n\n\n\n<P><U><H3>Test During Machine Operation</H3></U>\n<P>If the cause of overheating is not discovered by visual checks and simple cooling system tests, a temperature measurement must be taken. Temperatures are measured at different locations on the machine and compared to see if the temperatures are normal. The 4C6500 Thermistor Thermometer Group is used to measure temperatures at the following locations:\n<P><UL>\n<P><LI>Radiator top tank\n<P><LI>Water pump outlet\n<P><LI>Water temperature regulator housing\n<P><LI>Torque converter oil (inlet and outlet) measured across cooler\n<P><LI>Engine oil cooler\n</UL>\n<P>The temperature in the radiator top tank must be below coolant boiling point. The difference between the temperature in the radiator top tank and the ambient air must not be more than 61&deg;C (110&deg;F) with the regulator fully open, full coolant flow through the radiator, and the engine at full load. The water pump outlet temperature must be approximately 4.5&deg; to 11&deg;C (8&deg; to 20&deg;F) below the temperature in the radiator top tank.\n\n\n<P><CENTER>\n<TABLE BORDER=\"0\" WIDTH=\"493\">\n<TR><TD><HR NOSHADE></TD></TR>\n<TR><TH>NOTICE</TH></TR>\n<TR><TD><B>\n<P>The regulator in most machines is fully open when the water temperature is approximately 93&deg;C (200&deg;F - 205&deg;F). The regulators in some earlier commercial engines and engines with reduced emissions will fully open at higher water temperatures.</B></TD></TR>\n<TR><TD><HR NOSHADE></TD></TR>\n</TABLE></CENTER>\n\n<P>The cooler inlet oil temperature must not be more than 132&deg;C (270&deg;F). The normal temperature range for cooler inlet oil temperature is 6&deg; to 11&deg;C (10&deg; to 20&deg;F) over the radiator top tank temperature when a machine is operated under full load. The cooler outlet oil temperature will be 8&deg; to 22&deg;C (15&deg; to 40&deg;F) lower than the cooler inlet oil temperature.\n\n\n\n\n\n<P><U><H3>Measure Manifold and Aftercooler Temperatures</H3></U>\n<P>The temperature of the oil in the oil manifold is approximately 17&deg;C (30&deg;F) higher than the water temperature at the pump outlet. If the temperature of the oil in the oil manifold is 19&deg; to 22&deg;C (35&deg; to 40&deg;F) higher than the water pump outlet temperature, then scaling may be the cause.\n<P>A dirty aftercooler will result in high inlet air temperature. For every 1&deg; (Fahrenheit or Centigrade) increase in inlet air temperature the exhaust temperature increases 3&deg; (Fahrenheit or Centigrade). A dirty aftercooler, contaminated with oil mist or corrosion, will not permit normal heat transfer. Where raw or sea water aftercoolers leak into the engine, salt corrosion and wear of engine parts can result.",
+  "ie_number": "i03898385",
+  "doc_title": "Know Your Cooling System {0708, 1000, 1350, 7000}",
+  "prefix": "LAJ",
+  "rollup_key": "54321",
+  "last_updated_date": "2023-12-14"
+}
+Note: Knowledge base service is going to need to append safety information to the results. Either we need to store it in the document or have a reference by document to get it. Going to need to store safety info by ienumber and have a reference to it somewhere
+Pipeline will be calling the Knowledge Base service directly using custom code i.e. no PLF changes required at this time to integrate the framework itself with Knowledge Base.
+Access Policies can be defined on the exact knowledge bases:
+documents/sis/*
+documents/Recommendations/*
+GenAI Service
+
+Async API, client will call the instantiate endpoint which will kick off the task in the background and return an id. The client will then periodically poll the result endpoint until a response is returned.
+/instantiate
+
+
+
+{
+  "aiContextId": "569e86f6-94f3-4f04-9c5d-8dff39s54f",
+  "input": ["Low Engine Oil Pressure"],
+  "filters": [
+    { "name": "serial_prefix", "value": "LAJ" },
+    { "name": "event_id", "value": "4530" }
+  ]
+}
+Multi vector search, order depends on knowledge base definition:
+
+
+
+{
+  "promptId": "569e86f6-94f3-4f04-9c5d-8dff39s54f",
+  "input": ["Possible causes are...", "Consequence of inaction is...", "Recommended actions are..."],
+  "filters": [
+    { "name": "serial_prefix", "value": "LAJ" },
+    { "name": "event_id", "value": "4530" }
+  ]
+}
+/result/{id}
+Gen AI Service will do retries based on Quality Scores but other errors that occur during processing of the request will result in a failed output and can be retried by the consumer.
+S3/API Output from Gen AI Service:
+
+
+
+{
+  "statusDescription": "Open AI Timeout",
+  "status": 503,
+  "retryable": true,
+  "result": null
+}
+
+
+
+{
+  "statusDescription": "Success",
+  "status": 200,
+  "retryable": false,
+  "result": "The recommended action to resolve Product Link Event code 8090 is to..."
+}
+Pseudo Alg:
+Step 1: Call prompt service based on id, it will return the knowledge bases required and expected weighting
+Step 2: Call KnowledgeBase service based on Id’s from Step 1, get embedding model endpoint, embed the input text call KnowledgeBase service search endpoint using the embedding for each vector in the defined Knowledge base. If generative option is true in prompt service response then reduce to token limit and call Open AI, compute Quality score using defined model and return the summary plus score. If quality threshold does not meet threshold then retry up to max tries. If not successful then return quality score only and failure status.
+Notes:
+GenAI Service Access should only be internal and approved use cases
+Currently there are 4 deployed Azure Open AI resources, Gen AI service should distribute requests across each resource prioritizing the approved prompts over non approved.
+
+Sample requests and responses
+
+genAI/instantiate
+
+
+
+Sample Instantiate request - sis_summary
+
+
+Sample instantiate request - past_recommendations
+
+
+Sample instantiate request - mask
+genAI/getResults
+
+
+
+Sample getResults response - sis_summary
+
+
+Sample getResults response - past_recommendations
+
+
+Sample getResults response - mask
+/mask
+This endpoint will do regex masking, open ai masking (Call to GenAI Service), and model masking as a service
+
+
+
+
+{
+  "input": "Recommended action is to replace the oil filter, please call John Doe at 570-738-2232 for futher details"
+}
+Response:
+
+
+
+{
+  "result": "Recommended action is to replace the oil filter, please call ******* at ***-***-**** for futher details"
+}
+Logging/Monitoring
+
+Metrics
+BertScore (Alarm on degrading performance?)
+Individual lambda latency (Built in cloudwatch metrics)
+Overall latency (Single failure context)
+Completion latency
+Logging
+Code errors
+Error Handling/Retry
+
+Scenarios
+Open AI not responding
+Lambda Timeout
+Code error
+Suggestions
+Step function retry using specific exceptions (Open AI timeout, throttling etc)
+Global monitoring of retries (Built in step function cloudwatch metrics)
+Custom metrics/alarms on bert score, chunking, embedding, latency
+All other metric/logging to be done via standard cloudwatch logs, cloudwatch insight queries can be built to pull out specific metrics.
+Open SIS_Pastreco_Logging_Monitoring_Robustness_Security 2.docx
+
+SIS_Pastreco_Logging_Monitoring_Robustness_Security 2.docx
+14 Dec 2023, 10:02 AM
+Questions
+
+ 
+Vector Database
+
+Open Search
+Updated based on child embeddings
+Child Chunks
+Parent Chunks
+IE Number (Needs to be uniquely searchable)
+Doc Title
+Serial Prefix, Rollup Key
+SIS Last Updated
+Amazon OpenSearch Service’s vector database capabilities explained | Amazon Web Services 
+We will create the embeddings/chunks ourselves and pass the embeddings into open search (RAG) rather than letting the embedding model run on the open search cluster itself.
+2 indexes will be maintained one for SIS and one for Recommendations
+Open Search Vector DB PoC 
+Colocation/Recommendation/Events Schema
+
+events/summary
+Debezium output CDC events.ai_generated_content_ref to kinesis and new lambda will consume to update events.summary
+events.ai_generated_content_ref (Displayed from events/search i.e. event drawer)
+Id
+standard_manufacturer_code (Composite Key, hardcoded as CAT for now)
+Serial Number Prefix (Composite Key)
+Rollup key (Composite Key)
+Create Time (Composite Key)
+Summary Storage Reference (Id/Url for the location of the summary in storage service)
+Create Time
+Update Time
+events.ai_generated_content_user_rating (Not displayed in UI)
+Id
+AI Generated Content Ref Id (Id from events.ai_generated_content_ref) (Composite Key)
+assetId (Composite Key)
+cat_rec_id (Composite Key)
+source type (SIS Summary, Past Reco, etc) (Composite Key)
+rating (Boolean/Binary Thumbs up/down)
+comments
+Create Time
+Update Time
+events.ai_generated_content_usage (Not displayed in UI)
+Id
+AI Generated Content Ref Id (Id from events.ai_generated_content_ref)
+Recommendation Number
+Source Type (SIS Summary, Past Reco, etc)
+Reference Id (i.e. Reco Text Id for Past Reco)
+Create Time
+Table can be purged to hold only 6 months worth of data
+
+recommendation.recommendation_common (New fields only)
+reco_instantiation_timestamp (Time in which reco drawer was opened in UI)
+AI Assisted Indicator
+API
+
+Open image-20231214-195204.png
+
+ 
+
+
+Click here to expand...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Condition Monitoring V3
+
+events/search (POST) (Existing)
+New response attribute to be added which contains the AI Content Summary Storage reference id for each rollup key/snp in the event summary response. UI will use this to indicate that this event has AI Content and use it to download the content from the storage service.
+This attribute will come from a join of the events summary table with the events.ai_generated_content_ref table based on rollup key, serial prefix, and latest timestamp (timestamp of ai generated content) and the attribute will be the id from the storage service endpoint.
+API Needs to check entitlements, if CAT then AI Content reference can be returned, otherwise field should be returned as null.
+events.ai_generated_content_ref table based on serial prefix, rollupKey, and latest create time.
+Open
+
+Preview unavailable
+/recommendations/{recommendationNumber}/events (Add additional usage information)
+
+
+
+{
+    "contentReferenceId": "184029", // Id from events.ai_generated_content_ref
+    "referenceId": "288602", // Past Recommendation id
+    "sourceType": "AI PAST RECOMMENDATION" // Enum SIS SUMMARY,AI PAST RECOMMENDATION
+}
+Store in events.ai_generated_content_usage CDC to snowflake
+events/ai/rating (NEW POST)
+
+
+
+{
+    "contentReferenceId": "184029", // Id from events.ai_generated_content_ref
+    "assetIdentifier": "AI12389172832",
+    "sourceType": "SIS SUMMARY", // Enum SIS SUMMARY,AI PAST RECOMMENDATION
+    "rating": 1, // Thumbs up/down
+    "comments": "Good job Harini!"
+}
+Store in events.ai_generated_content_user_rating CDC to snowflake
+catRecId should be tagged from entitlements
+Recommendations V2
+
+recommendations (POST)
+Existing recommendation POST endpoint will have a new parameter to store the timestamp at which the user opened the create reco drawer. This timestamp will be used to compare the difference between it and the reco create timestamp to get an estimate on how long it took for the CMA to build the recommendation. Since the CMA may not create a reco all in the same time period i.e. opens it multiple times this will only be so accurate.
+Notes:
+215,000 distinct event rollup keys for October 2023 (This is just distinct values, does not consider pre defined rollup keys and serial prefixes)
+select count(distinct(EVENT_ROLLUP_KEY)) from DATA_QUALITY_VALIDATION_PROD_DB.DL_CONSUMER.GENERAL_EVENT_VW where EVENT_TIMESTAMP >= '2023-10-01' and EVENT_TIMESTAMP <= '2023-10-31' and (EVENT_ROLLUP_KEY like 'CAT INSPECT%' or EVENT_ROLLUP_KEY like 'PL%' or EVENT_ROLLUP_KEY like 'SOS%')
+ 
+ 
+Open image-20240410-140654.png
+image-20240410-140654.png
+ 
+Models Supported
+
+
+
+Models Supported
+Platform Work Breakdown and Feature Decomposition
+
+
+Feature identification based on solution design, feature description and engineering team assignment. Links to the team-level ADO features created. Suggested format is the table below with clear row by row work breakdown. Fill ‘Depends on #’ column where there is implementation dependency between features/work items, otherwise leave blank.
+Translation features
+
+
+Is this an FM 3.0 epic? Please check is Yes.
+
+Does it introduce new platform owned translatable attributes? Please check if Yes.
+If the answer to both questions is a “Yes”, then work break down structure should contain translation feature for new translation group. Link to the translation initiation process definition : Localization: Translation Initiation Process
+Entitlement features
+
+
+Does this AVT introduce changes to Application Subscription Events or Entitlements, eg. CLASS0 changes, that impact domains (Groups, Share Assets, Notifications) covered by AECM (Application Entity Cleanup Module)?
+If the answer is “Yes”, then AECM team (Arun Srinivasan or Ramesh Subramani) should participate throughout the AVT.
+
+Is this AVT introducing a new data domain?
+If the answer is “Yes”, then before the AVT closes:
+Application representatives with entitlement services team have to update appropriate for the application permission matrix on confluence.
+PO of the team owning the new data domain will later follow process detailed in links below to complete the new domain addition to the system.
+Please refer to training recording: Entitlements Training Video
+Confluence: New and Existing Application On-boarding to Helios Entitlements
+LTA’s
+
+Do you need to update/create LTA feature? If yes, please add work item to the Work Breakdown structure.
+HLA’s
+Do you need to update/create HLA feature? If yes, please add work item to the Work Breakdown structure and assign to Harini Anand.
+Work Breakdown
+
+Work Item #
+Depends on #
+Bus. Feature(s) Supported
+Service/Component
+Description
+AzDo Work Item
+Team
+Product Owner
+1
+8,12
+ 
+Infrastructure
+Staging RDS, Debezium, CDC stream
+create Postgres RDS Aurora instance (for generative AI)
+create new database/dbapi repository
+ability to define database table
+ability to define dbapi
+ability to define change stream
+Feature 1293416: AI DBAPI: Create Service
+Bravo
+@Sergio Penavades Suarez 
+@Atul Ankola 
+2
+ 
+ 
+Recommendations
+Create Daily S3 extract from Snowflake recommendation table based on update timestamp i.e. only contain new changes from 3 tables joined
+RECOMMENDATION_COMMON_DATA_VW
+RECOMMENDATION_MAPPING_VW
+RECOMMENDATION_CUSTOM_DATA_VW
+User Story 1274447 Snowflake S3 Extract for Past Recommendations (4 tables) (azure.com)
+Nightwing
+@Thoufeeq Ahamed Kajahussain @Pratap Reddy Marineni 
+3
+4 (Data Science to package and approve models)
+ 
+AEX
+Support the deployment and hosting of ML models required for the AI workflow.
+1279644
+1305083 (Quality model deployment)
+1305092 (Embedding model deployment)
+1305096 (Chunking model deployment)
+1305099 (PII Masking model deployment)
+1305103 (Language model deployment)
+Stonecutters
+@Kevin Gasiorowski 
+4
+3,7
+ 
+Data Science
+Package chunking, embedding, and quality models to AEX model service, JFrog, or Sagemaker; Language model and masking service
+1285710
+1285708
+1285704
+1285727
+1293393
+Ocelot
+@Travis Busen (Unlicensed) 
+5
+29
+ 
+Knowledge Base Service (NEW)
+Implement Knowledge Base Service
+Swagger
+API Gateway
+Open Search
+Dynamo or Postgres
+Append Safety Information (Needs a design session)
+API Implementation
+
+
+
+
+documents/{knowledgeBaseId}/{id}
+documents/{knowledgeBaseId}/create/{id}
+documents/{knowledgeBaseId}/update/{id}
+documents/{knowledgeBaseId}/delete/{id}
+documents/{knowledgeBaseId}/delete (By filter)
+documents/{knowledgeBaseId}/search
+Knowledge bases will be updated via GIT and a pipeline needs to be created which updates postgres and the open search index. Changes to embedding model or chunking model should be rejected.
+ 
+FEATURE 1293121
+Lima
+@Vasile Glijin (Unlicensed) @Sergio Penavades Suarez 
+6
+29
+ 
+AI Context Service (NEW)
+Swagger
+API Gateway
+Postgres
+API Implementation
+/create
+/update/{id}
+/delete/{id}
+/approved
+Feature 1297207: AI Context: Create service
+Delta
+@Atul Ankola 
+7
+5,6,29
+ 
+Prompt Engineering
+Create prompts and knowledge bases (AI Context integration)
+SIS
+Recommendation extraction
+SIS breakdown
+Masking Prompt
+Recommendation Similarity
+Define knowledge bases, weights, models, thresholds for each prompt
+1285727
+1285725
+1294384
+1296441
+ 
+ 
+Ocelot
+@Travis Busen (Unlicensed) 
+8
+1,3,4,5
+ 
+Pipelines (Data)
+SIS Pipeline
+Create schema definition for staging tables
+Get Failure Context
+Call SIS API (Top 5 Docs only)
+Check update time with staging table
+If not exists or changed call SIS Document API
+Chunk/Embed store
+Cleanup (Delete outdated chunks)
+Store document safety information in S3 based on ie number
+Feature 1296270: GEN AI Constellations- [SIS Vectorization]
+Feature 1300185: GEN AI Constellations- [Helpers]
+Constellation
+@Samuel Soto 
+9
+3,5,6
+ 
+Gen AI Service (NEW)
+Core Logic
+Accept a payload including promptId, search text, filters
+Get prompt details from AI Context service
+Get knowledge base metadata i.e. vectors, embedding model
+Call embedding model with search text, returns vector
+Call knowledge base service search with knowledge base name and vector and weights
+Reduce ranked results to token threshold
+Call Open AI (With Load Balancing) with reduced result plus prompt (Replace wild cards in prompt text with knowledge base fields)
+Call quality model with Open AI response
+If below prompt quality threshold then retry Open AI call up to prompt max tries
+Feature 1297236: Gen AI: Create service
+Delta
+@Atul Ankola 
+10
+9
+ 
+Gen AI Service (NEW)
+S3 Async Pattern (AEX Integration)
+Listen to SQS
+On message call Core Logic
+Output response to S3 (S3 structure should be based on SQS writer i.e. client based)
+ 
+Delta
+@Atul Ankola 
+11
+9
+ 
+Gen AI Service (NEW)
+Async API Pattern (PLF Integration)
+Swagger
+API Gateway Accept Gen AI Request
+Submit to Core Logic, return processing Id
+Update status when finished (Includes failures)
+Output to S3 and provide link to file in S3
+7 Day TTL Bucket policy
+Setup S3 notifications paths for AEX 
+Got confirmation from @Kevin Gasiorowski that their team is going to follow async approach and we do not need to setup S3 notifications on results S3.
+Feature 1297236: Gen AI: Create service
+Delta
+@Atul Ankola 
+12
+1,2,3,4,5,6,7,11
+ 
+Pipeline(Data)
+Recommendation Pipeline
+Create schema definition for staging tables
+Load S3 extract
+Compare changes in staging
+If new or changed
+Call Gen AI Async service to extract individual fields
+Get embedding/chunking models from Knowledge Base Service
+Embed and store
+Cleanup (Delete outdated recos)
+Feature 1296266: GEN AI Constellations- [Past Recommendations Vectorization]
+Feature 1300185: GEN AI Constellations- [Helpers]
+Constellation
+@Samuel Soto 
+ 13
+3, 6, 7, 9
+ 
+ AEX
+Provide orchestration to generate SIS document and Past Recommendations summary and make available for Foresight consumption
+ 1231330
+ Stonecutters
+ @Kevin Gasiorowski 
+14
+ 
+ 
+ CoLocation Data Model
+Table Schema/Creation
+Events
+ Feature 1221353: P - CM - Data Model for CMA AI Assistant
+ Koopa
+  @Ayu Saraswati 
+15
+14
+ 
+Snowflake Archival
+CDC data from usage and rating tables to kinesis
+events.ai_generated_content_user_rating and events.ai_generated_content_usage
+events.ai_generated_content_ref
+embedding/stage results
+Feature 1221366: P - CM - Debezium output CDC for CMA AI Tables
+Delta
+@Evgeny Kochnev 
+@Atul Ankola 
+16
+14
+ 
+Condition Monitoring V3
+events/search
+Add AI Content Reference Id (Id of storage service) to response for CAT users
+events/reco/link with usage
+events/ai/rating
+Feature 1231334: P - CM - Add AI Content Reference Id (for CAT users)
+Feature 1245499: P - CM - Enhance API to support suggested reco for events/exceptions linking (recommendation CM V3 API module)
+Feature 1245491: P - CM - Create API for events/ai/rating
+
+Piccadilly
+@Alexey Zyuzin 
+17
+The work is completed and deployed. 
+ 
+Recommendations
+reco_instantiation_timestamp (Time in which reco drawer was opened in UI)
+AI Assisted Indicator (POST and PUT)
+Data base schema
+ 
+ 
+https://dev.azure.com/cat-digital/Cat%20Digital/_workitems/edit/1212412Your team sees richer Azure DevOps previewsConnect 
+Leo
+@Siran.Jadhav 
+18
+ 
+ 
+LTA Update for OpenAI
+Submit LTA update for approval to call OpenAI from Datahub lambdas
+Feature 1226615: Create LTA for Open AI within Datahub
+Telemetry Architecture
+@Justin Rice 
+19
+ 
+ 
+Open Search PoC
+index defintions
+text versus embeddings
+Evaluate AWS Open Search as a solution for the vector DB in the CMA AI Context
+Feature 1226653: Open Search Vector DB PoC
+Telemetry Architecture
+@Justin Rice 
+20
+14
+ 
+Condition Monitoring
+Transfer ownership of ai content storage lambda from Leo
+Update the lambda to store the storage reference into events.ai_generated_content_ref table
+Feature 1221366: P - CM - Debezium output CDC for CMA AI Tables
+Delta
+@Evgeny Kochnev 
+@Atul Ankola 
+21
+14
+ 
+Condition Montioring
+Batch job to purge events.ai_generated_content_user_rating and events.ai_generated_content_usage to keep only last 6 months of records
+Feature 1221366: P - CM - Debezium output CDC for CMA AI Tables
+Delta
+@Evgeny Kochnev 
+@Atul Ankola 
+22
+14
+ 
+Snowflake Archival
+Archive events.ai_generated_content_user_rating and events.ai_generated_content_usage
+embedding/stage cdc data (From embedding pipelines)
+Feature 1221369: P - CM - Data - Sync CMA AI Assistant CoLo Tables to Snowflake
+Nightwing
+@Lee Brown @Thirumalai Varadarajan 
+23
+14,20
+ 
+Condition Monitoring
+Build lambda to update events summary data with the ai ref
+Feature 1231341: P - CM - Build lambda to update events summary data with the ai ref
+Piccadilly
+@Alexey Zyuzin 
+24
+14
+ 
+Provisioning
+CDC events.ai_generated_content_ref to kinesis 
+Feature 1221366: P - CM - Debezium output CDC for CMA AI Tables
+Delta
+@Evgeny Kochnev 
+@Atul Ankola 
+25
+(All features are predecessors as this is UI)
+ 
+Foresight UI
+Front end changes per figma
+Feature 1199685: CMA AI Assistant MVP: UI Requirements
+Tigris
+@Kaunish Patel 
+26
+ 
+ 
+Walk Me
+Survey Forms
+FEATURE 1152910
+ 
+Shareen Wahab
+27
+ 
+ 
+SIT
+End to End testing of CMA AI
+FEATURE 1215980. : SIT Validation - Foresight DRB 149 CMA AI Assist
+ 
+@Pratik Mehra 
+28
+4, 6, 7, 9
+ 
+Masking Service
+Create API implementation which uses a masking model deployed via AEX and then Open AI using a defined model prompt and returns the text as a masked result
+Masking Prompt hardcoded from AI Context Service
+Feature 1306690
+Stonecutters
+@Kevin Gasiorowski
+29
+ 
+ 
+Data Model
+Knowledge Base Data Models
+AI Context Data Model
+Delta will own the repo, teams will collaborate and jointly approve changes
+ 
+Ocelot, Koopa, Constellation, Delta
+@Travis Busen (Unlicensed) @Samuel Soto @Tejas Ravindra Baing @Atul Ankola 
+30
+ 
+ 
+Data Model
+Create and document Data model for:
+AI Context Service
+Knowledge base, including RDS and Open Search 
+Gen AI
+Schema for gen aI has to be added with requestId(guid), status , resultUrl, result, error all of them should be text fields
+Feature 1302099: Gen AI and AI context Data Model
+Koopa
+@Tejas Ravindra Baing @Ayu Saraswati @michael.pustylnik 
+Work Breakdown Column Descriptions
+Work Item #: a sequential line number
+Depends on #: the line number for the Work Item # that the Service/Component is dependent on
+Bus. Feature(s) Supported: The Business Feature that the Service/Component is supporting. Could be more than one.
+Service/Component: the service/component that needs work to be performed
+Description: Description of the work to be performed on the Service/Component
+AzDo Work Item: the Azure DevOps work item number
+Team: the team name performing the work (if known)
+Product Owner: the product owner responsible for the work
+High Level APIs
+
+
+High-level identification and description of all component interfaces in the solution design. Note: Detailed API/Swagger definitions are out of scope for the AVT. Swaggers place holders are however created and linked to the EPIC.
+Endpoint
+Description
+Swagger AzDO
+events/search (POST) 
+Condition monitoring V3 events/search response to include AI Content Reference Id (Storage api Id)
+link to swagger placeholder
+/recommendations/{recommendationNumber}/events
+Condition monitoring V3 link recommendation to event will now support AI usage content fields
+ 
+events/ai/rating
+Condition monitoring V3 new endpoint to store ratings of AI generated content. POST only
+ 
+recommendations
+reco_instantiation_timestamp to be added to POST body of recommendations create endpoint
+ 
+knowledgeBase
+New API
+1302389
+genAi
+New API
+1311897
+aiContext
+New API
+1310229
+ 
+Snowflake Role
+
+
+This section only applies if the dataset will be consumed via Snowflake.
+This section is completed by Product Management and supported by Data Team Solution Lead for any new dataset in Helios. If you can not determine the correct Data Team Solution Lead from this list by domain, please contact Lee Ann Brown or Mark Mcclaren.
+Does the dataset require a new Snowflake role to enable consumption, or addition of the data/view to an existing Snowflake role to enable consumption? Yes - new role / No - add to existing role
+If Yes,
+Consider restrictions/intended usage of this data set.
+Discuss with Data Team Solution Lead if there is guidance needed on roles.
+Link to Role Catalog to review existing Roles.
+If a new role is needed, Click to create a Feature.
+Populate the role name and any restrictions & intended usage in the Feature.
+Save and comment to Lee Ann Brown, AVT Facilitator and Data Team Solution Lead participating in the AVT that this is completed.
+Update the Work Breakdown table above with the new feature
+If a new role is NOT NEEDED, populate the cells denoted for “Product Mgr” below. Post AVT: Nightwing will complete Object/Entitlement Name.
+Domain (Solution Lead)
+Role Name (Product Mgr)
+Role Owner / Approver (Product Mgr)
+Object / Entitlement Name (Nightwing)
+Description & Notes (Anyone)
+ Ex. Customer
+ Ex.
+HELIOS_EDH_CONTACT_PROD_BASIC_CONSUMER_E
+ Ex. Melissa Herzberger
+ Ex. CONTACTS_BASIC
+Base view access for new Contact Repository – No special restrictions; available for general consumption with approvals
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Definitions:
+Domain – The Data Domain associated with the objects/views included in the role.  If the role contains data from multiple domains, include the name of each domain for completeness.
+Existing Role Name – The full name of the existing role, as noted in Snowflake or in the Helios Snowflake Role Catalog (Link to Role Catalog).
+Role Owner / Approver – The designated owner & approver of the Snowflake Role.  This individual approves changes/additions to the role, as well as any inbound access requests for that role.  If defined in the Helios Snowflake Role Catalog, this should reflect the existing role owner/approver.
+Object / Entitlement Name – Either the general data object name, or the specific Snowflake entitlement view that will be included in the Snowflake role for consumption.  If the View/Entitlement Name is not known at this time, the general data object name will suffice here.
+Description & Notes – Additional description of the role, including any restrictions on its use, intended consumers, special handling, or summary of data contained within the role.  This will help consumers find and select the right Snowflake role for their use-case.
+ 
+AWS Account
+
+
+Does there need to be a new AWS Account setup or are you using an existing account? If there is a need for a new account it takes time and must be acted on ASAP.
+Include feature in Work Breakdown area if need new account.
+Architect and the Lead must meet to discuss using the following confluence page for reference  
+Cat Digital Platform AWS Accounts .
+The outcome of the meeting MUST be documented on this page. include any communication with Vijay Korapaty (Primary Contact) or his team (DevOps Overlord), as needed.
+Document discussion here:
+New AWS Account Creation: Yes/No
+If using existing account, provide account name here:
+Dependencies
+
+
+Identify all dependencies to items in the work breakdown structure or external dependencies to complete the work. Include predecessors and successors if known.
+Microsoft Open AI instances need to be created and LTA for AEX to interact with each instance needs to be approved.
+ 
+SIT Testing for Services:
+ 
+ 
+Test Approach
+
+
+A high-level SIT test approach for functionality covered in the AVT. SIT is to provide a draft input for test approach discussions during the AVT/test break out sessions. The AVT core team provides final approval and SIT attaches the document to the AVT Page. If SIT testing is not needed it must be documented on the AVT page.
+NOTE: Application team provides input for E2E/BSO test scope, to avoid duplications, and ensure appropriate test coverage.
+Testing approach:
+ 
+ Test Data
+
+Do any of the following teams require Test Data Management team engagement to support generating test data?  For each team checked, create an AzDo user story in Area Path: Platform\P - Platform Lifters - TDM and link in the table.
+
+SIT
+
+Platform Development
+
+Application (identify Application owner who will create user story)
+Requesting Team
+AzDo Work item link
+Notes
+ 
+ 
+ 
+ 
+Deployment
+
+
+Identify any special requirements/dependencies and design if needed for how this feature will be deployed to the field in live production.
+text here
+Application Features: In and Out-of-Scope
+
+
+Mark all application business features accepted as in scope for this AVT, link all created Platform features back to the in-scope application business features. Negotiate and facilitate agreement on out-of-scope application features that may be deferred to a future application release.
+Business Feature
+AzDo Work Item
+Within AVT Scope
+ 
+ 
+YES/NO
+Open Risks/Issues
+
+
+A list of all open risks/issues deferred for post-AVT for resolution by the Engineering Teams. (Include the ADO ID)
+IMPORTANT Decisions:
+Feb 8th - AVT Breakout: Model Registry - CMA AI 
+ Model Registry will be within Sagemaker Studio by Daniela's team (training, versioning, experiment support)
+Daniela's team will deploy some type of artifact TBD (binary, image, python package) to TBD (Artifactory, S3, ECR)
+AEX will host and execute the model within AEX and also create the endpoint for the GenAI Service created by Atul.
+AEX will be responsible for inference monitoring of the hosted model
+ 
+AVT Close-Out
+
+
+Note important discussion topics, decision out of the final Business Review. Provide a summary of the team component responsibilities
+If this AVT identifies that Business Event consumption will be required, the solution lead or business event consumer should complete this form:  Microsoft Forms
+ 
+AVT Session Video Recording Links
+
+
+New process requirement! Past AVT sessions recordings are frequently used to review design and decisions made.. Table below contains detailed information to help find the required recording faster: List of Attendees, Title (Kick off, Working session, Close out and Business sign-off etc.), Topics covered in the meeting ( examples: API definitions, external team XYZ requirements, Risk ABC mitigation plan, design discussion )
+Date
+Title
+Topic(s) covered
+Attendees
+Recording link
+ Nov 14, 2023 
+AVT Kick Off: DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning focused
+Business features Kick off
+Roshan Hindia
+Dmitry Ornatsky
+Harinath Manchana
+Casey Bennett
+Sarath Manoharan
+Kevin Gasiorowski
+Dylan Driste
+Justin Rice
+Paul Amadeo
+Vijayaraj Varadarajan
+Tejas Ravindra Baing
+Felix Shulman
+Nitin Patidar
+NAVED BAIG
+Harini Anand
+Evgeny Kochnev
+	
+ [HOLD] AVT Kick Off_ DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning focused-20231114_093412-Meeting Recording.mp4
+ Nov 16, 2023 
+AVT Kick Off (continuation): DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning focused
+Business features Kick off II
+Roshan Hindia
+Dmitry Ornatsky
+Justin Rice
+Nitin Patidar
+Casey Bennett
+Paul Amadeo
+Simran Sharma
+Paul Potocki
+Dylan Driste
+Kevin Gasiorowski
+Tejas Ravindra Baing
+Evgeny Kochnev
+Harinath Manchana
+Oliver Tso
+Harini Anand
+Felix Shulman
+Sarath Manoharan
+	
+ AVT Kick Off (continuation)_ DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning focused-20231116_130229-Meeting Recording.mp4
+ Nov 17, 2023 
+AVT HLA Overview: DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning focused
+HLA Overview
+Roshan Hindia
+Justin Rice
+Nitin Patidar
+Casey Bennett
+Paul Amadeo
+Simran Sharma
+Dylan Driste
+Kevin Gasiorowski
+Tejas Ravindra Baing
+Evgeny Kochnev
+Harinath Manchana
+Naved Baig
+Harini Anand
+	
+HLA Overview_ DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning focused-20231117_113323-Meeting Recording.mp4
+ Nov 27, 2023 
+AVT: POC Demo by Harini - DRB 149 CMA AI Assist. 
+POC Demo by Harini
+Roshan Hindia
+Justin Rice
+Nitin Patidar
+Casey Bennett
+Paul Potocki
+Kevin Gasiorowski
+Sarath Manoharan
+Felix Shulman
+Paul Brown
+Evgeny Kochnev
+Harinath Manchana
+Harini Anand
+Mark Potocki
+Vijayaraj Varadarajan
+	
+AVT_ POC Demo by Harini - DRB 149 CMA AI Assist.-20231127_133128-Meeting Recording.mp4
+ Nov 28, 2023 
+AVT HLA (continuation): DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning focused
+HLA Overview II
+Roshan Hindia
+Harini Anand
+Paul Potocki
+Felix Shulman
+Justin Rice
+Kevin Gasiorowski
+Harinath Manchana
+Dylan Driste
+Evgeny Kochnev
+Casey Bennett
+Sarath Manoharan
+Paul Brown
+Nitin Patidar
+Abhishek Tiwary
+	
+AVT HLA (continuation)_ DRB 149 CMA AI Assistant (MVP) - AEX and Provisioning focused-20231128_111047-Meeting Recording.mp4
+ Nov 29, 2023 
+AVT: POC Demo (continuation) by Harini - DRB 149 CMA AI Assist. 
+POC Demo by Harini (continuation) II
+Roshan Hindia
+Tejas Ravindra Baing
+Kevin Gasiorowski
+Nitin Patidar
+Sarath Manoharan
+Evgeny Kochnev
+Simran Sharma
+Harini Anand
+Casey Bennett
+Paul Brown
+Paul Potocki
+Dylan Driste
+Mark Potocki
+Abhishek Tiwary
+Justin Rice
+Felix Shulman
+Harinath Manchana
+	
+AVT_ POC Demo (continuation) by Harini - DRB 149 CMA AI Assist.-20231129_133320-Meeting Recording.mp4
+ Dec 1, 2023 
+AVT Breakout: Configuration Schema & API - DRB 149 CMA AI Assist. (MVP)
+Input/Output parameters: ERK+SNP list, SIS docs, chunking, embedding, search & summarization, control/quality and feedback
+Roshan Hindia
+Casey Bennett
+Justin Rice
+Evgeny Kochnev
+Harini Anand
+Tejas Ravindra Baing
+Kevin Gasiorowski
+Harinath Manchana
+Mark Potocki
+NAVED BAIG
+	
+AVT Breakout_ Vector Database - DRB 149 CMA AI Assist. (MVP)-20231201_090353-Meeting Recording.mp4
+ Dec 1, 2023 
+AVT Breakout: Vector Database - DRB 149 CMA AI Assist. (MVP)
+API/Interface for storage & retrieval; Query embeddings and Semantic Search, Vector dimension and scaling/load support
+Roshan Hindia
+Harini Anand
+Simran Sharma
+Kevin Gasiorowski
+Oliver Tso
+Tejas Ravindra Baing
+Justin Rice
+Sarath Manoharan
+Dylan Driste
+Mark Potocki
+Felix Shulman
+Harinath Manchana
+NAVED BAIG
+	
+AVT Breakout_ Vector Database - DRB 149 CMA AI Assist. (MVP)-20231201_113222-Meeting Recording.mp4
+ Dec 1, 2023 
+AVT Breakout: Containerization - DRB 149 CMA AI Assist. (MVP)
+Cover what can be containerized so that AEX doesn’t need to be in every detail of the logic. 
+Roshan Hindia
+Mark Potocki
+Casey Bennett
+Justin Rice
+Felix Shulman
+Harini Anand
+Harinath Manchana
+Kevin Gasiorowski
+	
+AVT Breakout_ Containerization - DRB 149 CMA AI Assist. (MVP)-20231201_130244-Meeting Recording.mp4
+ Dec 4, 2023 
+AVT: POC Demo (continuation) by Harini - DRB 149 CMA AI Assist. 
+POC Demo by Harini (continuation) III
+Roshan Hindia
+Casey Bennett
+Paul Potocki
+Harini Anand
+Mark Potocki
+Tejas Ravindra Baing
+Nitin Patidar
+Justin Rice
+Paul Brown
+Harinath Manchana
+Nate Conner
+Abhishek Tiwary
+Felix Shulman
+Kevin Gasiorowski
+Evgeny Kochnev
+Vijayaraj Varadarajan
+Sarath Manoharan
+	
+AVT_ POC Demo (continuation) by Harini - DRB 149 CMA AI Assist.-20231204_113134-Meeting Recording.mp4
+ Dec 4, 2023 
+AVT Breakout: Model Execution - DRB 149 CMA AI Assist. (MVP)
+Cover Hugging Face/Langchain libraries and OpenAI APIs for chunking and embedding; Reco anonymization; quality & feedback mechanism 
+Roshan Hindia
+Justin Rice
+Nate Conner
+Kevin Gasiorowski
+Paul Potocki
+Casey Bennett
+Harini Anand
+Harinath Manchana
+	
+AVT Breakout_ Model Execution - DRB 149 CMA AI Assist. (MVP)-20231204_133134-Meeting Recording.mp4
+ Dec 5, 2023 
+AVT Breakout: Co-Loc DB Schema & Database pipeline - DRB 149 CMA AI Assist. (MVP)
+Cover
+DB Schema for S3 output
+S3 Input and output Co-Loc DB schema 
+Roshan Hindia
+Evgeny Kochnev
+Harinath Manchana
+Felix Shulman
+Justin Rice
+Alexey Zyuzin
+NAVED BAIG
+Tejas Ravindra Baing
+Nitin Patidar
+Paul Potocki
+	
+AVT Breakout_ Co-Loc DB Schema & Database pipeline - DRB 149 CMA AI Assist. (MVP)-20231205_133554-Meeting Recording.mp4
+ Dec 6, 2023 
+AVT Breakout: Model Orchestration, Scheduling and Scaling - DRB 149 CMA AI Assist. (MVP)
+Cover Registration, execution control, retrying and frequency configuration
+Roshan Hindia
+Kevin Gasiorowski
+Harini Anand
+Justin Rice
+Paul Potocki
+Nate Conner
+NAVED BAIG
+Harinath Manchana
+	
+AVT Breakout_ Model Orchestration, Scheduling and Scaling - DRB 149 CMA AI Assist. (MVP)-20231206_140130-Meeting Recording.mp4
+ Dec 7, 2023 
+AVT Breakout: CM-v3 API & RECO API - DRB 149 CMA AI Assist. (MVP)
+Cover
+AI summary indicator and summary retrieval 
+Reco DB schema foreign keys
+Roshan Hindia
+Harinath Manchana
+Justin Rice
+Nitin Patidar
+Tejas Ravindra Baing
+Felix Shulman
+Farkhad Bikmuratov
+Evgeny Kochnev
+Harini Anand
+NAVED BAIG
+Pratik Mehra
+	
+AVT Breakout_ CM-v3 API & RECO API - DRB 149 CMA AI Assist. (MVP)-20231207_130338-Meeting Recording.mp4
+ Dec 8, 2023
+ 
+AVT Breakout: SIS & Past Reco Retrieval and OpenAI Summarization - DRB 149 CMA AI Assist. (MVP)
+ 
+Roshan Hindia
+Mark Potocki
+Nate Conner
+Kevin Gasiorowski
+Justin Rice
+Harini Anand
+Lu Bai
+Nitin Patidar
+Harinath Manchana
+NAVED BAIG
+Pratik Mehra
+Abhishek Tiwary
+	
+AVT Breakout_ SIS & Past Reco Retrieval and OpenAI Summarization - DRB 149 CMA AI Assist. (MVP)-20231208_093257-Meeting Recording.mp4
+ Dec 12, 2023
+AVT Breakout: CM-v3 API & RECO API (continuation) - DRB 149 CMA AI Assist. (MVP)
+Continuation of covering:
+AI summary indicator and summary retrieval 
+Reco DB schema foreign keys
+Roshan Hindia
+Tejas Ravindra Baing
+Evgeny Kochnev
+Justin Rice
+Nitin Patidar
+Felix Shulman
+Alexey Zyuzin
+Harinath Manchana
+Simran Sharma
+NAVED BAIG
+	
+AVT Breakout_ CM-v3 API & RECO API (continuation) - DRB 149 CMA AI Assist. (MVP)-20231212_090347-Meeting Recording.mp4
+ Dec 12, 2023
+AVT Breakout: JSON/S3 Output - DRB 149 CMA AI Assist. (MVP) - AEX and Provisioning focused
+JSON schema and S3 output location
+Roshan Hindia
+Felix Shulman
+Nate Conner
+Justin Rice
+Harini Anand
+Nitin Patidar
+Dmitry Yakushev
+Pratik Mehra
+Kevin Gasiorowski
+Evgeny Kochnev
+Abhishek Tiwary
+	
+AVT Breakout_ JSON_S3 Output - DRB 149 CMA AI Assist. (MVP) - AEX and Provisioning focused-20231212_140556-Meeting Recording.mp4
+ Dec 13, 2023
+AVT Breakout: Foresight UI & APIs - DRB 149 CMA AI Assist. (MVP)
+RECO and CM-v3 Swagger changes
+Roshan Hindia
+Justin Rice
+Harinath Manchana
+Harini Anand
+Vishal Suchak
+Vijay Vadlamani
+Brian Golub
+Nitin Patidar
+Alexey Zyuzin
+Kaunish Patel
+Abhishek Tiwary
+Srujan Kumar Pasula
+Pratik Mehra
+Felix Shulman
+	
+AVT Breakout_ Foresight UI & APIs - DRB 149 CMA AI Assist. (MVP)-20231213_080517-Meeting Recording.mp4
+ Dec 13, 2023
+AVT Breakout: Auditability - DRB 149 CMA AI Assist. (MVP) - AEX and Provisioning focused
+Logging and tracing, monitoring, failure handling, performance metrics
+Roshan Hindia
+Abhishek Tiwary
+Paul Potocki
+Justin Rice
+Nate Conner
+Harini Anand
+Harinath Manchana
+Kevin Gasiorowski
+	
+AVT Breakout_ Auditability - DRB 149 CMA AI Assist. (MVP) - AEX and Provisioning focused-20231213_100435-Meeting Recording.mp4
+ Dec 13, 2023
+SIT Sync for CMA AI
+SIT Testing
+Roshan Hindia
+Pratik Mehra
+Dmitry Yakushev
+Kevin Gasiorowski
+Harinath Manchana
+NAVED BAIG
+Justin Rice
+	
+SIT Sync for CMA AI-20231213_113340-Meeting Recording.mp4
+ Dec 13, 2023
+UX Design - DRB 149 CMA AI Assist. (MVP)
+Cover UX flow/wizard for RECO creation from both SIS and Past RECO sources
+Roshan Hindia
+Vijay Vadlamani
+Brian Golub
+Srujan Kumar Pasula
+Kaunish Patel
+Vishal Suchak
+Harini Anand
+Harinath Manchana
+Zach Cordes
+	
+UX Design - DRB 149 CMA AI Assist. (MVP)-20231213_133354-Meeting Recording.mp4
+ Dec 15, 2023
+AVT Breakout: OpenSearch spike update and high-level Interface - DRB 149 CMA AI Assist. (MVP) - AEX and Provisioning focused
+Mark P to demo/present OpenSearch Spike
+Mark to go over OpenSearch Spike update (first 30 min)
+High-level discussion or/and agreement on OpenSearch interface for AEX integration (2nd half, expecting to be led and moderated by Justin with any clarifications from Mark)
+Roshan Hindia
+Mark Potocki
+NAVED BAIG
+Justin Rice
+Sarath Manoharan
+Kevin Gasiorowski
+Harini Anand
+Harinath Manchana
+Nitin Patidar
+Pratik Mehra
+	
+AVT Breakout_ OpenSearch spike update and high-level Interface - DRB 149 CMA AI Assist. (MVP) - AEX and Provisioning focused-20231215_080222-Meeting Recording.mp4
+ Dec 15, 2023 
+AVT Close out
+ 
+Roshan Hindia
+Kaunish Patel
+Nitin Patidar
+Tejas Ravindra Baing
+Abhishek Tiwary
+Felix Shulman
+Harinath Manchana
+Justin Rice
+Kevin Gasiorowski
+NAVED BAIG
+Harini Anand
+Alexey Zyuzin
+Pratik Mehra
+Vijay Vadlamani
+Vishal Suchak
+	
+AVT Close Out - DRB 149 CMA AI Assist. (MVP)-20231215_091642-Meeting Recording.mp4
+ Dec 18, 2023 
+WalkMe - DRB 149 CMA AI Assist. (MVP)
+ 
+Roshan Hindia
+Shareen Wahab
+Sneha Rathi Manoj Rathi
+Saini Sophia
+Justin Rice
+Harini Anand
+Harinath Manchana
+Abhishek Tiwary
+	
+WalkMe - DRB 149 CMA AI Assist. (MVP)-20231218_083517-Meeting Recording.mp4
+ Dec 18, 2023 
+AVT Breakout: Interfaces (continuation) - DRB 149 CMA AI Assist. (MVP) - AEX and Provisioning focused
+High-level discussion or/and agreement on OpenSearch interface for AEX integration (moderated by Justin with any clarifications from Mark)
+Roshan Hindia
+Kevin Gasiorowski
+Mark Potocki
+Oliver Tso
+Sarath Manoharan
+Justin Rice
+Harini Anand
+Harinath Manchana
+NAVED BAIG
+Dmitry Yakushev
+Abhishek Tiwary
+	
+AVT Breakout_ Interfaces (continuation) - DRB 149 CMA AI Assist. (MVP) - AEX and Provisioning focused-20231218_140159-Meeting Recording.mp4
+ Feb 6, 2024 
+CMA AI Workshop (AVT Reboot)
+ 
+Justin Rice
+Travis Busen
+Roshan Hindia
+	
+ 
+ Feb 7, 2024 
+SIS Search/Vector Usage with Open AI
+ 
+Justin Rice
+Travis Busen
+Roshan Hindia
+Lu Bai
+Felix Shulman
+Venkatesh Jayaprakash
+Samuel Soto
+Alan Doty
+	
+SIS Search_Vector Usage with Open AI-20240207_153244-Meeting Recording.mp4
+ Feb 8, 2024 
+AVT Breakout: Model Registry - CMA AI
+ 
+Roshan Hindia
+Justin Rice
+Samuel Soto
+Kevin Gasiorowski
+Travis Busen
+Felix Shulman
+Paul Potocki
+	
+AVT Breakout_ Model Registry - CMA AI-20240208_130232-Meeting Recording.mp4
+ Feb 9, 2024 
+AVT Breakout: GenAI Service - CMA AI
+ 
+Roshan Hindia
+Samuel Soto
+Justin Rice
+Kevin Gasiorowski
+Felix Shulman
+Evgeny Kochnev
+Atul Ankola
+Travis Busen
+Konstantin Sorochan
+Iryna Korzhova
+Harini Anand
+	
+AVT Breakout_ GenAI Service - CMA AI-20240209_100223-Meeting Recording.mp4
+ Feb 13, 2024 
+AVT Breakout: GenAI Service - CMA AI (continuation)
+ 
+Roshan Hindia
+Samuel Soto
+Benjamin Greene
+Travis Busen
+Felix Shulman
+Konstantin Sorochan
+Justin Rice
+Kevin Gasiorowski
+Evgeny Kochnev
+Simran Sharma
+NAVED BAIG
+	
+AVT Breakout_ GenAI Service - CMA AI (continuation)-20240213_083122-Meeting Recording.mp4
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Related content
+
+More info
+AVT - Entitlement AI Assistant
+AVT - Entitlement AI Assistant
+Felix Shulman
+AVT - EO Dashboard AI Assistant
+AVT - EO Dashboard AI Assistant
+damir.alpysbay
+AVT - Integrate CMA AI Assistant Content with SIS2.0 App
+AVT - Integrate CMA AI Assistant Content with SIS2.0 App
+Meenu Satiya
+AVT - AI Assistant - SIS Parts/OMM Search
+AVT - AI Assistant - SIS Parts/OMM Search
+Meenu Satiya
+AVT - AI Assistant - Salesforce Live Agent Integration (BE & FE)
+AVT - AI Assistant - Salesforce Live Agent Integration (BE & FE)
+Meenu Satiya
+AVT - AI Assistant - CatDealer.com (Deprecated - DO NOT REFER)
+AVT - AI Assistant - CatDealer.com (Deprecated - DO NOT REFER)
+Meenu Satiya
+
+View all comments
+
+Open Details Panel
+
+Open Rovo Chat
+Comments
+
+Add a reaction
+
+Shanmukha Sai Krishna Vedantam
+Feb 29, 2024
+@Justin Rice  coming to response of Gen AI service 
+I have few of questions:
+1.  Should we also have more metadata such as prompt Id so that we can track the results back to specific prompt Id or request ID? this question is specific to prompt engineering team and how do one know which request to approve? what metadata do you needed like versions, prompt Id,Bert scores etc. and need to discuss about this flow:
+A: up on discussion with Travis we decided to provide systemPrompt,humanPrompt, systemPromptVersion,humanPromptVersion and BertScore in gen AI result json that goes to S3. and we are going to support POST:genAI/instantiate for prod gen AI need a to go to AI context table and pick the versions by default 
+ Prompt engineering team agreed we agreed to create separate AI context for each use case so that we do not need to maintain versions so there wont be /instantiateTest endpoint
+POST:genAI/instantiate follows Async pattern
+Request
+{
+  "aiContextId": "569e86f6-94f3-4f04-9c5d-8dff39s54f",
+  "input": ["Low Engine Oil Pressure"],
+  "filters": [
+    { "name": "serial_prefix", "value": "LAJ" },
+    { "name": "event_id", "value": "4530" }
+  ]
+}
+ 
+Response:
+{
+"requestId": "57661b35-6f47-4732-9dd1-49c6fee27143"
+}
+Result format in S3 it is going to be in json format:
+{
+  "requestId": "57661b35-6f47-4732-9dd1-49c6fee27143"
+  "name": "recommendation_extraction",//AIcontext Name unique for every system, human and query prompt combination
+  "systemPrompt": "extraction", // prompt name
+  "humanPrompt": "recommendation_extraction", // prompt name
+  "queryPrompt": "pl_event_similiarity", // prompt name
+  "statusDescription": "Success",
+  "status": 200,
+  "retryable": false,
+  "result": "The recommended action to resolve Product Link Event code 8090 is to...",
+  "QualityScore" ,
+  "externalLinks", "self signed S3 url"
+}
+failure scenario:
+ { "requestId": UUID, "statusDescription": "Open AI Timeout", "status": 503, "retryable": true, "result": null }
+ 
+ 
+2.And since we agreed to go with Async approach would need one more endpoint for PLF pipelines to /poll, and shouldnt we provide getResults API for plf team get result S3 location ?  and  /search API has be renamed to /instantiate API.
+/pollResults/{requestId}/result
+/getResults/{requestId}/location
+{
+  "requestStatus": "PROCESSING"
+}
+{
+  "preSignedUrl": "http://genai.cat.com/pfm-infra-genAI-bucket-local/2024/03/30/015e4133-f1e5-4269-9bd3-547970bc3462.jsonl?X-Amz-Security-Token=A&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=2020&X-Amz-SignedHeaders=A&X-Amz-Expires=1&X-Amz-Credential=A&X-Amz-Signature=A% 
+}
+@Kevin Gasiorowski  since you have confirmed you dont need to have S3 notifications setup can we remove S3 and just add /getResults/{requestId}/ API and return the final result as json itself? 
+{
+  "requestId": "57661b35-6f47-4732-9dd1-49c6fee27143"
+  "name": "recommendation_extraction",//AIcontext Name unique for every system, human and query prompt combination
+  "systemPrompt": "extraction", // prompt name
+  "humanPrompt": "recommendation_extraction", // prompt name
+  "queryPrompt": "pl_event_similiarity", // prompt name
+  "statusDescription": "Success",
+  "status": 200,
+  "retryable": false,
+  "result": "The recommended action to resolve Product Link Event code 8090 is to...",
+  "QualityScore" ,
+  "externalLinks", "self signed S3 url"
+}
+if that is te case we dont need to support /getResults/{requestId}/location API Please confirm
+ 
+3. Should safety info be fetched from S3 (for safetyLink that knowledge base search returns) and be appended to result or just the url will suffice? as per Justin it would be just safety link @Kevin Gasiorowski  need your inputs on this are you okay to have externalLinks url or do you want Gen AI to extract and append the data to S3 result?
+Need clarification on the last step of  Gen AI  flow since the above flow diagram is out of date for example,   In the last discussion we have discussed Gen AI will be doing retries until BERT score is met and then send results to S3.  @Justin Rice the diagram has to be updated with async grief pattern for  better understanding of over all flow. 
+Do we need to have all the knowledge bases in advance since our gen AI implementation is going to depend on them we can use swagger spec finalized before implementation. and need more clarification on how vectors are passed relying on indexes is not a good option.
+   6.   We agreed that AEX team is going to own masking so /mask API  and this should be should be under AEX team(its still placed under gen AI above). The same applies to PII info Gen AI returns results without any masking and its up to downstream team to mask the results. 
+Prompt engineering team would need  following API need more discussion with Travis and team
+ /createAIContext
+ /updateAIContext 
+/deleteAIContext  along with
+/createPrompt 
+/updatePrompt 
+/deletePrompt 
+GET /Prompts with approved filter 
+(edited)
+
+
+Justin Rice
+Feb 29, 2024
+Additional metadata for troubleshooting is fine with me.
+
+I was thinking GenAI would retrieve the information and return it in the response. I guess for future if the content is too large to return we could return a storage service link. But for now I would keep it simple and just loop through the s3Links and append to the response
+
+
+1
+
+
+Reply
+
+Hide reply
+
+Benjamin Greene (Unlicensed)
+Feb 29, 2024
+Another question about safety info:
+Should we use all of the safety info the Gen AI service gets back from the knowledge base search, or should we use only the safety info associated with chunks that we called OpenAI with?
+
+
+Justin Rice
+Feb 29, 2024
+Just the chunks that were part of the OpenAI request
+
+
+Reply
+
+Hide reply
+
+Shanmukha Sai Krishna Vedantam
+Mar 4, 2024
+
+Reply to Shanmukha Sai Krishna Vedantam
+
+Resolve comment thread
+
+More actions
+Schema for gen aI has to be added with requestId(guid), status , resultUrl, result, error  all of them should be text fields^^@Justin @Tejas Ravindra Baing 
+(edited)
+
+Reply
+
