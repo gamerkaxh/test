@@ -1,0 +1,651 @@
+00:00:02,600 --> 00:00:17,380 [speaker_0]
+When-- or the dealers about when, um, assets might need some maintenance, right?
+Whether something urgent is c-going on with the asset or, you know, it's coming due for, uh,
+an oil change or something like that, right?
+
+00:00:17,660 --> 00:00:17,870 [speaker_1]
+Mm-hmm.
+
+00:00:17,980 --> 00:00:33,640 [speaker_0]
+So they use CAT Foresight here to view information, and then they'll publish recommendations, um,
+that, you know, go out to the dealers to say, "Here's based on the activity I'm seeing,
+here's the recommendation I make, uh, uh, I make for you," right?
+
+00:00:33,880 --> 00:00:34,160 [speaker_1]
+Okay.
+
+00:00:34,420 --> 00:01:14,000 [speaker_0]
+Um, so part of this view are these events, right? So this
+is basically the telemetry data coming off that asset, right? And, um, it is the very... Like,
+for this given asset, you know, here over, you know, this is sorted by, like, time order. Here
+are the f-the events that are occurring, and each of these events have, um, kind of a fault code.
+Okay? So here in the title, these are like you'll see E2041, E8292. These
+are various fault codes that mean different things. So in this case, it means the hydraulic,
+hydraulic oil level is low.
+
+00:01:14,420 --> 00:01:14,450 [speaker_1]
+Mm-hmm.
+
+00:01:14,500 --> 00:01:24,580 [speaker_0]
+In this case, it means the engine shut down, so some of these are more significant than others,
+right? Four, and then here, like, swing gearbox one level minimum and so on, right?
+
+00:01:25,440 --> 00:01:25,600 [speaker_1]
+Okay.
+
+00:01:25,720 --> 00:01:33,660 [speaker_0]
+Um, so this is kind of the main, you know, these are one of the main things
+that the CMAs will use when they're trying to make a recommendation.
+
+00:01:34,320 --> 00:01:34,720 [speaker_1]
+Mm-hmm.
+
+00:01:34,820 --> 00:01:49,020 [speaker_0]
+Um, as they dig in here, you know, to this and so on, um, in some cases you'll see this icon.
+This means AI-related icon, right?
+
+00:01:49,440 --> 00:01:49,450 [speaker_1]
+Okay.
+
+00:01:49,480 --> 00:02:44,240 [speaker_0]
+So this means for some of these, we have an AI assistant has produced kind of a gen--
+an AI-generated summary of the fault associated with that asset, right? So in this case, um,
+hydraulic oil level is low. Um, here's a description of it, right? Here are the probable causes.
+If you-- Here's the consequences of inaction and then recommended a-actions.
+And so this has meant that now you could provide this to dealers. They can just kind of cut
+and paste these into a new recommendation. Um, and the intent here is to save the user time,
+'cause otherwise they would have to go search up, like,
+the related user manuals associated with this asset to find this information.
+So we're trying to make that easier on them, so they can come in here
+and look at the summarization and kind of go from there. Okay?
+
+00:02:44,600 --> 00:02:44,920 [speaker_1]
+Okay.
+
+00:02:45,080 --> 00:02:52,840 [speaker_0]
+So what I'm trying to show you here is, like, the end result of what the CMA AI assistant does.
+Okay?
+
+00:02:53,240 --> 00:02:53,460 [speaker_1]
+Okay.
+
+00:02:53,560 --> 00:03:06,500 [speaker_0]
+So it is, it is this kind of generated content here, um, associated with events that
+are basically fault codes being raised from the telemetry data of the individual assets. Okay?
+
+00:03:06,780 --> 00:03:07,080 [speaker_1]
+Okay.
+
+00:03:08,380 --> 00:03:15,500 [speaker_0]
+Um, so that's that. So I think I shared with you in our chat the initial AVT.
+
+00:03:15,720 --> 00:03:15,880 [speaker_1]
+Yeah.
+
+00:03:15,980 --> 00:03:16,340 [speaker_0]
+Right?
+
+00:03:17,300 --> 00:03:17,540 [speaker_1]
+You did.
+
+00:03:17,570 --> 00:03:29,220 [speaker_0]
+Right. So let's see. So, uh, it's-- You don't have to understand all of this here,
+but I-I just want to give you some context here-
+
+00:03:29,400 --> 00:03:29,900 [speaker_1]
+Mm-hmm.
+
+00:03:29,910 --> 00:03:36,780 [speaker_0]
+-of what this project is, right? So this is the-- maybe the most important part of this AVT
+is this diagram here.
+
+00:03:36,890 --> 00:03:36,890 [speaker_1]
+Yeah.
+
+00:03:36,940 --> 00:03:42,940 [speaker_0]
+It kind of tells you the steps and things that are happening. So first there is this.
+I won't go into too much detail here-
+
+00:03:43,040 --> 00:03:43,070 [speaker_1]
+Mm-hmm.
+
+00:03:43,070 --> 00:03:45,660 [speaker_0]
+-because, um, it won't be in it for your story.
+
+00:03:46,200 --> 00:03:46,380 [speaker_1]
+Yeah.
+
+00:03:46,620 --> 00:03:54,340 [speaker_0]
+But there's first-- This is not us.
+This is another team that's actually looking at the SYS documents, which
+are basically like the user manuals-
+
+00:03:54,960 --> 00:03:54,970 [speaker_1]
+Mm-hmm.
+
+00:03:54,990 --> 00:03:56,560 [speaker_0]
+-for these assets, right?
+
+00:03:56,980 --> 00:03:56,990 [speaker_1]
+Mm-hmm.
+
+00:03:57,040 --> 00:04:03,460 [speaker_0]
+And it's doing some chunking and embedding of those documents
+and storing them into a knowledge base, right?
+
+00:04:03,480 --> 00:04:03,700 [speaker_1]
+Okay.
+
+00:04:04,340 --> 00:04:35,020 [speaker_0]
+Um, then we run, like, the orchestration for this. So then given a set of, like, um, assets
+and their fault codes, we query this information in the knowledge base, and we call OpenAI,
+and we ask OpenAI to give us a summarization. You know, here
+are the related documents for this asset, g-and here's the fault code.
+Give me a summary of what that, you know, what that means, right? So what you just saw here.
+
+00:04:35,280 --> 00:04:35,450 [speaker_1]
+Mm-hmm.
+
+00:04:35,760 --> 00:04:47,020 [speaker_0]
+Sorry, here, right? We ask it for give us, you know, a summary, give us a description,
+co-probable causes and so on. We ask specifically for all these components that you see here. Yes?
+
+00:04:47,200 --> 00:04:47,760 [speaker_1]
+Okay.
+
+00:04:47,900 --> 00:04:55,180 [speaker_0]
+Um, and, you know, then we take that, publish it,
+and then the user could see it through the Foresight application, right?
+
+00:04:55,420 --> 00:04:56,040 [speaker_1]
+Okay.
+
+00:04:56,160 --> 00:05:11,560 [speaker_0]
+Um, so what goes into this OpenAI summarization is we search and find relevant, um,
+embeddings in the knowledge base,
+take that text associated with the embeddings from those documents-
+
+00:05:11,690 --> 00:05:11,870 [speaker_1]
+Mm-hmm.
+
+00:05:12,030 --> 00:05:19,740 [speaker_0]
+-and send it to OpenAI with a prompt that says, "Go find me, you know,
+go summarize this information." Okay?
+
+00:05:19,840 --> 00:05:20,140 [speaker_1]
+Okay.
+
+00:05:20,900 --> 00:05:46,960 [speaker_0]
+So s- in the past, when we were developing this, we've worked with a data science team
+that creates the prompts and other teams that create these services.
+It's been the data science team's use case where they are, um, m-kind of manually verifying results,
+right? So they'll take a set of ten or a hundred sample records-
+
+00:05:47,480 --> 00:05:47,740 [speaker_1]
+Okay.
+
+00:05:47,820 --> 00:05:53,640 [speaker_0]
+-generate summarizations for it, and then do an evaluation to determine the quality of it. Okay?
+
+00:05:53,820 --> 00:05:54,020 [speaker_1]
+Mm-hmm.
+
+00:05:54,920 --> 00:06:05,060 [speaker_0]
+Um, what the scope of your story is, is that we now want to Automate that validation.
+
+00:06:05,180 --> 00:06:05,440 [speaker_1]
+Okay.
+
+00:06:05,520 --> 00:06:05,840 [speaker_0]
+Okay?
+
+00:06:05,849 --> 00:06:06,170 [speaker_1]
+Mm-hmm.
+
+00:06:06,320 --> 00:06:49,420 [speaker_0]
+So that when we run, when we run this orchestration here, this, the summarization,
+and we run this orchestration to do this,
+we first can optionally run some tests against ground truth data where, um...
+And then we can validate, okay, we're still getting the expected responses, right? Uh,
+or the quality of responses remain above a certain threshold, right? Um, and this means, okay,
+then we'll do that for some sample records, and if that looks good,
+then we can optionally then continue. You know, 'cause a lot of times we'll do thousands
+or hundreds of thousands of these generations, right?
+
+00:06:49,920 --> 00:06:49,930 [speaker_1]
+Okay.
+
+00:06:49,940 --> 00:07:44,140 [speaker_0]
+And it's costly because that means we're ma-making many calls of OpenAI using a lot of tokens. Um,
+what we wanna do is insert some automated tests, um, into this orchestration flow so that, you know,
+we are first saying, okay, against new generations,
+and then compare it against the ground truth data for those. Um, they look acceptable,
+and so now we can continue with the hundreds of thousands of keys, right? We're,
+we're confident that, you know, nothing... Because things could change, right? We might, um,
+introduce a small prompt change. Maybe we use a different model, things like that, right?
+There could be many factors that might influence the results, and we wanna try to catch
+that via automated tests here before we spend a lot of money generating new keys, you know, new gen-
+new summaries just to h- you know, hopefully we wouldn't find out then, oh, the summaries are bad,
+we just wasted money, right?
+
+00:07:44,260 --> 00:07:44,290 [speaker_1]
+Mm-hmm.
+
+00:07:44,880 --> 00:07:46,290 [speaker_0]
+Um, does that make sense so far?
+
+00:07:47,080 --> 00:07:48,800 [speaker_1]
+Yeah, it do- it does.
+
+00:07:49,740 --> 00:07:51,300 [speaker_0]
+Okay. So-
+
+00:07:51,640 --> 00:07:51,960 [speaker_1]
+Mm-hmm.
+
+00:07:53,840 --> 00:08:16,759 [speaker_0]
+There was a proposal here that basically the, the team that builds, um, models that we host,
+that they would introduce new models that would allow us to, um, validate the ground truth data.
+Okay?
+
+00:08:16,920 --> 00:08:17,120 [speaker_1]
+Mm-hmm.
+
+00:08:18,100 --> 00:08:30,620 [speaker_0]
+So, um... And, and to be honest,
+this is a somewhat complicated story here because this still requires some design work, right?
+
+00:08:32,080 --> 00:08:32,090 [speaker_1]
+Okay.
+
+00:08:32,180 --> 00:08:50,080 [speaker_0]
+Um, what the data science team has proposed is
+that they're going to potentially introduce new models like context relevancy here, um,
+and otherwise that we could call as part of our orchestration, right?
+
+00:08:50,320 --> 00:08:50,580 [speaker_1]
+Okay.
+
+00:08:51,140 --> 00:09:00,970 [speaker_0]
+So I think I would take this in a couple of steps.
+The first simple step would be in our overall CMA AI orchestration-
+
+00:09:01,140 --> 00:09:01,460 [speaker_1]
+Mm-hmm.
+
+00:09:01,700 --> 00:09:22,320 [speaker_0]
+I wanna introduce a s- a step to optionally run these tests. And on failure of these tests, I want,
+um, to... Uh, let me sn- Let me think. Sorry, let me, let me just think. There,
+there's a couple of options here.
+
+00:09:22,720 --> 00:09:22,750 [speaker_1]
+Mm-hmm.
+
+00:09:22,880 --> 00:09:44,740 [speaker_0]
+One is that we just introduce the cert- the option to... Maybe that's what I would,
+I would change is, um... Okay. Let me now introduce you to something else here. Let me,
+let me start here. There is a specification here.
+
+00:09:47,220 --> 00:10:00,420 [speaker_1]
+Yeah, the story description says the retrieval evaluation should be optional,
+but it also says the default should run this test. And, uh, I'm not-- I'm confused.
+Should it default to true or false?
+
+00:10:01,760 --> 00:10:05,120 [speaker_0]
+Yeah. Well, let me, let me maybe slightly change that proposal there.
+
+00:10:05,360 --> 00:10:05,500 [speaker_1]
+Mm-hmm.
+
+00:10:05,740 --> 00:10:08,400 [speaker_0]
+Um, I think to make things even easier-
+
+00:10:08,660 --> 00:10:08,820 [speaker_1]
+Mm-hmm.
+
+00:10:09,380 --> 00:11:05,620 [speaker_0]
+Or straightforward. So we have this specification here, and I will send this to you. This
+is a service that we have, um, that is used to... And let me just do this. Okay. This
+is a service we can use to run orchestrations, okay? And, um, instantiate is kind of the main, um,
+this is called is the endpoint we would use when we wanna, we want to actually perform, you know,
+create these, these summaries, right?
+
+00:11:05,960 --> 00:11:06,210 [speaker_1]
+Okay.
+
+00:11:06,340 --> 00:11:39,540 [speaker_0]
+And currently as the input we provide either, um, you could give us a list of the keys
+that you wanna generate the summary for. Okay, so this is like an example. This is like a,
+a serial number prefix, and then this is the fault code.
+Or there's already kind of an internal list of about a hundred of these keys we maintain.
+So you could also just give a count and say, "Just run orchestration for the ten known ke-keys."
+
+00:11:39,880 --> 00:11:40,070 [speaker_1]
+Mm-hmm.
+
+00:11:40,480 --> 00:12:04,080 [speaker_0]
+Okay? What I would like to do is update this service so that it can be a one of list, count or, um,
+we could introduce it just as... Let's, let me just say the word validate or something like that,
+right?
+
+00:12:04,220 --> 00:12:04,330 [speaker_1]
+Mm-hmm.
+
+00:12:04,780 --> 00:12:11,544 [speaker_0]
+Um, and- It, it'd just be like validate is true or something like that, right?
+
+00:12:11,844 --> 00:12:11,894 [speaker_1]
+Mm-hmm.
+
+00:12:12,044 --> 00:12:22,144 [speaker_0]
+So either I'm gonna generate from a list, I'm gonna generate from a known set,
+or I'm just gonna run, uh, some validation. Uh, I, I wanna run the ground truth, right?
+
+00:12:22,764 --> 00:12:22,774 [speaker_1]
+Okay.
+
+00:12:22,844 --> 00:12:40,284 [speaker_0]
+So I think the first task I'd have for you here is let's update this spec and service such
+that I can now... And I'll, I'll write you a... 'Cause I realize the story I gave you is huge,
+right? It's kind of a feature in itself.
+
+00:12:40,344 --> 00:12:40,794 [speaker_1]
+Mm-hmm.
+
+00:12:40,794 --> 00:12:40,794 [speaker_0]
+Right?
+
+00:12:40,794 --> 00:12:40,794 [speaker_1]
+Mm-hmm.
+
+00:12:40,794 --> 00:12:58,944 [speaker_0]
+Um, let me break it down a little bit.
+And the first story would be create a update this specification so
+that I could now give an option of, like, validate is true or something like that. And
+that would mean to run the test. Okay?
+
+00:12:59,224 --> 00:12:59,504 [speaker_1]
+Okay.
+
+00:12:59,654 --> 00:13:27,184 [speaker_0]
+And then, then the other piece is you'll have to get into the orchestration code and,
+and services itself such that it is capable of allowing this support of, if that's true,
+now we're going to only, um, run the validation tests.
+That could be a placeholder for now because we're still kind of working out the details of what
+that will be.
+
+00:13:27,264 --> 00:13:27,294 [speaker_1]
+Mm-hmm.
+
+00:13:27,484 --> 00:13:27,824 [speaker_0]
+Okay?
+
+00:13:29,024 --> 00:13:29,034 [speaker_1]
+Mm-hmm.
+
+00:13:29,034 --> 00:13:41,724 [speaker_0]
+Um, but the end result is, like, if it fails, it should... If it fails or succeeds,
+it should then kind of just produce a summary of the results there. Okay?
+
+00:13:42,184 --> 00:13:42,194 [speaker_1]
+Okay.
+
+00:13:42,264 --> 00:14:07,424 [speaker_0]
+Um, and that could kind of just be a placeholder here as well. You know, for now it could say, uh,
+you know, failed succes- or it completed successfully or, or failed,
+and then we'll have a place where more details where we could actually produce, um, a report of the,
+of the, of the, um, criteria occurred, right? So-
+
+00:14:07,544 --> 00:14:07,794 [speaker_1]
+Mm-hmm
+
+00:14:07,864 --> 00:14:24,324 [speaker_0]
+... I think I'm giving you just kind of a small item here of updating the specification
+and then determining where in the orchestration code itself we could add support for such validation
+and then, um, you know, a response of summarization of, of results, right?
+
+00:14:24,654 --> 00:14:24,654 [speaker_1]
+Right.
+
+00:14:24,704 --> 00:14:48,324 [speaker_0]
+Uh, without having to go, you know, not actually running any tests yet,
+not actually producing a report other than, uh, of maybe a simple, a simple, uh, file. Okay? Um,
+so I think we could start there. Let me... Give me a little bit of time.
+Give me today to kind of write that more specific story out. I,
+I kind of wanna give you a much smaller entry into this, right?
+
+00:14:48,584 --> 00:14:48,844 [speaker_1]
+Yeah.
+
+00:14:48,984 --> 00:14:55,514 [speaker_0]
+Um, and so... And what, what I would suggest here is, um... Have you met Luba yet on our team?
+
+00:14:55,684 --> 00:14:58,924 [speaker_1]
+Uh, not yet, yeah. That's what I wanted to talk to you first.
+
+00:14:59,004 --> 00:14:59,014 [speaker_0]
+Sure.
+
+00:14:59,024 --> 00:14:59,564 [speaker_1]
+Confirm-
+
+00:14:59,764 --> 00:14:59,894 [speaker_0]
+Mm-hmm
+
+00:14:59,924 --> 00:15:07,124 [speaker_1]
+... a few questions I got, and then, yeah. I see one of his story, uh, you know, I think he
+was previously working on this story.
+
+00:15:08,124 --> 00:15:08,404 [speaker_0]
+Yes.
+
+00:15:08,644 --> 00:15:08,724 [speaker_1]
+Yeah.
+
+00:15:08,734 --> 00:15:11,964 [speaker_0]
+Yeah, Luba is kind of our, our main developer on this piece, right?
+
+00:15:12,044 --> 00:15:12,053 [speaker_1]
+Okay.
+
+00:15:12,104 --> 00:15:14,684 [speaker_0]
+So I will write you the story.
+
+00:15:15,044 --> 00:15:15,053 [speaker_1]
+Mm-hmm.
+
+00:15:15,094 --> 00:15:17,463 [speaker_0]
+And then I'm, I'm gonna put you in contact with Luba.
+
+00:15:17,664 --> 00:15:17,864 [speaker_1]
+Yeah.
+
+00:15:17,924 --> 00:15:30,504 [speaker_0]
+Luba will... I think it would be worthwhile having a review with Luba then on this,
+and he could be helpful in showing you exactly where in the code, um, you'll need to start looking.
+
+00:15:30,824 --> 00:15:30,954 [speaker_1]
+Okay.
+
+00:15:30,954 --> 00:15:34,704 [speaker_0]
+Right? Um, and he'll probably be your, your main resource here.
+
+00:15:34,773 --> 00:15:34,773 [speaker_1]
+Okay.
+
+00:15:34,804 --> 00:15:37,364 [speaker_0]
+So I'll ask him to give, to give you a hand on this-
+
+00:15:37,984 --> 00:15:38,384 [speaker_1]
+Mm-hmm
+
+00:15:38,404 --> 00:15:39,884 [speaker_0]
+... and, you know, to kind of guide you through-
+
+00:15:40,224 --> 00:15:40,374 [speaker_1]
+Mm-hmm
+
+00:15:40,374 --> 00:15:45,324 [speaker_0]
+... the areas of the code and you know, how to... the pipelines,
+the relevant pipelines to build this and so on.
+
+00:15:45,424 --> 00:15:45,434 [speaker_1]
+Mm-hmm.
+
+00:15:45,544 --> 00:15:56,484 [speaker_0]
+Right? 'Cause this'll be wa- you know, this'll be a different repo, a different, you know,
+code base than you've been looking at so far with the work you've been doing with Elliot, right? So-
+
+00:15:57,184 --> 00:15:57,214 [speaker_1]
+Yes.
+
+00:15:57,244 --> 00:16:02,004 [speaker_0]
+Um, mm-hmm. So this is where I, I will start you. So give me a little bit, uh-
+
+00:16:02,324 --> 00:16:02,924 [speaker_1]
+Yeah, sure, sure. Thank you
+
+00:16:02,944 --> 00:16:17,244 [speaker_0]
+... give you a refined story. Right. But I wanted to... And I'm sorry, did I share
+that spec with you? I did, yeah. Um, but I think that'll be a much easier starting point.
+And in the meantime, I'll include you in the conversations we're having with the data science team-
+
+00:16:17,254 --> 00:16:17,394 [speaker_1]
+Mm-hmm
+
+00:16:17,394 --> 00:16:20,584 [speaker_0]
+... about what, what the actual approach for validation will be here.
+
+00:16:20,884 --> 00:16:25,224 [speaker_1]
+Yeah, sure. So Luba is from the Slovakian team, right?
+
+00:16:25,784 --> 00:16:26,484 [speaker_0]
+That's correct. Yep.
+
+00:16:26,924 --> 00:16:33,604 [speaker_1]
+Uh, I'm not yet, uh... I mean, I haven't figured out yet until what time in our time zone
+are they available.
+
+00:16:34,324 --> 00:16:38,844 [speaker_0]
+Sure. It depends. Um, Lub, you know, it depends on the individual, right?
+
+00:16:39,004 --> 00:16:39,114 [speaker_1]
+Mm-hmm.
+
+00:16:39,304 --> 00:16:47,964 [speaker_0]
+Luba is probably works the latest of our, you know,
+of our hours than anybody else on the Slovakia team.
+
+00:16:48,524 --> 00:16:48,534 [speaker_1]
+Mm-hmm.
+
+00:16:48,534 --> 00:16:55,844 [speaker_0]
+Um, so I try to schedule all my meetings with Luba with the Slovakia team before, like 10:00,
+if possible.
+
+00:16:55,854 --> 00:16:55,854 [speaker_1]
+Okay.
+
+00:16:55,924 --> 00:16:59,984 [speaker_0]
+Usually with Luba, I can go up through like noon our time.
+
+00:17:00,084 --> 00:17:00,284 [speaker_1]
+Mm-hmm.
+
+00:17:00,804 --> 00:17:14,544 [speaker_0]
+Um, so, you know, I... That, that's, that's probably what, you know, um,
+but he sometimes he's on later. He's, he works quite later hours. Um, and it depends. He has a,
+a newer baby, so sometimes his hours fluctuate a little bit.
+
+00:17:14,784 --> 00:17:14,934 [speaker_1]
+Mm-hmm.
+
+00:17:15,084 --> 00:17:18,184 [speaker_0]
+Um, but you could probably go through noon, but if possible, try to stay-
+
+00:17:18,314 --> 00:17:18,314 [speaker_1]
+Yeah
+
+00:17:18,314 --> 00:17:21,004 [speaker_0]
+... through 10:00 or 11:00 in the morning with him. Yeah.
+
+00:17:21,034 --> 00:17:23,784 [speaker_1]
+Yeah. I'll, I'll, I'll check with them and then schedule that way.
+
+00:17:25,024 --> 00:17:28,724 [speaker_0]
+Yeah. Okay. Um, okay. So yeah.
+
+00:17:28,754 --> 00:17:28,754 [speaker_1]
+Yeah.
+
+00:17:28,784 --> 00:17:32,383 [speaker_0]
+So let's, let's give this a start here, and I think we can, we can go from there.
+
+00:17:33,064 --> 00:17:33,684 [speaker_1]
+Yeah, sure.
+
+00:17:36,744 --> 00:17:52,224 [speaker_0]
+All right. All right. I'll talk... Uh, once I get that set up, I'll share it with you and then, uh,
+we- we'll... I'll, I'll, I'll start including you, I think, into the, our... So on Monday,
+Wednesday, Fridays, we have AI assistant specific stand-ups.
+
+00:17:52,484 --> 00:17:52,494 [speaker_1]
+Mm-hmm.
+
+00:17:52,624 --> 00:18:00,284 [speaker_0]
+Right? Um, if you're... Is Paul... Are you done with that work with Iliya, or did,
+did Paul give you an indication there?
+
+00:18:00,684 --> 00:18:05,924 [speaker_1]
+Yeah, we closed that story. The, you know, the second story I was working with him.
+
+00:18:06,204 --> 00:18:06,214 [speaker_0]
+Okay.
+
+00:18:06,244 --> 00:18:17,704 [speaker_1]
+Yeah, that's closed for now. Actually, Paul told me that the SOS project is currently delayed
+or it's paused for a while. Mm-hmm. That's right. Yeah.
+
+00:18:18,524 --> 00:18:45,904 [speaker_0]
+So I, I will invite you to our AI assistant syncs on Monday, Wednesday, Friday.
+I think you could start attending that because that's where we'll, um,
+discuss more things like on the CMA C- side here. Um, we can discuss more of that,
+and then you could probably stop attending that other one that you're in on the, on the Monday,
+Wednesday, Friday, right? Instead, you could probably go to the AI assistant one.
+And then on Tuesday, Thursdays we all meet together, right?
+
+00:18:46,124 --> 00:18:47,584 [speaker_1]
+Yeah. Yeah. Yeah. Sure.
+
+00:18:47,644 --> 00:18:50,904 [speaker_0]
+Okay. All right. Okay, cool.
+
+00:18:51,034 --> 00:18:51,034 [speaker_1]
+Thank you.
+
+00:18:51,064 --> 00:18:54,654 [speaker_0]
+So let's get this, this one started then, and then we'll keep talking as we work through-
+
+00:18:55,124 --> 00:18:55,174 [speaker_1]
+Yeah
+
+00:18:55,174 --> 00:18:55,744 [speaker_0]
+... details here.
+
+00:18:55,884 --> 00:18:57,364 [speaker_1]
+Yeah, sure.
+
+00:18:57,444 --> 00:18:57,524 [speaker_0]
+Okay.
+
+00:18:58,354 --> 00:18:58,684 [speaker_1]
+Thank you.
+
+00:18:58,744 --> 00:18:59,464 [speaker_0]
+All right. Thanks, Sundar.
+
+00:18:59,664 --> 00:18:59,734 [speaker_1]
+Yeah.
+
+00:18:59,784 --> 00:19:00,244 [speaker_0]
+Talk to you later.
