@@ -22,54 +22,202 @@ We added a new option called retrievalEvaluation to the orchestration service. W
 
 The implementation is a placeholder right now. The actual validation model (Context Relevancy) is still being built by the data science team. What we've done is build all the plumbing so that when that model is ready, it plugs right in without needing to restructure anything.
 
-Specifically we did the following:
 
-1. Updated the API contract so that the service now accepts a new retrievalEvaluation parameter. This tells the service whether to run validation or not. We also defined what the validation results look like in the response so that anyone polling for status can see whether validation passed or failed, how many tests ran, and where to find the detailed report.
-
-2. Added two new statuses that the orchestration can be in. VALIDATING means the validation tests are currently running. VALIDATION_FAILED means the tests did not pass the quality bar and summary generation was stopped to avoid wasting resources.
-
-3. Created a data model that represents a validation result. This gives us a consistent structure for passing validation information around the system rather than relying on loose dictionaries that could have typos or missing fields.
-
-4. Created a placeholder validation function. This is where the real Context Relevancy model calls will eventually live. Right now it just returns a passing result with zero tests run. When the data science team delivers the model, we update this one piece and everything else stays the same.
-
-5. Updated the main orchestration logic to check the retrievalEvaluation flag. If it's true, the service enters validation mode first. If validation passes it continues with generating summaries. If validation fails it stops immediately without generating anything. If the flag is false or not provided, everything works exactly as it did before.
-
-6. Updated the entry point that receives API requests so it can accept, validate, and forward the new parameter. It also now allows requests without keys when validation is the only thing being requested.
-
-7. Updated the status response so that when someone checks how their orchestration is going, they can see the validation results alongside the usual progress information.
-
-8. Added tests covering all the new paths plus verified that all existing functionality still works. 143 tests pass.
+The files and what each one does
 
 
-How the flow works
+1. orchestrationService-v1-oas.yaml
 
-Normal flow (unchanged):
-Someone sends a list of fault codes. The service generates AI summaries for each one. Status goes from pending to processing to succeeded. Nothing about this changed.
+Location: orchestration/src/orchestration_service/resources/
+
+This is the API specification, the formal contract that defines what the service accepts and returns. Every team that calls this service (Foresight, Data Science, internal tools) reads this to know what's available.
+
+What we added:
+- retrievalEvaluation: a true/false parameter on the instantiate request. When true, tells the service to run validation before generating summaries. Defaults to false so existing behavior is unchanged.
+- VALIDATING status: a new orchestration state that means validation tests are currently running.
+- VALIDATION_FAILED status: means validation did not pass the quality bar, summaries were not generated, money was saved.
+- ValidationResult schema: a new object in the status response showing the outcome (PASSED/FAILED/ERROR), how many tests ran, how many passed, how many failed, and where to find the detailed report.
+
+Why we did it: The spec comes first because it's the agreement between everyone. Before writing any code, we define what the API looks like so other teams can build against it and the API gateway can validate incoming requests automatically.
+
+
+2. common/models/validation.py
+
+Location: orchestration/src/orchestration_service/common/models/
+
+This is a Python dataclass that defines the shape of a validation result:
+
+    class ValidationResult:
+        outcome: str          -> "PASSED", "FAILED", or "ERROR"
+        tests_run: int        -> how many ground-truth test cases were evaluated
+        tests_passed: int     -> how many met the quality threshold
+        tests_failed: int     -> how many did not meet the threshold
+        details: str          -> S3 path to full report or a message
+
+Why we did it: Without a defined model you'd pass around raw dictionaries and hope everyone spells the keys the same way. A dataclass gives you type safety, makes the code self-documenting, and means if someone adds a new field later it's obvious where it lives.
+
+
+3. functions/executor/validation.py
+
+Location: orchestration/src/orchestration_service/functions/executor/
+
+This is where the actual validation logic lives. Right now it's a placeholder function called run_retrieval_evaluation() that always returns PASSED with zero tests run.
+
+What it does now:
+    def run_retrieval_evaluation() -> ValidationResult:
+        return ValidationResult(
+            outcome="PASSED",
+            tests_run=0,
+            tests_passed=0,
+            tests_failed=0,
+            details="Validation placeholder - Context Relevancy model integration pending"
+        )
+
+What it will do in the future when the data science team delivers the Context Relevancy model:
+1. Load ground-truth test data (known inputs with known correct outputs)
+2. For each test case, call GenAI to generate a summary
+3. Send the generated summary plus the retrieved documents to the Context Relevancy model
+4. Get back quality scores (context relevancy, faithfulness, answer relevancy, context recall, context precision)
+5. Compare each score against configured thresholds
+6. Produce a detailed report and store it in S3
+7. Return pass or fail based on how many tests met the bar
+
+Why it's separate: Kevin said build the structure now, fill in the logic later. By putting validation in its own file, when the model is ready we only change this one file. Nothing else in the system needs to be touched.
+
+
+4. functions/executor/executor.py (modified)
+
+Location: orchestration/src/orchestration_service/functions/executor/
+
+This is the main orchestration function that already existed. It handles the normal flow of resolving keys, calling GenAI for each one, and storing results.
+
+What we added (a conditional branch at the beginning):
+
+    def execute_orchestration(request):
+        retrieval_evaluation = request.get("retrievalEvaluation", False)
+
+        if retrieval_evaluation:
+            update_status(orchestration_id, "VALIDATING")
+            validation_result = run_retrieval_evaluation()
+            store_validation_result(orchestration_id, validation_result)
+
+            if validation_result.outcome == "FAILED":
+                update_status(orchestration_id, "VALIDATION_FAILED")
+                return  # Stop here. Don't generate summaries. Save money.
+
+            if not keys:
+                update_status(orchestration_id, "SUCCEEDED")
+                return  # Validation-only mode. Done.
+
+        # Everything below is existing code, unchanged
+        update_status(orchestration_id, "PROCESSING")
+        for key in resolve_keys(keys):
+            generate_summary(key)
+        update_status(orchestration_id, "SUCCEEDED")
+
+Why we did it: This is the core decision point. If retrievalEvaluation is true, check quality first. If quality is bad, stop. If quality is good, proceed. If retrievalEvaluation is false or missing, skip the whole thing and run the normal flow exactly as before.
+
+
+5. functions/request_handler/ (modified)
+
+Location: orchestration/src/orchestration_service/functions/request_handler/
+
+This is the Lambda that receives the HTTP POST from API Gateway. It's the front door of the service.
+
+What we added:
+
+    def handle_instantiate(event):
+        body = parse_body(event)
+        retrieval_evaluation = body.get("retrievalEvaluation", False)
+
+        # Validate it's actually a boolean
+        if not isinstance(retrieval_evaluation, bool):
+            return error_response(400, "retrievalEvaluation must be a boolean")
+
+        # Allow requests without keys if doing validation only
+        if not keys and not retrieval_evaluation:
+            return error_response(400, "Either keys or retrievalEvaluation must be provided")
+
+        # Store everything including the new flag
+        create_orchestration_record(
+            keys=keys,
+            retrieval_evaluation=retrieval_evaluation,
+            ...
+        )
+
+Why we did it: The front door needs to accept the new field, make sure it's valid (reject garbage like "yes" or 123 instead of true/false), and store it so the executor knows what to do later. We also had to relax the validation that previously required keys on every request, since validation-only mode doesn't need keys.
+
+
+6. api_responses.py / status endpoint (modified)
+
+Location: orchestration/src/orchestration_service/functions/request_handler/
+
+When someone polls GET /orchestrations/{id}/status, the response now includes validationResult if validation was run:
+
+    def handle_get_status(orchestration_id):
+        record = get_record(orchestration_id)
+        response = {
+            "orchestrationId": record["orchestrationId"],
+            "status": record["status"]
+        }
+        if record.get("validationResult"):
+            response["validationResult"] = record["validationResult"]
+        return response
+
+Why we did it: The caller needs to see what happened with validation. Without this they'd have no way to know if it passed, failed, how many tests ran, or where the report is.
+
+
+7. Test files
+
+Modified:
+- tests/orchestration_service/functions/executor/test_executor.py
+- tests/orchestration_service/functions/request_handler/conftest.py
+- tests/orchestration_service/functions/request_handler/test_request.py
+
+New test data files:
+- tests/.../request_handler/_data/instantiate_retrieval_evaluation_only.json (simulates validation-only request)
+- tests/.../request_handler/_data/instantiate_validation_error_10.json (simulates invalid input for error handling)
+
+What the tests verify:
+- Executor enters validation branch when retrievalEvaluation is true
+- Executor skips validation when retrievalEvaluation is false (existing behavior unchanged)
+- Validation-only mode works (no keys, just validation)
+- Request handler accepts valid retrievalEvaluation input
+- Request handler rejects invalid input (non-boolean values)
+- All 143 tests pass including all previously existing tests
+
+Why we did it: Tests prove the new code works and the old code wasn't broken. If someone changes something later and a test fails, they know immediately what went wrong.
+
+
+How the flow works end to end
+
+Normal flow (no validation, same as before):
+Someone sends a list of fault codes. Service goes PENDING then PROCESSING then SUCCEEDED. Summaries are generated for each key. Nothing about this changed.
 
 Validation with fault codes:
-Someone sends fault codes and sets retrievalEvaluation to true. The service first runs the validation tests. If they pass, it proceeds with generating summaries as normal. If they fail, it stops and reports the failure. No summaries are generated, no money is wasted.
+Someone sends fault codes and sets retrievalEvaluation to true. Service goes PENDING then VALIDATING (runs ground-truth tests). If tests pass, continues to PROCESSING (generates summaries) then SUCCEEDED. If tests fail, goes to VALIDATION_FAILED and stops. No summaries generated, no money wasted.
 
-Validation only:
-Someone sets retrievalEvaluation to true but doesn't send any fault codes. The service just runs the validation tests and reports the results. This is useful for the data science team to check quality without triggering a full batch.
+Validation only (no fault codes):
+Someone sends just retrievalEvaluation true with no keys. Service goes PENDING then VALIDATING then SUCCEEDED. Just runs tests and reports results. Useful for the data science team to check quality without triggering a full batch.
 
 
-What's left to do (not this story)
+What's left to do (future work, not this story)
 
-- Integrate the actual Context Relevancy model when the data science team delivers it
-- Load real ground-truth test data
+- Integrate the actual Context Relevancy model when the data science team (Ocelot) delivers it
+- Load real ground-truth test data (location to be determined with Luba and data science team)
 - Implement threshold comparison logic
-- Generate detailed validation reports and store them
-- Possibly add a second model for summary quality evaluation
+- Generate detailed validation reports and store them in S3
+- Possibly add a second model for SIS summary quality evaluation
 
-These are future stories. This story was about building the structure and making the service ready to receive the real validation logic when it comes.
+These are all future stories. This story was about building the structure and making the service ready to receive the real validation logic when it comes.
 
 
 Testing status
 
 What passed:
 - 143 unit tests (all existing plus new ones for the validation paths)
-- API spec validation (no errors)
-- Local testing of the request handling (correctly accepts valid requests, rejects invalid ones)
+- API spec validation (no schema errors)
+- Local testing of request handling (correctly accepts valid requests, rejects invalid ones)
 
 What still needs testing and requires deployment to the DEV environment:
 - End-to-end API calls against real infrastructure
