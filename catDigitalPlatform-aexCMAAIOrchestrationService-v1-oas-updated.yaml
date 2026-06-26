@@ -1,0 +1,645 @@
+openapi: 3.0.3
+info:
+  description: |
+    API to run and manage CMA AI Assistant orchestration pipelines / executions. 
+    The CMA AI Assistant orchestration pipeline is an implementation of RAG (Retrieval-Augmented Generation) pattern
+    utilizing Azure OpenAI via GenAI service and AEX Model Repo service to generate content based on Caterpillar's internal documents.
+    The CMA AI Assistant orchestration API is being developed and maintained by Analytics Execution team (AEX).
+  version: 1.1.0
+  title: AEX CMA AI Assistant Orchestration
+  contact:
+    name: AEX Support
+    email: heliosanalyticsexecutiongroup@cat.com
+  x-cat-confidential-level-oas: 'Caterpillar: Confidential Green'
+  x-cat-api-metadata:
+    cat-app-troux-id: "12463"
+    cat-api-sharable: "Yes"
+    cat-api-internet-facing: "No"
+    cat-api-has-web-contents: "No"
+    cat-api-base-url: "https://aex-ai-assistant-orchestration-svc.platform.prod.helios-internal.cat.com/v1"
+    cat-api-auth-type: "no_auth"
+    cat-api-is-production: "No"
+
+servers:
+  - url: https://aex-ai-assistant-orchestration-svc.platform.dev.helios-internal.cat.com/v1
+  - url: https://aex-ai-assistant-orchestration-svc.platform.int.helios-internal.cat.com/v1
+  - url: https://aex-ai-assistant-orchestration-svc.platform.prod.helios-internal.cat.com/v1
+
+tags:
+  - name: Orchestration
+    description: |
+      Orchestration endpoints allow to run and manage orchestration executions. 
+      Users can run executions using their own input keys sets (serial number prefix + rollup key combinations) and configuration parameters. 
+      Users can specify how the output from their executions will be used - they can be the only consumers or it can also be consumed by Foresight. 
+      The users can also specify a notification channel - the way in which they will be notified about an execution outcome 
+      and where they find execution's associated output data.
+
+paths:
+  /orchestrations/instantiate:
+    post:
+      tags:
+        - Orchestration
+      summary: Instantiate an orchestration execution
+      description: |
+        Instantiates an AI Assistant orchestration execution.
+      operationId: instantiateOrchestration
+      x-cat-eCustomer-allowed: false
+      x-cat-eCustomer-responseCode: 403
+      x-cat-confidential-level-data: "Caterpillar: Confidential Green"
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RequestHandlerLambdaArn}/invocations
+      requestBody:
+        description: Submits an orchestration execution request.
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstantiateOrchestrationRequest'
+            examples:
+              consumerSpecifiedKeysList:
+                summary: Consumer-specified list of input keys
+                description: Putting a consumer-specified set of keys (serial number prefixes + roll-up keys) in the request payload.
+                value:
+                  keys:
+                    list:
+                      - "KYD-PL|2126,PL"
+                      - "KYD-VIMS|237,VIMS"
+                      - "KPZ-PL|361,PL"
+                      - "KYD-PL|198,PL"
+                      - "T6X-VIMS|2112,VIMS"
+              aexDefaultKeysByCount:
+                summary: AEX Default keys by count specified
+                description: |
+                  Putting count of keys (serial number prefixes + roll-up keys) pulled out from an AEX default keys set. 
+                  Supported range is between 1 and 100.
+                value:
+                  keys:
+                    count: 50
+              groundTruthValidationRun:
+                summary: Ground truth validation run
+                description: |
+                  Runs a pre-defined set of keys against saved ground truth data to validate retrieval quality 
+                  and AI summary generation. Produces a report summarizing the validation results including 
+                  pass/fail outcome and quality scores. This is mutually exclusive with list and count options.
+                value:
+                  keys:
+                    groundTruthValidation: true
+                  notificationMail: "generic.user@cat.com"
+              customAiContextConfiguration:
+                summary: Custom AI Context configuration and notification e-mail set
+                description: |
+                  Putting custom AI context configuration in the request payload so that AEX default one is overridden. 
+                  Also a notification e-mail is set so the consumer is informed about the orchestration execution outcome and where the output data can be found.
+                value:
+                  keys:
+                    list:
+                      - "KYD-PL|2126,PL"
+                      - "KYD-PL|237,PL"
+                      - "KPZ-PL|361,PL"
+                      - "KYD-PL|198,PL"
+                      - "T6X-PL|2112,PL"
+                  aiContext:
+                    sisSummary: "oaikb-cma_ai_assistant-sis_summary-summarization_pl-123"
+                    pastRecommendations: "kb-cma_ai_assistant-past_recommendation-similarity_search-234"
+                    masking: "oai-cma_ai_assistant-past_recommendation-ner-345"
+                  notificationMail: "generic.user@cat.com"
+              foresightConsumptionAndNotificationEmail:
+                summary: Foresight consumption
+                description: Orchestration execution output is meant to be available for Foresight.
+                value:
+                  keys:
+                    list:
+                      - "KYD-PL|2126,PL"
+                      - "KYD-PL|237,PL"
+                      - "KPZ-PL|361,PL"
+                      - "KYD-PL|198,PL"
+                      - "T6X-PL|2112,PL"
+                  isForForesightConsumption: true
+                  notificationMail: "generic.user@cat.com"
+              knowledgeBaseBehaviourModified:
+                summary: Knowledge Base behaviour modification
+                description: Behaviour / results of the Knowledge Base can be impacted by set of flags.
+                value:
+                  keys:
+                    list:
+                      - "KYD-PL|2126,PL"
+                      - "KYD-PL|237,PL"
+                      - "KPZ-PL|361,PL"
+                      - "KYD-PL|198,PL"
+                      - "T6X-PL|2112,PL"
+                  knowledgeBaseFlags:
+                    - "search_ranking_update"
+                    - "index_query_v2"
+              alternativeMaskingModels:
+                summary: Alternative masking models use
+                description: Default models can be alternated with different versions of the models by putting a model URL.
+                value:
+                  keys:
+                    list:
+                      - "KYD-PL|2126,PL"
+                      - "KYD-PL|237,PL"
+                      - "KPZ-PL|361,PL"
+                      - "KYD-PL|198,PL"
+                      - "T6X-PL|2112,PL"
+                  regexMasking:
+                    modelUrl: "https://aex-model-repo-service.platform.int.helios-internal.cat.com/v1/model/6d8d7907-b389-49ef-9b6b-f13cbbb0c64b/run-async/"
+                  nerMasking:
+                    modelUrl: "https://aex-model-repo-service.platform.int.helios-internal.cat.com/v1/model/6d8d7907-b389-49ef-9b6b-f13cbbb0c64b/run-async/"
+      responses:
+        "202":
+          description: Orchestration execution request submitted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstantiateOrchestrationResponse"
+              examples:
+                requestSubmitted:
+                  summary: Request submitted
+                  value:
+                    orchestrationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    status: "PENDING"
+        "400":
+          description: Bad Request. Input payload violates validations.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/400BadRequest"
+              examples:
+                inputKeysSizeExceeded:
+                  value:
+                    code: "400.008"
+                    description: |
+                      There is a validation error. List of input keys exceeds 100. 
+                      Maximally 100 input keys are supported. Fix the input and resubmit the request.
+                aiContextConfigurationNotCompleted:
+                  value:
+                    code: "400.008"
+                    description: |
+                      There is a validation error. All of sisSummary, PastRecommendations, Masking have to be set. 
+                      Fix the input and resubmit the request.
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "500":
+          $ref: "#/components/responses/500InternalServerError"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+
+  /orchestrations/{orchestrationId}/cancel:
+    post:
+      tags:
+        - Orchestration
+      summary: Cancel an orchestration execution
+      description: |
+        Cancels an AI Assistant orchestration execution.
+      operationId: cancelOrchestration
+      x-cat-eCustomer-allowed: false
+      x-cat-eCustomer-responseCode: 403
+      x-cat-confidential-level-data: "Caterpillar: Confidential Green"
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RequestHandlerLambdaArn}/invocations
+      parameters:
+        - $ref: "#/components/parameters/OrchestrationId"
+      responses:
+        "200":
+          description: Orchestration execution cancelled successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrchestrationCancelledResponse"
+              examples:
+                requestSubmitted:
+                  summary: Orchestration execution cancelled
+                  value:
+                    orchestrationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    status: "CANCELLED"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "500":
+          $ref: "#/components/responses/500InternalServerError"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+
+  /orchestrations/{orchestrationId}/status:
+    get:
+      tags:
+        - Orchestration
+      summary: Get an orchestration execution status
+      description: |
+        Get an AI Assistant orchestration execution status.
+      operationId: getOrchestrationStatus
+      x-cat-eCustomer-allowed: false
+      x-cat-eCustomer-responseCode: 403
+      x-cat-confidential-level-data: "Caterpillar: Confidential Green"
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RequestHandlerLambdaArn}/invocations
+      parameters:
+        - $ref: "#/components/parameters/OrchestrationId"
+      responses:
+        "200":
+          description: Orchestration execution status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrchestrationStatusResponse"
+              examples:
+                orchestrationProcessing:
+                  summary: Orchestration execution in progress
+                  value:
+                    orchestrationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    status: "PROCESSING"
+                    overallProgress: "51 of 100 keys complete"
+                validationInProgress:
+                  summary: Ground truth validation in progress
+                  value:
+                    orchestrationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    status: "VALIDATING"
+                validationSucceeded:
+                  summary: Ground truth validation completed successfully
+                  value:
+                    orchestrationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    status: "SUCCEEDED"
+                    validationResult:
+                      outcome: "PASSED"
+                      testsRun: 10
+                      testsPassed: 9
+                      testsFailed: 1
+                      reportLocation: "s3://aex-cmaai-orchestration-output/validation/3fa85f64-5717-4562-b3fc-2c963f66afa6/report.json"
+                validationFailed:
+                  summary: Ground truth validation failed
+                  value:
+                    orchestrationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    status: "VALIDATION_FAILED"
+                    validationResult:
+                      outcome: "FAILED"
+                      testsRun: 10
+                      testsPassed: 4
+                      testsFailed: 6
+                      reportLocation: "s3://aex-cmaai-orchestration-output/validation/3fa85f64-5717-4562-b3fc-2c963f66afa6/report.json"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "500":
+          $ref: "#/components/responses/500InternalServerError"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+
+components:
+  parameters:
+    OrchestrationId:
+      name: orchestrationId
+      in: path
+      required: true
+      description: Orchestration execution ID.
+      schema:
+        type: string
+        format: uuid
+      example: "1d81abbe-4f5a-4ef8-8d05-7bf89f66b9ad"
+
+  schemas:
+    InstantiateOrchestrationRequest:
+      type: object
+      description: Input data and configuration parameters for orchestration execution.
+      properties:
+        keys:
+          type: object
+          description: |
+            Input keys specification. Exactly one of list, count, or groundTruthValidation must be provided.
+            These options are mutually exclusive.
+          oneOf:
+            - properties:
+                list:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 100
+                  description: List of input keys which should be processed in an orchestration execution.
+                  example:
+                    - "KYD-PL|2126,PL"
+                    - "KYD-PL|237,PL"
+                    - "KPZ-PL|361,PL"
+                    - "KYD-PL|198,PL"
+                    - "T6X-PL|2112,PL"
+              required:
+                - list
+            - properties:
+                count:
+                  type: integer
+                  format: int32
+                  minimum: 1
+                  maximum: 100
+                  description: |
+                    Number of keys to pull from the AEX default keys set. 
+                    Supported range is between 1 and 100.
+              required:
+                - count
+            - properties:
+                groundTruthValidation:
+                  type: boolean
+                  enum:
+                    - true
+                  description: |
+                    When set to true, the orchestration will run a pre-defined set of keys against saved 
+                    ground truth data to validate retrieval quality and AI summary generation.
+                    It will produce a report that summarizes the results of the ground truth validation 
+                    including pass/fail outcome, number of tests run, and quality scores.
+                    This option is mutually exclusive with list and count.
+              required:
+                - groundTruthValidation
+        aiContext:
+          type: object
+          properties:
+            sisSummary:
+              type: string
+              description: SIS Summary AI Context name.
+              example: oaikb-cma_ai_assistant-sis_summary-summarization_pl
+            pastRecommendations:
+              type: string
+              description: Past Recommendations AI Context name.
+              example: kb-cma_ai_assistant-past_recommendation-similarity_search
+            masking:
+              type: string
+              description: Masking AI Context name.
+              example: oai-cma_ai_assistant-past_recommendation-ner
+        knowledgeBaseFlags:
+          type: array
+          minItems: 1
+          maxItems: 100
+          description: Optional flags to modify / adjust default behaviour when calling Knowledge Base (via GenAI).
+          items:
+            type: string
+          example:
+            - "search_ranking_update"
+            - "index_query_v2"
+        regexMasking:
+          type: object
+          description: Regex Masking Model configuration.
+          properties:
+            modelUrl:
+              allOf:
+                - $ref: "#/components/schemas/ModelUrl"
+              description: Alternative Regex Masking model URL.
+              example: https://aex-model-repo-service.platform.int.helios-internal.cat.com/v1/model/abcdefgh-b389-49ef-9b6b-f13cbbb0c64b/run-async/
+          required:
+            - modelUrl
+        nerMasking:
+          type: object
+          description: NER Masking Model configuration.
+          properties:
+            modelUrl:
+              allOf:
+                - $ref: "#/components/schemas/ModelUrl"
+              description: Alternative NER Masking model URL.
+              example: https://aex-model-repo-service.platform.int.helios-internal.cat.com/v1/model/12345678-b389-49ef-9b6b-f13cbbb0c64b/run-async/
+          required:
+            - modelUrl
+        isForForesightConsumption:
+          type: boolean
+          description: Whether or not orchestration execution outcome should be published to Foresight UI.
+          default: false
+          example: true
+        notificationMail:
+          oneOf:
+            - type: string
+              format: email
+              maxLength: 30
+              description: Notification e-mail ID via which consumer should be notified of orchestration execution outcome.
+              example: John.Caterpillar@cat.com
+            - type: array
+              items:
+                type: string
+                format: email
+                maxLength: 30
+              maxItems: 10
+              description: Notifications e-mail IDs of the service users to be notified of orchestration execution outcome.
+              example:
+                - John.Caterpillar@cat.com
+                - Eva.Caterpillar@cat.com
+
+    InstantiateOrchestrationResponse:
+      type: object
+      description: Information response that an orchestration execution request was submitted successfully.
+      properties:
+        orchestrationId:
+          type: string
+          format: uuid
+          description: ID of orchestration execution.
+          example: "b8bc2535-5896-4638-9987-17540b417c69"
+        status:
+          $ref: "#/components/schemas/OrchestrationStatus"
+
+    OrchestrationCancelledResponse:
+      type: object
+      description: Information response that an orchestration execution was successfully cancelled.
+      properties:
+        orchestrationId:
+          type: string
+          format: uuid
+          description: ID of orchestration execution.
+          example: "b8bc2535-5896-4638-9987-17540b417c69"
+        status:
+          $ref: "#/components/schemas/OrchestrationStatus"
+
+    OrchestrationStatusResponse:
+      type: object
+      description: |
+        Status of orchestration execution. Includes validation results when ground truth validation was requested.
+      properties:
+        orchestrationId:
+          type: string
+          format: uuid
+          description: ID of orchestration execution.
+          example: b8bc2535-5896-4638-9987-17540b417c69
+        status:
+          $ref: "#/components/schemas/OrchestrationStatus"
+        overallProgress:
+          type: string
+          description: |
+            Overall progress of the orchestration execution in terms of processed input keys regardless of whether they ended up with success or failure. 
+            Returned in the response if the execution already started.
+          example: 51 of 100 keys complete
+        validationResult:
+          $ref: "#/components/schemas/ValidationResult"
+      required:
+        - orchestrationId
+        - status
+
+    OrchestrationStatus:
+      type: string
+      description: |
+        Status of orchestration execution.
+        - PENDING: Request received, execution not yet started.
+        - VALIDATING: Ground truth validation tests are currently running.
+        - PROCESSING: Summary generation is in progress.
+        - SUCCEEDED: Orchestration completed successfully (includes successful validation).
+        - FAILED: Orchestration failed during execution.
+        - VALIDATION_FAILED: Ground truth validation did not meet quality thresholds.
+        - ABORTED: Orchestration was cancelled by user.
+      enum:
+        - PENDING
+        - VALIDATING
+        - PROCESSING
+        - SUCCEEDED
+        - FAILED
+        - VALIDATION_FAILED
+        - ABORTED
+      example: PENDING
+
+    ValidationResult:
+      type: object
+      description: |
+        Results from ground truth validation. Only present in the status response when 
+        groundTruthValidation was specified in the keys of the instantiate request.
+        Contains the overall outcome, counts of tests run/passed/failed, and a reference 
+        to the detailed validation report.
+      properties:
+        outcome:
+          type: string
+          description: Overall validation outcome.
+          enum:
+            - PASSED
+            - FAILED
+            - ERROR
+          example: PASSED
+        testsRun:
+          type: integer
+          description: Total number of ground-truth test cases evaluated.
+          example: 10
+        testsPassed:
+          type: integer
+          description: Number of test cases that met quality thresholds.
+          example: 8
+        testsFailed:
+          type: integer
+          description: Number of test cases that did not meet quality thresholds.
+          example: 2
+        reportLocation:
+          type: string
+          description: |
+            S3 URI to the full validation report containing per-test-case results 
+            and detailed quality metrics.
+          example: "s3://aex-cmaai-orchestration-output/validation/b8bc2535-5896-4638-9987-17540b417c69/report.json"
+      required:
+        - outcome
+        - testsRun
+        - testsPassed
+        - testsFailed
+
+    ModelUrl:
+      type: string
+      description: Alternative Masking model URL.
+      example: https://aex-model-repo-service.platform.int.helios-internal.cat.com/v1/model/6d8d7907-b389-49ef-9b6b-f13cbbb0c64b/run-async/
+
+    Error:
+      type: object
+      description: |
+        Represents an error code, description, and detailed error message for a given endpoint.
+      properties:
+        code:
+          type: string
+          description: Error Code represents an alpha-numeric error code received from the error.
+          example: "400.001"
+        description:
+          type: string
+          description: Message represents a textual description of a given error code.
+          example: Unknown error occurred.
+
+  responses:
+    400BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          example:
+            code: "400.008"
+            description: Invalid or missing request body
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    401Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          example:
+            code: '401.001'
+            description: Invalid Access Token
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    403Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          example:
+            code: "403.006"
+            description: User not Authorized
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    404NotFound:
+      description: Not Found
+      content:
+        application/json:
+          example:
+            code: '404.001'
+            description: Resource not found
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    500InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          example:
+            code: '500.001'
+            description: Uncaught server error
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    429TooManyRequests:
+      description: Too Many Requests
+      content:
+        application/json:
+          example:
+            code: "429.001"
+            description: Throttling rate limit exceeded
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    503ServiceUnavailable:
+      description: Service Unavailable
+      content:
+        application/json:
+          example:
+            code: '503.001'
+            description: Service is currently not available
+          schema:
+            $ref: '#/components/schemas/Error'
