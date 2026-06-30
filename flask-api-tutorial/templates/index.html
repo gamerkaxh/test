@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask API Tutorial</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Flask API Tutorial</h1>
+        <p class="subtitle">Learn REST API concepts interactively</p>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="showSection('overview')">Overview</button>
+        <button class="nav-btn" onclick="showSection('users')">Users API</button>
+        <button class="nav-btn" onclick="showSection('products')">Products API</button>
+        <button class="nav-btn" onclick="showSection('tasks')">Tasks API</button>
+        <button class="nav-btn" onclick="showSection('search')">Search</button>
+        <button class="nav-btn" onclick="showSection('stats')">Stats</button>
+    </nav>
+
+    <main>
+        <!-- OVERVIEW SECTION -->
+        <section id="overview" class="section active">
+            <h2>What is a REST API?</h2>
+            <div class="info-box">
+                <p><strong>REST</strong> (Representational State Transfer) is an architectural style for building web services.</p>
+                <p>APIs use <strong>HTTP methods</strong> to perform operations on resources:</p>
+            </div>
+            <div class="methods-grid">
+                <div class="method-card get">
+                    <h3>GET</h3>
+                    <p>Retrieve data from the server</p>
+                    <code>GET /api/users</code>
+                </div>
+                <div class="method-card post">
+                    <h3>POST</h3>
+                    <p>Create new data on the server</p>
+                    <code>POST /api/users</code>
+                </div>
+
+                <div class="method-card put">
+                    <h3>PUT</h3>
+                    <p>Update existing data on the server</p>
+                    <code>PUT /api/users/1</code>
+                </div>
+                <div class="method-card delete">
+                    <h3>DELETE</h3>
+                    <p>Remove data from the server</p>
+                    <code>DELETE /api/users/1</code>
+                </div>
+            </div>
+            <div class="info-box">
+                <h3>HTTP Status Codes</h3>
+                <ul>
+                    <li><span class="status-code success">200</span> OK - Request successful</li>
+                    <li><span class="status-code success">201</span> Created - Resource created</li>
+                    <li><span class="status-code error">400</span> Bad Request - Invalid input</li>
+                    <li><span class="status-code error">404</span> Not Found - Resource doesn't exist</li>
+                    <li><span class="status-code error">500</span> Server Error - Something went wrong</li>
+                </ul>
+            </div>
+            <div class="try-it">
+                <h3>Try It: Get API Info</h3>
+                <button class="btn" onclick="makeRequest('GET', '/api')">GET /api</button>
+                <pre id="overview-response" class="response-box">Click the button to see the response...</pre>
+            </div>
+        </section>
+
+
+        <!-- USERS SECTION -->
+        <section id="users" class="section">
+            <h2>Users API</h2>
+            <div class="info-box">
+                <p>CRUD operations on user resources. Try each operation below!</p>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge get">GET</span> Get All Users</h3>
+                <p>Retrieve a list of all users. Optionally filter by role.</p>
+                <div class="controls">
+                    <select id="user-role-filter">
+                        <option value="">All Roles</option>
+                        <option value="admin">Admin</option>
+                        <option value="moderator">Moderator</option>
+                        <option value="user">User</option>
+                    </select>
+                    <button class="btn" onclick="getUsers()">Send Request</button>
+                </div>
+                <pre id="users-list-response" class="response-box">Click to fetch users...</pre>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge get">GET</span> Get Single User</h3>
+                <p>Retrieve a specific user by their ID.</p>
+                <div class="controls">
+                    <input type="number" id="user-id-get" placeholder="User ID (1-5)" min="1">
+                    <button class="btn" onclick="getUser()">Send Request</button>
+                </div>
+                <pre id="user-get-response" class="response-box">Enter an ID and click to fetch...</pre>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge post">POST</span> Create User</h3>
+                <p>Create a new user by sending JSON data.</p>
+                <div class="controls">
+                    <input type="text" id="user-name" placeholder="Name">
+                    <input type="email" id="user-email" placeholder="Email">
+                    <select id="user-role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                        <option value="moderator">Moderator</option>
+                    </select>
+                    <button class="btn btn-post" onclick="createUser()">Create User</button>
+                </div>
+                <pre id="user-create-response" class="response-box">Fill in the fields and create...</pre>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge delete">DELETE</span> Delete User</h3>
+                <p>Remove a user by their ID.</p>
+                <div class="controls">
+                    <input type="number" id="user-id-delete" placeholder="User ID" min="1">
+                    <button class="btn btn-delete" onclick="deleteUser()">Delete User</button>
+                </div>
+                <pre id="user-delete-response" class="response-box">Enter an ID to delete...</pre>
+            </div>
+        </section>
+
+
+        <!-- PRODUCTS SECTION -->
+        <section id="products" class="section">
+            <h2>Products API</h2>
+            <div class="info-box">
+                <p>Manage a product catalog with filtering capabilities.</p>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge get">GET</span> Get All Products</h3>
+                <p>Retrieve products with optional filters for category and stock status.</p>
+                <div class="controls">
+                    <select id="product-category-filter">
+                        <option value="">All Categories</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="kitchen">Kitchen</option>
+                        <option value="stationery">Stationery</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                    <select id="product-stock-filter">
+                        <option value="">All Stock</option>
+                        <option value="true">In Stock</option>
+                        <option value="false">Out of Stock</option>
+                    </select>
+                    <button class="btn" onclick="getProducts()">Send Request</button>
+                </div>
+                <pre id="products-list-response" class="response-box">Click to fetch products...</pre>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge post">POST</span> Create Product</h3>
+                <p>Add a new product to the catalog.</p>
+                <div class="controls">
+                    <input type="text" id="product-name" placeholder="Product Name">
+                    <input type="number" id="product-price" placeholder="Price" step="0.01">
+                    <select id="product-category">
+                        <option value="electronics">Electronics</option>
+                        <option value="kitchen">Kitchen</option>
+                        <option value="stationery">Stationery</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                    <button class="btn btn-post" onclick="createProduct()">Create Product</button>
+                </div>
+                <pre id="product-create-response" class="response-box">Fill in fields to create...</pre>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge delete">DELETE</span> Delete Product</h3>
+                <p>Remove a product by its ID.</p>
+                <div class="controls">
+                    <input type="number" id="product-id-delete" placeholder="Product ID" min="1">
+                    <button class="btn btn-delete" onclick="deleteProduct()">Delete Product</button>
+                </div>
+                <pre id="product-delete-response" class="response-box">Enter an ID to delete...</pre>
+            </div>
+        </section>
+
+
+        <!-- TASKS SECTION -->
+        <section id="tasks" class="section">
+            <h2>Tasks API</h2>
+            <div class="info-box">
+                <p>A todo-list API with task toggling via PATCH method.</p>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge get">GET</span> Get All Tasks</h3>
+                <p>Filter tasks by completion status or priority level.</p>
+                <div class="controls">
+                    <select id="task-completed-filter">
+                        <option value="">All</option>
+                        <option value="true">Completed</option>
+                        <option value="false">Pending</option>
+                    </select>
+                    <select id="task-priority-filter">
+                        <option value="">All Priorities</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <button class="btn" onclick="getTasks()">Send Request</button>
+                </div>
+                <pre id="tasks-list-response" class="response-box">Click to fetch tasks...</pre>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge post">POST</span> Create Task</h3>
+                <p>Add a new task to the list.</p>
+                <div class="controls">
+                    <input type="text" id="task-title" placeholder="Task title">
+                    <select id="task-priority">
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <button class="btn btn-post" onclick="createTask()">Create Task</button>
+                </div>
+                <pre id="task-create-response" class="response-box">Fill in to create a task...</pre>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge patch">PATCH</span> Toggle Task</h3>
+                <p>Toggle a task's completion status (demonstrates PATCH method).</p>
+                <div class="controls">
+                    <input type="number" id="task-id-toggle" placeholder="Task ID" min="1">
+                    <button class="btn btn-patch" onclick="toggleTask()">Toggle Status</button>
+                </div>
+                <pre id="task-toggle-response" class="response-box">Enter an ID to toggle...</pre>
+            </div>
+        </section>
+
+
+        <!-- SEARCH SECTION -->
+        <section id="search" class="section">
+            <h2>Search API</h2>
+            <div class="info-box">
+                <p>Search across all resources using query parameters. Demonstrates how APIs handle search functionality.</p>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge get">GET</span> Search All Data</h3>
+                <p>Search users, products, and tasks with a single query.</p>
+                <div class="controls">
+                    <input type="text" id="search-query" placeholder="Try: alice, laptop, flask...">
+                    <button class="btn" onclick="searchData()">Search</button>
+                </div>
+                <pre id="search-response" class="response-box">Enter a search term...</pre>
+            </div>
+        </section>
+
+        <!-- STATS SECTION -->
+        <section id="stats" class="section">
+            <h2>Statistics API</h2>
+            <div class="info-box">
+                <p>Aggregated data endpoint - demonstrates how APIs can return computed/derived data.</p>
+            </div>
+
+            <div class="api-card">
+                <h3><span class="badge get">GET</span> Get All Statistics</h3>
+                <p>Get aggregated statistics across all resources.</p>
+                <div class="controls">
+                    <button class="btn" onclick="getStats()">Get Stats</button>
+                </div>
+                <pre id="stats-response" class="response-box">Click to get statistics...</pre>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Flask API Tutorial | Built for learning REST API concepts</p>
+        <p>Run with: <code>python app.py</code> | API base: <code>http://localhost:5000/api</code></p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
