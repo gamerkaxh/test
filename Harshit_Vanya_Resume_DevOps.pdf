@@ -1,0 +1,258 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 6470 >>
+stream
+BT /F1 20 Tf 241.0 742.0 Td (HARSHIT VANYA) Tj ET
+BT /F1 11 Tf 162.4 714.0 Td (Senior DevOps Engineer | Cloud Infrastructure & Automation) Tj ET
+BT /F1 9 Tf 186.5 697.0 Td (Bhopal, India | +91-9755106375 | harshitvanyagmer@gmail.com) Tj ET
+BT /F1 9 Tf 192.6 682.0 Td (linkedin.com/in/harshit-vanya | github.com/Harshit-Vanya) Tj ET
+BT /F2 12 Tf 50.0 653.0 Td (PROFESSIONAL SUMMARY) Tj ET
+50.0 650.0 m 562.0 650.0 l S
+BT /F1 9 Tf 50.0 634.0 Td (Senior DevOps Engineer with 6+ years of experience architecting, automating, and managing scalable cloud infrastructure across) Tj ET
+BT /F1 9 Tf 50.0 622.0 Td (AWS and Azure environments. Proven track record in leading cross-functional engineering teams, designing CI/CD pipelines,) Tj ET
+BT /F1 9 Tf 50.0 610.0 Td (implementing Infrastructure-as-Code with Ansible and Terraform, and building robust API integration platforms. Deep expertise) Tj ET
+BT /F1 9 Tf 50.0 598.0 Td (in container orchestration \(Kubernetes, Docker\), Apache-based web infrastructure, and automated testing frameworks. Adept at) Tj ET
+BT /F1 9 Tf 50.0 586.0 Td (translating business requirements into production-grade, highly available systems while mentoring engineers and driving DevOps) Tj ET
+BT /F1 9 Tf 50.0 574.0 Td (culture adoption.) Tj ET
+BT /F2 12 Tf 50.0 550.0 Td (KEY SKILLS) Tj ET
+50.0 547.0 m 562.0 547.0 l S
+BT /F2 9 Tf 50.0 531.0 Td (Infrastructure & Automation: ) Tj ET
+BT /F1 9 Tf 180.5 531.0 Td (Ansible, Terraform, CloudFormation, Infrastructure-as-Code \(IaC\), Configuration Management,) Tj ET
+BT /F1 9 Tf 50.0 519.0 Td (Server Provisioning) Tj ET
+BT /F2 9 Tf 50.0 507.0 Td (Cloud Platforms \(AWS\): ) Tj ET
+BT /F1 9 Tf 153.5 507.0 Td (EC2, ECS, EKS, Lambda, S3, SQS, SNS, CloudWatch, IAM, Route 53, VPC, RDS, ElastiCache, CodePipeline,) Tj ET
+BT /F1 9 Tf 50.0 495.0 Td (CodeDeploy) Tj ET
+BT /F2 9 Tf 50.0 483.0 Td (Cloud Platforms \(Azure\): ) Tj ET
+BT /F1 9 Tf 162.5 483.0 Td (Azure Kubernetes Service \(AKS\), Azure DevOps, Azure Monitor, Azure Functions, ARM Templates) Tj ET
+BT /F2 9 Tf 50.0 471.0 Td (CI/CD & Build Systems: ) Tj ET
+BT /F1 9 Tf 153.5 471.0 Td (Jenkins, GitHub Actions, GitLab CI/CD, Azure DevOps Pipelines, ArgoCD, Spinnaker) Tj ET
+BT /F2 9 Tf 50.0 459.0 Td (Containers & Orchestration: ) Tj ET
+BT /F1 9 Tf 176.0 459.0 Td (Docker, Kubernetes, Helm, ECS Fargate, Docker Compose) Tj ET
+BT /F2 9 Tf 50.0 447.0 Td (Web & API Infrastructure: ) Tj ET
+BT /F1 9 Tf 167.0 447.0 Td (Apache HTTP Server, Nginx, Apache Kafka, REST APIs, SOAP APIs, API Gateway, Load Balancing) Tj ET
+BT /F2 9 Tf 50.0 435.0 Td (API Testing & Quality: ) Tj ET
+BT /F1 9 Tf 153.5 435.0 Td (Postman, Newman \(CLI\), pytest, Swagger/OpenAPI Validation, Contract Testing, JMeter, Locust) Tj ET
+BT /F2 9 Tf 50.0 423.0 Td (Monitoring & Observability: ) Tj ET
+BT /F1 9 Tf 176.0 423.0 Td (Prometheus, Grafana, ELK Stack, CloudWatch, Datadog, PagerDuty) Tj ET
+BT /F2 9 Tf 50.0 411.0 Td (Scripting & Development: ) Tj ET
+BT /F1 9 Tf 162.5 411.0 Td (Python, Bash, SQL, YAML, JSON, Go \(basic\)) Tj ET
+BT /F2 9 Tf 50.0 399.0 Td (Other: ) Tj ET
+BT /F1 9 Tf 81.5 399.0 Td (Git, Linux Administration, Networking \(TCP/IP, DNS, SSL/TLS\), Security Hardening, Agile/Scrum) Tj ET
+BT /F2 12 Tf 50.0 375.0 Td (WORK EXPERIENCE) Tj ET
+50.0 372.0 m 562.0 372.0 l S
+BT /F2 10 Tf 50.0 352.0 Td (Senior DevOps Engineer / DevOps Lead - CloudNexus DigiWeb Services Pvt. Ltd.) Tj ET
+BT /F1 9 Tf 50.0 338.0 Td (Mar 2024 - Present | Bhopal, India) Tj ET
+BT /F1 9 Tf 55.0 324.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 324.0 Td (Led a team of 6 engineers, coordinating task delivery, conducting code reviews, and providing technical mentorship across) Tj ET
+BT /F1 9 Tf 65.0 312.0 Td (multiple client engagements in Agile sprints.) Tj ET
+BT /F1 9 Tf 55.0 300.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 300.0 Td (Architected and maintained CI/CD pipelines using Jenkins, GitHub Actions, and Azure DevOps - reducing deployment frequency) Tj ET
+BT /F1 9 Tf 65.0 288.0 Td (from bi-weekly to multiple daily releases with zero-downtime deployments.) Tj ET
+BT /F1 9 Tf 55.0 276.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 276.0 Td (Designed and implemented Infrastructure-as-Code \(IaC\) using Ansible \(50+ playbooks\) and Terraform to automate provisioning) Tj ET
+BT /F1 9 Tf 65.0 264.0 Td (of AWS EC2, EKS clusters, RDS instances, and VPC configurations across 3 environments.) Tj ET
+BT /F1 9 Tf 55.0 252.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 252.0 Td (Deployed and managed Apache HTTP Server clusters with mod_proxy and mod_security for a GEICO enterprise client, handling) Tj ET
+BT /F1 9 Tf 65.0 240.0 Td (10K+ concurrent connections with automated SSL certificate rotation.) Tj ET
+BT /F1 9 Tf 55.0 228.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 228.0 Td (Built an end-to-end API testing pipeline using Postman/Newman integrated into CI/CD, validating REST and SOAP endpoints) Tj ET
+BT /F1 9 Tf 65.0 216.0 Td (with contract testing, achieving 95%+ API test coverage before production deployments.) Tj ET
+BT /F1 9 Tf 55.0 204.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 204.0 Td (Engineered an event-driven data validation platform on AWS \(Lambda + SQS + S3\), processing 500K+ daily events with) Tj ET
+BT /F1 9 Tf 65.0 192.0 Td (automated retry/dead-letter queue patterns and CloudWatch alerting.) Tj ET
+BT /F1 9 Tf 55.0 180.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 180.0 Td (Designed and deployed containerized microservices on Azure Kubernetes Service \(AKS\) with Helm charts, implementing) Tj ET
+BT /F1 9 Tf 65.0 168.0 Td (horizontal pod autoscaling, rolling updates, and automated rollback strategies.) Tj ET
+BT /F1 9 Tf 55.0 156.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 156.0 Td (Implemented centralized logging and monitoring using ELK Stack and Prometheus/Grafana, reducing MTTD by 60% and MTTR by) Tj ET
+BT /F1 9 Tf 65.0 144.0 Td (45%.) Tj ET
+BT /F1 9 Tf 55.0 132.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 132.0 Td (Automated server configuration and application deployments using Ansible roles and Galaxy modules, eliminating manual) Tj ET
+BT /F1 9 Tf 65.0 120.0 Td (SSH-based deployments and reducing provisioning time from hours to minutes.) Tj ET
+BT /F1 9 Tf 55.0 108.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 108.0 Td (Established API governance standards and automated API testing workflows \(schema validation, load testing with JMeter,) Tj ET
+BT /F1 9 Tf 65.0 96.0 Td (security scanning with OWASP ZAP\) across the organization.) Tj ET
+BT /F2 10 Tf 50.0 76.0 Td (DevOps Engineer - CloudNexus DigiWeb Services Pvt. Ltd.) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 6649 >>
+stream
+BT /F1 9 Tf 50.0 742.0 Td (Sep 2022 - Feb 2024 | Bhopal, India) Tj ET
+BT /F1 9 Tf 55.0 728.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 728.0 Td (Built and maintained CI/CD pipelines for 12+ microservices using Jenkins and GitLab CI, integrating automated testing,) Tj ET
+BT /F1 9 Tf 65.0 716.0 Td (Docker image builds, and Kubernetes deployments.) Tj ET
+BT /F1 9 Tf 55.0 704.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 704.0 Td (Managed AWS infrastructure including EC2 fleets, Auto Scaling Groups, Application Load Balancers, and RDS clusters serving) Tj ET
+BT /F1 9 Tf 65.0 692.0 Td (production workloads for enterprise clients.) Tj ET
+BT /F1 9 Tf 55.0 680.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 680.0 Td (Configured and optimized Apache web servers and reverse proxies for high-traffic applications, implementing caching) Tj ET
+BT /F1 9 Tf 65.0 668.0 Td (strategies and security hardening \(mod_security, rate limiting\).) Tj ET
+BT /F1 9 Tf 55.0 656.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 656.0 Td (Developed Ansible playbooks for automated patching, compliance checks, and application deployment across 100+ Linux) Tj ET
+BT /F1 9 Tf 65.0 644.0 Td (servers, reducing manual effort by 80%.) Tj ET
+BT /F1 9 Tf 55.0 632.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 632.0 Td (Created comprehensive API testing suites using Postman collections and Newman CLI, integrated into pre-deployment gates in) Tj ET
+BT /F1 9 Tf 65.0 620.0 Td (CI/CD pipelines.) Tj ET
+BT /F1 9 Tf 55.0 608.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 608.0 Td (Implemented infrastructure monitoring with Prometheus, Grafana, and CloudWatch dashboards; configured alerting rules and) Tj ET
+BT /F1 9 Tf 65.0 596.0 Td (on-call rotation with PagerDuty.) Tj ET
+BT /F1 9 Tf 55.0 584.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 584.0 Td (Containerized legacy monolithic applications into Docker-based microservices and orchestrated deployments on ECS Fargate) Tj ET
+BT /F1 9 Tf 65.0 572.0 Td (and EKS.) Tj ET
+BT /F1 9 Tf 55.0 560.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 560.0 Td (Automated DNS management, SSL provisioning \(Let's Encrypt/ACM\), and CDN configuration for client-facing applications.) Tj ET
+BT /F2 10 Tf 50.0 540.0 Td (Junior DevOps Engineer - CloudNexus DigiWeb Services Pvt. Ltd.) Tj ET
+BT /F1 9 Tf 50.0 526.0 Td (Mar 2021 - Aug 2022 | Bhopal, India) Tj ET
+BT /F1 9 Tf 55.0 512.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 512.0 Td (Supported infrastructure provisioning and configuration management using Ansible and AWS CloudFormation templates.) Tj ET
+BT /F1 9 Tf 55.0 500.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 500.0 Td (Maintained Jenkins pipelines, troubleshot build failures, and implemented automated artifact publishing to S3 and ECR.) Tj ET
+BT /F1 9 Tf 55.0 488.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 488.0 Td (Assisted in migrating on-premise workloads to AWS, including network configuration \(VPC, subnets, security groups\) and) Tj ET
+BT /F1 9 Tf 65.0 476.0 Td (database migration \(RDS\).) Tj ET
+BT /F1 9 Tf 55.0 464.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 464.0 Td (Wrote Bash and Python scripts for log rotation, backup automation, health checks, and deployment orchestration.) Tj ET
+BT /F1 9 Tf 55.0 452.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 452.0 Td (Configured Apache virtual hosts, SSL termination, and URL rewriting for multi-tenant web applications.) Tj ET
+BT /F1 9 Tf 55.0 440.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 440.0 Td (Performed API testing and validation using Postman during integration testing phases, documenting API contracts and edge) Tj ET
+BT /F1 9 Tf 65.0 428.0 Td (cases.) Tj ET
+BT /F2 10 Tf 50.0 408.0 Td (Software Engineering Intern - TechDrive Solutions) Tj ET
+BT /F1 9 Tf 50.0 394.0 Td (Jun 2020 - Feb 2021 | Bhopal, India) Tj ET
+BT /F1 9 Tf 55.0 380.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 380.0 Td (Developed RESTful APIs using Python \(Flask/FastAPI\) with comprehensive unit and integration test coverage.) Tj ET
+BT /F1 9 Tf 55.0 368.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 368.0 Td (Participated in CI/CD pipeline setup using GitHub Actions for automated testing and deployment to AWS EC2.) Tj ET
+BT /F1 9 Tf 55.0 356.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 356.0 Td (Gained foundational experience in Linux server administration, Docker containerization, and cloud-native architecture.) Tj ET
+BT /F2 12 Tf 50.0 332.0 Td (PROJECTS) Tj ET
+50.0 329.0 m 562.0 329.0 l S
+BT /F2 10 Tf 50.0 309.0 Td (Enterprise Infrastructure Automation Platform - Ansible + AWS + Terraform \(8 Months\)) Tj ET
+BT /F1 9 Tf 55.0 295.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 295.0 Td (Designed a comprehensive infrastructure automation platform using Ansible \(70+ roles\) and Terraform modules to manage) Tj ET
+BT /F1 9 Tf 65.0 283.0 Td (multi-account AWS environments for enterprise clients.) Tj ET
+BT /F1 9 Tf 55.0 271.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 271.0 Td (Automated end-to-end server provisioning, application deployment, security hardening, and compliance auditing across 200+) Tj ET
+BT /F1 9 Tf 65.0 259.0 Td (EC2 instances.) Tj ET
+BT /F1 9 Tf 55.0 247.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 247.0 Td (Implemented dynamic inventory management with AWS EC2 plugin, enabling automatic discovery and configuration of new) Tj ET
+BT /F1 9 Tf 65.0 235.0 Td (instances.) Tj ET
+BT /F1 9 Tf 55.0 223.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 223.0 Td (Built custom Ansible modules for proprietary API integrations, reducing onboarding time for new services from days to) Tj ET
+BT /F1 9 Tf 65.0 211.0 Td (hours.) Tj ET
+BT /F2 10 Tf 50.0 192.0 Td (High-Availability API Gateway & Testing Framework - AWS + Apache + CI/CD \(6 Months\)) Tj ET
+BT /F1 9 Tf 55.0 178.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 178.0 Td (Architected a highly available API gateway using Apache HTTP Server with mod_proxy_balancer, handling 50K+ requests/minute) Tj ET
+BT /F1 9 Tf 65.0 166.0 Td (across multiple backend microservices.) Tj ET
+BT /F1 9 Tf 55.0 154.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 154.0 Td (Built a comprehensive API testing framework using Postman/Newman, pytest, and custom Python validators - executing 2,000+) Tj ET
+BT /F1 9 Tf 65.0 142.0 Td (test cases per deployment cycle.) Tj ET
+BT /F1 9 Tf 55.0 130.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 130.0 Td (Implemented contract testing \(consumer-driven\) using Pact framework to ensure API backward compatibility across 15+) Tj ET
+BT /F1 9 Tf 65.0 118.0 Td (microservices.) Tj ET
+BT /F1 9 Tf 55.0 106.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 106.0 Td (Deployed the platform on AWS ECS with Auto Scaling, Application Load Balancer, and Route 53 health checks for multi-region) Tj ET
+BT /F1 9 Tf 65.0 94.0 Td (failover.) Tj ET
+BT /F2 10 Tf 50.0 75.0 Td (Real-Time Infrastructure Monitoring & Incident Response Platform \(5 Months\)) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 10 0 R >>
+endobj
+10 0 obj
+<< /Length 4147 >>
+stream
+BT /F1 9 Tf 55.0 742.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 742.0 Td (Built a real-time monitoring platform using Prometheus, Grafana, and ELK Stack to observe 100+ services across AWS and) Tj ET
+BT /F1 9 Tf 65.0 730.0 Td (on-premise infrastructure.) Tj ET
+BT /F1 9 Tf 55.0 718.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 718.0 Td (Streamed infrastructure metrics and application logs through Apache Kafka into Elasticsearch for centralized analysis and) Tj ET
+BT /F1 9 Tf 65.0 706.0 Td (alerting.) Tj ET
+BT /F1 9 Tf 55.0 694.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 694.0 Td (Automated incident response workflows using Ansible Tower \(AWX\) for self-healing actions \(service restart, scaling,) Tj ET
+BT /F1 9 Tf 65.0 682.0 Td (failover\).) Tj ET
+BT /F1 9 Tf 55.0 670.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 670.0 Td (Integrated with PagerDuty and Slack for intelligent alert routing and escalation policies.) Tj ET
+BT /F2 10 Tf 50.0 651.0 Td (Cloud Migration & Containerization - On-Premise to AWS EKS \(6 Months\)) Tj ET
+BT /F1 9 Tf 55.0 637.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 637.0 Td (Led migration of 8 legacy applications from on-premise servers to AWS EKS, including Dockerization, Helm chart creation,) Tj ET
+BT /F1 9 Tf 65.0 625.0 Td (and CI/CD pipeline setup.) Tj ET
+BT /F1 9 Tf 55.0 613.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 613.0 Td (Implemented blue-green and canary deployment strategies using ArgoCD and Istio service mesh.) Tj ET
+BT /F1 9 Tf 55.0 601.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 601.0 Td (Designed network architecture \(VPC, subnets, NACLs, security groups\) and IAM policies following least-privilege) Tj ET
+BT /F1 9 Tf 65.0 589.0 Td (principles.) Tj ET
+BT /F1 9 Tf 55.0 577.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 577.0 Td (Achieved 99.95% uptime SLA with automated failover, horizontal pod autoscaling, and cluster autoscaler configurations.) Tj ET
+BT /F2 12 Tf 50.0 553.0 Td (EDUCATION) Tj ET
+50.0 550.0 m 562.0 550.0 l S
+BT /F2 10 Tf 50.0 530.0 Td (B.Tech / B.E., Computer Science and Engineering \(CSE\)) Tj ET
+BT /F1 9 Tf 50.0 516.0 Td (Sagar Institute of Science Technology and Research, Bhopal - 2020 | Grade: 7.8/10) Tj ET
+BT /F1 9 Tf 50.0 502.0 Td (12th - Madhya Pradesh Board \(English medium\) - 2016 | Marks: 74%) Tj ET
+BT /F1 9 Tf 50.0 490.0 Td (10th - Madhya Pradesh Board \(English medium\) - 2014 | Marks: 89%) Tj ET
+BT /F2 12 Tf 50.0 466.0 Td (CERTIFICATIONS) Tj ET
+50.0 463.0 m 562.0 463.0 l S
+BT /F1 9 Tf 55.0 447.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 447.0 Td (AWS Certified Solutions Architect - Associate) Tj ET
+BT /F1 9 Tf 55.0 435.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 435.0 Td (AWS Certified DevOps Engineer - Professional) Tj ET
+BT /F1 9 Tf 55.0 423.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 423.0 Td (Red Hat Certified System Administrator \(RHCSA\)) Tj ET
+BT /F1 9 Tf 55.0 411.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 411.0 Td (Certified Kubernetes Administrator \(CKA\)) Tj ET
+BT /F1 9 Tf 55.0 399.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 399.0 Td (HashiCorp Certified: Terraform Associate) Tj ET
+BT /F2 12 Tf 50.0 375.0 Td (ACHIEVEMENTS & ADDITIONAL INFORMATION) Tj ET
+50.0 372.0 m 562.0 372.0 l S
+BT /F1 9 Tf 55.0 356.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 356.0 Td (Leadership Recognition: Promoted from DevOps Engineer to DevOps Lead within 2 years for exceptional technical delivery,) Tj ET
+BT /F1 9 Tf 65.0 344.0 Td (team mentorship, and client satisfaction.) Tj ET
+BT /F1 9 Tf 55.0 332.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 332.0 Td (Infrastructure Scale: Managed AWS infrastructure supporting 500K+ daily API transactions and 99.9%+ uptime across) Tj ET
+BT /F1 9 Tf 65.0 320.0 Td (production environments.) Tj ET
+BT /F1 9 Tf 55.0 308.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 308.0 Td (Cost Optimization: Reduced AWS infrastructure costs by 35% through right-sizing, Reserved Instances, Spot Fleet adoption,) Tj ET
+BT /F1 9 Tf 65.0 296.0 Td (and automated resource scheduling.) Tj ET
+BT /F1 9 Tf 55.0 284.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 284.0 Td (Open Source: Active contributor to Ansible Galaxy community roles and Terraform provider modules.) Tj ET
+BT /F1 9 Tf 55.0 272.0 Td (\267) Tj ET
+BT /F1 9 Tf 65.0 272.0 Td (Languages: English, Hindi) Tj ET
+endstream
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000326 00000 n 
+0000000462 00000 n 
+0000006984 00000 n 
+0000007120 00000 n 
+0000013821 00000 n 
+0000013958 00000 n 
+trailer
+<< /Size 11 /Root 1 0 R >>
+startxref
+18158
+%%EOF
